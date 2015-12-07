@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      0.3
-// @description  Hides watched videos from your YouTube subscriptions page
+// @version      0.4
+// @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
 // @include      http://*.youtube.com/*
@@ -10,6 +10,11 @@
 // @include      https://*.youtube.com/*
 // @include      https://youtube.com/*
 // ==/UserScript==
+
+// To submit bugs or submit revisions please see visit the repository at:
+// https://github.com/globexdesigns/youtube-hide-watched
+// You can open new issues at:
+// https://github.com/globexdesigns/youtube-hide-watched/issues
 
 (function (undefined) {
     
@@ -61,10 +66,16 @@ vertical-align: -2px;\
         for (var i = 0, l = items.length; i < l; i++) {
             var item = items[i];
             var row = findParentByClass(item, 'feed-item-container');
+            var gridItem = findParentByClass(item, 'yt-shelf-grid-item');
+            
+            // If we're in grid view, we will hide the "grid" item,
+            // otherwise we'll hide the item row
+            var itemToHide = gridItem ? gridItem : row;
+            
             if (localStorage.GRWATCHED === 'true') {
-                row.classList.add('GR-WATCHED');
+                itemToHide.classList.add('GR-WATCHED');
             } else {
-                row.classList.remove('GR-WATCHED');
+                itemToHide.classList.remove('GR-WATCHED');
             }
         };
     };
