@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      0.4
+// @version      0.5
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -65,7 +65,17 @@ vertical-align: -2px;\
         var items = findWatchedElements() || [];
         for (var i = 0, l = items.length; i < l; i++) {
             var item = items[i];
-            var row = findParentByClass(item, 'feed-item-container');
+
+            // "Subscription" section needs us to hide the "feed-item-container",
+            // but in the "Trending" section, that class will hide everything.
+            // So there, we need to hide the "expanded-shelf-content-item-wrapper"
+            var row;
+            if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+                row = findParentByClass(item, 'feed-item-container');
+            } else {
+                row = findParentByClass(item, 'expanded-shelf-content-item-wrapper');
+            }
+            
             var gridItem = findParentByClass(item, 'yt-shelf-grid-item');
             
             // If we're in grid view, we will hide the "grid" item,
