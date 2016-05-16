@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      0.5
+// @version      0.6
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -17,50 +17,55 @@
 // https://github.com/globexdesigns/youtube-hide-watched/issues
 
 (function (undefined) {
-    
+
     GM_addStyle("\
 .GR-WATCHED {\
 display: none;\
 }\
-.GR-LABEL {\
-color:#666;\
-cursor:pointer;\
+.GR-BUTTON {\
+cursor: pointer;\
+position: absolute;\
+right: 80px;\
+top: 10px;\
 }\
-.GR-LABEL input {\
-vertical-align: -2px;\
+.GR-BUTTON-LABEL {\
+pointer-events: none;\
+}\
+.GR-BUTTON-CHECKBOX {\
+pointer-events: none;\
+margin-right: 10px;\
+vertical-align: -3px;\
 }\
 ");
-    
+
     // ===========================================================
-    
+
     var findWatchedElements = function () {
         return document.getElementsByClassName('watched');
     };
-    
+
     // ===========================================================
-    
+
     var findParentByClass = function(el, cls) {
         while ((el = el.parentElement) && !el.classList.contains(cls));
         return el;
     };
-    
+
     // ===========================================================
-    
-    var findToolbar = function () {
-        var toolbar = document.getElementsByClassName('appbar-nav-menu');
-        if (!toolbar || !toolbar.length) return;
-        return toolbar[0];
+
+    var findButtonTarget = function () {
+        return document.getElementById('browse-items-primary');
     };
-    
+
     // ===========================================================
-    
-    var isCheckboxAlreadyThere = function () {
-        var checkbox = document.getElementsByClassName('GR-LABEL');
-        return checkbox && checkbox.length;
+
+    var isButtonAlreadyThere = function () {
+        var button = document.getElementsByClassName('GR-BUTTON');
+        return button && button.length;
     };
-    
+
     // ===========================================================
-    
+
     var addClassToWatchedRows = function () {
         var items = findWatchedElements() || [];
         for (var i = 0, l = items.length; i < l; i++) {
@@ -75,62 +80,67 @@ vertical-align: -2px;\
             } else {
                 row = findParentByClass(item, 'expanded-shelf-content-item-wrapper');
             }
-            
+
             var gridItem = findParentByClass(item, 'yt-shelf-grid-item');
-            
+
             // If we're in grid view, we will hide the "grid" item,
             // otherwise we'll hide the item row
             var itemToHide = gridItem ? gridItem : row;
-            
+
             if (localStorage.GRWATCHED === 'true') {
                 itemToHide.classList.add('GR-WATCHED');
             } else {
                 itemToHide.classList.remove('GR-WATCHED');
             }
-        };
+        }
     };
-    
+
     // ===========================================================
-    
+
     var addCheckboxButton = function () {
-        if (isCheckboxAlreadyThere()) return;
-        
-        // Find toolbar
-        var toolbar = findToolbar();
-        if (!toolbar) return;
-        
+        if (isButtonAlreadyThere()) return;
+
+        // Find button target
+        var target = findButtonTarget();
+        if (!target) return;
+
         // Add label
         var label = document.createElement('label');
-        label.classList.add('GR-LABEL');
-        
+        label.className = 'GR-BUTTON-LABEL';
+
         // Add checkbox
         var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
         checkbox.checked = localStorage.GRWATCHED === 'true' ? 'checked' : null;
-        checkbox.addEventListener('change', function (event) {
-            localStorage.GRWATCHED = event.target.checked;
-            addClassToWatchedRows();
-        });
+        checkbox.className = 'GR-BUTTON-CHECKBOX';
+        checkbox.type = 'checkbox';
         label.appendChild(checkbox);
-        
+
         // Add label text
         var textnode = document.createTextNode("Hide Watched");
         label.appendChild(textnode);
-        
-        // Create <li> wrapper
-        var linode = document.createElement('li');
-        linode.appendChild(label);
-        
-        toolbar.appendChild(linode);
+
+        // Create <button>
+        var button = document.createElement('button');
+        button.className = 'yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-has-icon yt-uix-button-reverse inq-no-click GR-BUTTON';
+        button.appendChild(label);
+        button.addEventListener('click', function (event) {
+            var value = localStorage.GRWATCHED === 'true' ? 'false' : 'true';
+            localStorage.GRWATCHED = value;
+            console.log(localStorage.GRWATCHED, Boolean(localStorage.GRWATCHED), value);
+            checkbox.checked = value === 'true';
+            addClassToWatchedRows();
+        });
+
+        target.appendChild(button);
     };
-    
+
     var run = function () {
         addClassToWatchedRows();
         addCheckboxButton();
     };
-    
+
     // ===========================================================
-    
+
     // Hijack all XHR calls
     var send = XMLHttpRequest.prototype.send;
     XMLHttpRequest.prototype.send = function (data) {
@@ -145,10 +155,10 @@ vertical-align: -2px;\
             }
         }, false);
         send.call(this, data);
-    }
-    
+    };
+
     // ===========================================================
-    
+
     var observeDOM = (function(){
         var MutationObserver = window.MutationObserver || window.WebKitMutationObserver,
             eventListenerSupported = window.addEventListener;
@@ -167,16 +177,16 @@ vertical-align: -2px;\
                 obj.addEventListener('DOMNodeInserted', callback, false);
                 obj.addEventListener('DOMNodeRemoved', callback, false);
             }
-        }
+        };
     })();
-    
+
     // YouTube does weird things during navigation. This seems to be the only reliable way to
     // check when user moves from one page to another.
     observeDOM(document.body, function () {
         run();
     });
-    
+
     // ===========================================================
-    
+
     run();
 }());
