@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      0.6
+// @version      0.7
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -28,20 +28,21 @@ position: absolute;\
 right: 80px;\
 top: 10px;\
 }\
-.GR-BUTTON-LABEL {\
-pointer-events: none;\
-}\
 .GR-BUTTON-CHECKBOX {\
 pointer-events: none;\
-margin-right: 10px;\
-vertical-align: -3px;\
 }\
 ");
 
     // ===========================================================
 
     var findWatchedElements = function () {
-        return document.getElementsByClassName('watched');
+        var bars = document.getElementsByClassName('resume-playback-progress-bar');
+        var watched = [];
+        for (var i = 0, l = bars.length; i < l; i++) {
+            var bar = bars[i];
+            if (bar.style.width && parseInt(bar.style.width, 10) > 0) watched.push(bar);
+        }
+        return watched;
     };
 
     // ===========================================================
@@ -104,29 +105,26 @@ vertical-align: -3px;\
         var target = findButtonTarget();
         if (!target) return;
 
-        // Add label
-        var label = document.createElement('label');
-        label.className = 'GR-BUTTON-LABEL';
-
         // Add checkbox
+        var checkboxContainer = document.createElement('span');
+        checkboxContainer.className = 'yt-uix-button-icon-wrapper';
         var checkbox = document.createElement('input');
         checkbox.checked = localStorage.GRWATCHED === 'true' ? 'checked' : null;
         checkbox.className = 'GR-BUTTON-CHECKBOX';
         checkbox.type = 'checkbox';
-        label.appendChild(checkbox);
+        checkboxContainer.appendChild(checkbox);
 
         // Add label text
         var textnode = document.createTextNode("Hide Watched");
-        label.appendChild(textnode);
 
         // Create <button>
         var button = document.createElement('button');
-        button.className = 'yt-uix-button yt-uix-button-size-default yt-uix-button-default yt-uix-button-has-icon yt-uix-button-reverse inq-no-click GR-BUTTON';
-        button.appendChild(label);
+        button.className = 'yt-uix-button yt-uix-button-size-default yt-uix-button-default GR-BUTTON';
+        button.appendChild(checkboxContainer);
+        button.appendChild(textnode);
         button.addEventListener('click', function (event) {
             var value = localStorage.GRWATCHED === 'true' ? 'false' : 'true';
             localStorage.GRWATCHED = value;
-            console.log(localStorage.GRWATCHED, Boolean(localStorage.GRWATCHED), value);
             checkbox.checked = value === 'true';
             addClassToWatchedRows();
         });
