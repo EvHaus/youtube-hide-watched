@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      1.0
+// @version      1.1
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -18,7 +18,7 @@
 
 (function (undefined) {
     // Enable for debugging
-    var __DEV__ = true;
+    var __DEV__ = false;
 
     // Set defaults
     localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
