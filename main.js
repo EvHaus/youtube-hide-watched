@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      1.1
+// @version      1.2
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -149,6 +149,10 @@
         // DOM detection here instead of URL detection, because the URL
         // will change before the DOM has been updated.
         if ($('#watch-history-pause-button').length > 0) return;
+
+        // If th target can't be found, we might be on a channel page
+        if (!target.length) target = $('#browse-items-primary .branded-page-v2-subnav-container');
+        console.log(target);
 
         return target;
     };
