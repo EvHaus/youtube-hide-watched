@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      1.2
+// @version      1.3
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -9,6 +9,7 @@
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
 // @include      https://youtube.com/*
+// @require      https://code.jquery.com/jquery-3.1.1.slim.min.js
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -55,6 +56,7 @@
 
 .YT-HWV-HIDEBUTTON {
     border-radius: 2px 0 0 2px;
+    display: block;
     padding: 0 10px;
 }
 
@@ -67,7 +69,7 @@
 .YT-HWV-BUTTON-CHECKBOX {
     margin: 0 8px 0 0;
     pointer-events: none;
-    vertical-align: 2px;
+    vertical-align: -2px;
 }
 
 .YT-HWV-MENU {
@@ -103,21 +105,6 @@
     vertical-align: -4px;
 }
 `);
-
-    // ===========================================================
-
-    var addJQuery = function (callback) {
-        var script = document.createElement("script");
-        script.setAttribute("src", "//code.jquery.com/jquery-3.1.1.slim.min.js");
-        script.setAttribute("integrity", "sha256-/SIrNqv8h6QGKDuNoLGA4iret+kyesCkHGzVUUV0shc=");
-        script.setAttribute("crossorigin", "anonymous");
-        script.addEventListener('load', function() {
-            document.body.appendChild(script);
-            if (__DEV__) console.log('[YT-HWV] jQuery has been loaded');
-            callback();
-        }, false);
-        document.body.appendChild(script);
-    };
 
     // ===========================================================
 
@@ -295,14 +282,13 @@
     // ===========================================================
 
     if (__DEV__) console.log('[YT-HWV] Starting Script');
-    addJQuery(function () {
-        // YouTube does navigation via history and also does a bunch
-        // of AJAX video loading. In order to ensure we're always up
-        // to date, we have to listen for ANY DOM change event, and
-        // re-run our script.
-        if (__DEV__) console.log('[YT-HWV] Attaching DOM listener');
-        observeDOM(document.body, run);
+    
+    // YouTube does navigation via history and also does a bunch
+    // of AJAX video loading. In order to ensure we're always up
+    // to date, we have to listen for ANY DOM change event, and
+    // re-run our script.
+    if (__DEV__) console.log('[YT-HWV] Attaching DOM listener');
+    observeDOM(document.body, run);
 
-        run();
-    });
+    run();
 }());
