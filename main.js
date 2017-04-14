@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      1.3
+// @version      1.4
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -109,14 +109,16 @@
     // ===========================================================
 
     var findWatchedElements = function () {
-        var watched = $('.resume-playback-progress-bar')
-            .filter(function (i, bar) {
-                return bar.style.width && parseInt(bar.style.width, 10) > parseInt(localStorage.YTHWV_WATCH_PERC, 10);
-            });
+        var watched = $('.resume-playback-progress-bar');
+
+        // New YouTube (2017-04-14)
+        if (!watched.length) watched = $('.ytd-thumbnail-overlay-resume-playback-renderer');
 
         if (__DEV__) console.log(`[YT-HWV] Found ${watched.length} watched elements`);
 
-        return watched;
+        return watched.filter(function (i, bar) {
+            return bar.style.width && parseInt(bar.style.width, 10) > parseInt(localStorage.YTHWV_WATCH_PERC, 10);
+        });
     };
 
     // ===========================================================
@@ -132,6 +134,9 @@
         // Button will be injected into the menu of an item browser
         var target = $('#browse-items-primary .yt-uix-menu-top-level-button-container');
 
+        // New YouTube (2017-04-14)
+        if (!target.length) target = $('#top-level-buttons');
+
         // If this is a "History" video -- we don't need a button. We use
         // DOM detection here instead of URL detection, because the URL
         // will change before the DOM has been updated.
@@ -139,7 +144,6 @@
 
         // If th target can't be found, we might be on a channel page
         if (!target.length) target = $('#browse-items-primary .branded-page-v2-subnav-container');
-        console.log(target);
 
         return target;
     };
@@ -165,6 +169,9 @@
             var row;
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
                 row = item.closest('.feed-item-container');
+
+                // New YouTube (2017-04-14)
+                if (!row || !row.length) row = item.closest('ytd-item-section-renderer');
             } else {
                 row = item.closest('.expanded-shelf-content-item-wrapper');
             }
@@ -282,7 +289,7 @@
     // ===========================================================
 
     if (__DEV__) console.log('[YT-HWV] Starting Script');
-    
+
     // YouTube does navigation via history and also does a bunch
     // of AJAX video loading. In order to ensure we're always up
     // to date, we have to listen for ANY DOM change event, and
