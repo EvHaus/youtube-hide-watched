@@ -26,7 +26,9 @@
     localStorage.YTHWV_WATCH_PERC = localStorage.YTHWV_WATCH_PERC || '0';
 
     GM_addStyle(`
-.YT-HWV-WATCHED { display: none !important; }
+.YT-HWV-WATCHED {
+    display: none !important;
+}
 
 .YT-HWV-CONTAINER {
     display: inline-flex;
@@ -108,6 +110,23 @@
 
     // ===========================================================
 
+    var debounce = function (func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+
+    // ===========================================================
+
     var findWatchedElements = function () {
         var watched = $('.resume-playback-progress-bar');
 
@@ -157,9 +176,6 @@
     // ===========================================================
 
     var addClassToWatchedRows = function () {
-        // Clean up first
-        $('.YT-HWV-WATCHED').removeClass('YT-HWV-WATCHED');
-
         if (localStorage.YTHWV_WATCHED !== 'true') return;
 
         $(findWatchedElements()).each(function (i, item) {
@@ -171,7 +187,13 @@
                 row = item.closest('.feed-item-container');
 
                 // New YouTube (2017-04-14)
-                if (!row || !row.length) row = item.closest('ytd-item-section-renderer');
+                if (!row || !row.length) {
+                    row = item.closest('ytd-item-section-renderer');
+
+                    // If this is the first row -- we can't hide it because it contains the toolbar
+                    // TODO: This doesn't seem to work properly
+                    // if (row === row.parentNode.childNodes[0]) row = $(row).find('#contents');
+                }
             } else {
                 row = item.closest('.expanded-shelf-content-item-wrapper');
             }
@@ -240,11 +262,12 @@
         target.prepend(li);
     };
 
-    var run = function () {
+    var run = debounce(function () {
         if (__DEV__) console.log('[YT-HWV] Running check for watched videos');
+        console.log('running');
         addClassToWatchedRows();
         addCheckboxButton();
-    };
+    }, 250);
 
     // ===========================================================
 
@@ -256,6 +279,7 @@
                 // Anytime more videos are fetched -- re-run script
                 this.responseURL.indexOf('browse_ajax?action_continuation') > 0
             ) {
+                console.log('fetched more');
                 setTimeout(function () {
                     run();
                 }, 0);
