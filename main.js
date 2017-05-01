@@ -154,14 +154,14 @@
         var target = $('#browse-items-primary .yt-uix-menu-top-level-button-container');
 
         // New YouTube (2017-04-14)
-        if (!target.length) target = $('#top-level-buttons');
+        if (!target.length) target = $('ytd-section-list-renderer #top-level-buttons');
 
         // If this is a "History" video -- we don't need a button. We use
         // DOM detection here instead of URL detection, because the URL
         // will change before the DOM has been updated.
         if ($('#watch-history-pause-button').length > 0) return;
 
-        // If th target can't be found, we might be on a channel page
+        // If the target can't be found, we might be on a channel page
         if (!target.length) target = $('#browse-items-primary .branded-page-v2-subnav-container');
 
         return target;
@@ -191,8 +191,7 @@
                     row = item.closest('ytd-item-section-renderer');
 
                     // If this is the first row -- we can't hide it because it contains the toolbar
-                    // TODO: This doesn't seem to work properly
-                    // if (row === row.parentNode.childNodes[0]) row = $(row).find('#contents');
+                    if (row === row.parentNode.childNodes[0]) row = $(row).find('#contents');
                 }
             } else {
                 row = item.closest('.expanded-shelf-content-item-wrapper');
