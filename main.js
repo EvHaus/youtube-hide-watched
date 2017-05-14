@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      1.4
+// @version      2.0
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -23,55 +23,31 @@
 
     // Set defaults
     localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
-    localStorage.YTHWV_WATCH_PERC = localStorage.YTHWV_WATCH_PERC || '0';
 
     GM_addStyle(`
 .YT-HWV-WATCHED {
     display: none !important;
 }
 
-.YT-HWV-CONTAINER {
-    display: inline-flex;
-    position: relative;
-    vertical-align: -2px;
+.YT-HWV-BUTTON {
+    background: transparent;
+    border: 0;
+    color: #888888;
+    cursor: pointer;
+    height: 40px;
+    outline: 0;
+    padding: 0 8px;
+    width: 40px;
 }
 
-.YT-HWV-BUTTON {
-    align-items: center;
-    background: #F8F8F8;
-    border: 1px solid #D3D3D3;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-    color: #333;
-    cursor: pointer;
-    display: flex;
-    font-size: 11px;
-    font-weight: 500;
-    height: 28px;
+.YT-HWV-BUTTON svg {
+    height: 24px;
+    width: 24px;
 }
 
 .YT-HWV-BUTTON:focus,
 .YT-HWV-BUTTON:hover {
-    background: #F0F0F0;
-    border-color: #C6C6C6;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.10);
-}
-
-.YT-HWV-HIDEBUTTON {
-    border-radius: 2px 0 0 2px;
-    display: block;
-    padding: 0 10px;
-}
-
-.YT-HWV-MENUBUTTON {
-    border-radius: 0 2px 2px 0;
-    border-left: 0;
-    padding: 0 10px 0 5px;
-}
-
-.YT-HWV-BUTTON-CHECKBOX {
-    margin: 0 8px 0 0;
-    pointer-events: none;
-    vertical-align: -2px;
+    color: #FFF;
 }
 
 .YT-HWV-MENU {
@@ -93,20 +69,10 @@
 .YT-HWV-MENU-ON { display: block; }
 .YT-HWV-MENUBUTTON-ON span { transform: rotate(180deg) }
 
-.YT-HWV-MENU-WATCH-PERC {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    font-size: 11px;
-    margin: 5px auto;
-}
-
-.YT-HWV-MENU-WATCH-PERC-INPUT {
-    cursor: pointer;
-    margin: auto 10px;
-    vertical-align: -4px;
-}
 `);
+
+    var visibilityIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
+    var visibilityOffIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>';
 
     // ===========================================================
 
@@ -128,15 +94,12 @@
     // ===========================================================
 
     var findWatchedElements = function () {
-        var watched = $('.resume-playback-progress-bar');
-
-        // New YouTube (2017-04-14)
-        if (!watched.length) watched = $('.ytd-thumbnail-overlay-resume-playback-renderer');
+        var watched = $('.ytd-thumbnail-overlay-resume-playback-renderer');
 
         if (__DEV__) console.log(`[YT-HWV] Found ${watched.length} watched elements`);
 
         return watched.filter(function (i, bar) {
-            return bar.style.width && parseInt(bar.style.width, 10) > parseInt(localStorage.YTHWV_WATCH_PERC, 10);
+            return bar.style.width && parseInt(bar.style.width, 10) > 0;
         });
     };
 
@@ -151,10 +114,7 @@
 
     var findButtonTarget = function () {
         // Button will be injected into the menu of an item browser
-        var target = $('#browse-items-primary .yt-uix-menu-top-level-button-container');
-
-        // New YouTube (2017-04-14)
-        if (!target.length) target = $('ytd-section-list-renderer #top-level-buttons');
+        var target = $('#title-container #top-level-buttons');
 
         // If this is a "History" video -- we don't need a button. We use
         // DOM detection here instead of URL detection, because the URL
@@ -170,7 +130,7 @@
     // ===========================================================
 
     var isButtonAlreadyThere = function () {
-        return $('.YT-HWV-CONTAINER').length > 0;
+        return $('.YT-HWV-BUTTON').length > 0;
     };
 
     // ===========================================================
@@ -179,22 +139,14 @@
         if (localStorage.YTHWV_WATCHED !== 'true') return;
 
         $(findWatchedElements()).each(function (i, item) {
-            // "Subscription" section needs us to hide the "feed-item-container",
+            // "Subscription" section needs us to hide the "#contents",
             // but in the "Trending" section, that class will hide everything.
-            // So there, we need to hide the "expanded-shelf-content-item-wrapper"
+            // So there, we need to hide the "ytd-video-renderer"
             var row;
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
-                row = item.closest('.feed-item-container');
-
-                // New YouTube (2017-04-14)
-                if (!row || !row.length) {
-                    row = item.closest('ytd-item-section-renderer');
-
-                    // If this is the first row -- we can't hide it because it contains the toolbar
-                    if (row === row.parentNode.childNodes[0]) row = $(row).find('#contents');
-                }
+                row = item.closest('#contents');
             } else {
-                row = item.closest('.expanded-shelf-content-item-wrapper');
+                row = item.closest('ytd-video-renderer');
             }
 
             var gridItem = item.closest('.yt-shelf-grid-item');
@@ -218,7 +170,15 @@
 
     // ===========================================================
 
-    var addCheckboxButton = function () {
+    var removeClassFromWatchedRows = function () {
+        $('.YT-HWV-WATCHED').each(function (i, item) {
+           $(item).removeClass('YT-HWV-WATCHED');
+        });
+    };
+
+    // ===========================================================
+
+    var addButton = function () {
         if (isButtonAlreadyThere()) return;
 
         // Find button target
@@ -226,46 +186,30 @@
         if (!target) return;
 
         // Generate button DOM
-        var li = $('<li class="yt-uix-menu-top-level-button yt-uix-menu-top-level-flow-button" />');
-        var container = $('<div class="YT-HWV-CONTAINER" />').appendTo(li);
-        var button = $('<button class="YT-HWV-BUTTON YT-HWV-HIDEBUTTON">Hide Watched</button>').appendTo(container);
-        var checkbox = $('<input class="YT-HWV-BUTTON-CHECKBOX" type="checkbox" />').prependTo(button);
-        var menubutton = $('<button class="YT-HWV-BUTTON YT-HWV-MENUBUTTON"><span class="yt-uix-button-arrow yt-sprite" /></button>').appendTo(container);
-        var menu = $('<div class="YT-HWV-MENU">Videos are considered "watched" when you have watched at least: </div>').appendTo(container);
-        var watchedContainer = $('<div class="YT-HWV-MENU-WATCH-PERC">0%<span />100%</div>').appendTo(menu);
-        var watchedInput = $('<input class="YT-HWV-MENU-WATCH-PERC-INPUT" type="range" max="100" min="0" />').appendTo(menu.find('span'));
+        var icon = localStorage.YTHWV_WATCHED === 'true' ? visibilityIcon : visibilityOffIcon;
+        var button = $('<button class="YT-HWV-BUTTON">' + icon + '</button>');
 
         // Attach events
         button.on("click", function () {
             var value = localStorage.YTHWV_WATCHED === 'true' ? 'false' : 'true';
             localStorage.YTHWV_WATCHED = value;
-            checkbox.attr('checked', value === 'true' ? true : false);
-            addClassToWatchedRows();
+            if (value === 'true') {
+                addClassToWatchedRows();
+                $(this).html(visibilityIcon);
+            } else {
+                removeClassFromWatchedRows();
+                $(this).html(visibilityOffIcon);
+            }
         });
-
-        menubutton.on("click", function () {
-            menubutton.toggleClass("YT-HWV-MENUBUTTON-ON");
-            menu.toggleClass("YT-HWV-MENU-ON");
-        });
-
-        watchedInput.on("change", function (event) {
-            localStorage.YTHWV_WATCH_PERC = event.target.value;
-            run();
-        });
-
-        // Set DOM values accordingly
-        if (localStorage.YTHWV_WATCHED === 'true') checkbox.attr('checked', true);
-        watchedInput.attr('value', localStorage.YTHWV_WATCH_PERC);
 
         // Insert button into DOM
-        target.prepend(li);
+        target.prepend(button);
     };
 
     var run = debounce(function () {
         if (__DEV__) console.log('[YT-HWV] Running check for watched videos');
-        console.log('running');
         addClassToWatchedRows();
-        addCheckboxButton();
+        addButton();
     }, 250);
 
     // ===========================================================
