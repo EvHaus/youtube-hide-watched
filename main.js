@@ -144,7 +144,7 @@
             // So there, we need to hide the "ytd-video-renderer"
             var row;
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
-                row = item.closest('#contents');
+                row = item.closest('ytd-video-renderer #contents');
             } else {
                 row = item.closest('ytd-video-renderer');
             }
