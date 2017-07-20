@@ -142,14 +142,13 @@
             // "Subscription" section needs us to hide the "#contents",
             // but in the "Trending" section, that class will hide everything.
             // So there, we need to hide the "ytd-video-renderer"
-            var row;
+            var row, gridItem;
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
-                row = item.closest('ytd-video-renderer #contents');
+                row = item.closest('#grid-container');
+                gridItem = item.closest('.ytd-grid-renderer');
             } else {
                 row = item.closest('ytd-video-renderer');
             }
-
-            var gridItem = item.closest('.yt-shelf-grid-item');
 
             // If we're in grid view, we will hide the "grid" item,
             // otherwise we'll hide the item row
