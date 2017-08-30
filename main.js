@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.0
+// @version      2.1
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -36,6 +36,7 @@
     cursor: pointer;
     height: 40px;
     outline: 0;
+    margin-right: 8px;
     padding: 0 8px;
     width: 40px;
 }
@@ -115,6 +116,7 @@
     var findButtonTarget = function () {
         // Button will be injected into the menu of an item browser
         var target = $('#title-container #top-level-buttons');
+        console.log(target);
 
         // If this is a "History" video -- we don't need a button. We use
         // DOM detection here instead of URL detection, because the URL
@@ -146,7 +148,8 @@
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
                 row = item.closest('#grid-container');
                 gridItem = item.closest('.ytd-grid-renderer');
-            } else {
+            // Do not enable for trending page
+            } else if (window.location.href.indexOf('/feed/trending') < 0) {
                 row = item.closest('ytd-video-renderer');
             }
 
