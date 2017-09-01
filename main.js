@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.1
+// @version      2.2
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -114,19 +114,8 @@
     // ===========================================================
 
     var findButtonTarget = function () {
-        // Button will be injected into the menu of an item browser
-        var target = $('#title-container #top-level-buttons');
-        console.log(target);
-
-        // If this is a "History" video -- we don't need a button. We use
-        // DOM detection here instead of URL detection, because the URL
-        // will change before the DOM has been updated.
-        if ($('#watch-history-pause-button').length > 0) return;
-
-        // If the target can't be found, we might be on a channel page
-        if (!target.length) target = $('#browse-items-primary .branded-page-v2-subnav-container');
-
-        return target;
+        // Button will be injected into the main header menu
+        return $('#container #end #buttons');
     };
 
     // ===========================================================
@@ -140,6 +129,13 @@
     var addClassToWatchedRows = function () {
         if (localStorage.YTHWV_WATCHED !== 'true') return;
 
+        // If we're on the HIstory page -- do nothing. We don't want to hide
+        // watched videos here.
+        if (window.location.href.indexOf('/feed/history') >= 0) return null;
+
+        // [TODO] If we're on the Trending page -- we don't support it yet.
+        if (window.location.href.indexOf('/feed/trending') >= 0) return null;
+
         $(findWatchedElements()).each(function (i, item) {
             // "Subscription" section needs us to hide the "#contents",
             // but in the "Trending" section, that class will hide everything.
@@ -148,8 +144,7 @@
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
                 row = item.closest('#grid-container');
                 gridItem = item.closest('.ytd-grid-renderer');
-            // Do not enable for trending page
-            } else if (window.location.href.indexOf('/feed/trending') < 0) {
+            } else {
                 row = item.closest('ytd-video-renderer');
             }
 
@@ -189,7 +184,7 @@
 
         // Generate button DOM
         var icon = localStorage.YTHWV_WATCHED === 'true' ? visibilityIcon : visibilityOffIcon;
-        var button = $('<button class="YT-HWV-BUTTON">' + icon + '</button>');
+        var button = $('<button class="YT-HWV-BUTTON" title="Toggle Watched Videos">' + icon + '</button>');
 
         // Attach events
         button.on("click", function () {
@@ -210,6 +205,7 @@
 
     var run = debounce(function () {
         if (__DEV__) console.log('[YT-HWV] Running check for watched videos');
+        removeClassFromWatchedRows();
         addClassToWatchedRows();
         addButton();
     }, 250);
@@ -224,7 +220,6 @@
                 // Anytime more videos are fetched -- re-run script
                 this.responseURL.indexOf('browse_ajax?action_continuation') > 0
             ) {
-                console.log('fetched more');
                 setTimeout(function () {
                     run();
                 }, 0);
