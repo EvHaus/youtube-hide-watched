@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.2
+// @version      2.3
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -235,6 +235,11 @@
         var eventListenerSupported = window.addEventListener;
 
         return function(obj, callback) {
+            if (__DEV__) console.log('[YT-HWV] Attaching DOM listener');
+
+            // Invalid `obj` given
+            if (!obj) return;
+
             if (MutationObserver) {
                 var obs = new MutationObserver(function (mutations, observer) {
                     if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
@@ -258,7 +263,6 @@
     // of AJAX video loading. In order to ensure we're always up
     // to date, we have to listen for ANY DOM change event, and
     // re-run our script.
-    if (__DEV__) console.log('[YT-HWV] Attaching DOM listener');
     observeDOM(document.body, run);
 
     run();
