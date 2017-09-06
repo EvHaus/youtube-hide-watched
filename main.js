@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.3
+// @version      2.4
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -144,6 +144,9 @@
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
                 row = item.closest('#grid-container');
                 gridItem = item.closest('.ytd-grid-renderer');
+            } else if (window.location.href.match(/.*\/videos$/)) {
+                // Channel "Videos" section needs special handling
+                row = item.closest('.ytd-grid-renderer');
             } else {
                 row = item.closest('ytd-video-renderer');
             }
