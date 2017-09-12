@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.4
+// @version      2.5
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Evgueni Naverniouk
 // @grant        GM_addStyle
@@ -142,7 +142,12 @@
             // So there, we need to hide the "ytd-video-renderer"
             var row, gridItem;
             if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+                // For rows, hide the row and the header too. We can't hide
+                // their entire parent because then we'll get the infinite
+                // page loader to load forever.
                 row = item.closest('#grid-container');
+                row = $(row).add($(item.closest('#dismissable.ytd-shelf-renderer')).children('.grid-subheader'));
+
                 gridItem = item.closest('.ytd-grid-renderer');
             } else if (window.location.href.match(/.*\/videos$/)) {
                 // Channel "Videos" section needs special handling
