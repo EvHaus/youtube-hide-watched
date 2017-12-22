@@ -1,10 +1,9 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.5
+// @version      2.6
 // @description  Hides watched videos from your YouTube subscriptions page.
-// @author       Evgueni Naverniouk
-// @grant        GM_addStyle
+// @author       Ev Haus
 // @include      http://*.youtube.com/*
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
@@ -23,8 +22,22 @@
 
     // Set defaults
     localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
+  
+  	// GreaseMonkey no longer supports GM_addStyle. So we have to define
+    // our own polyfill here
+  	var addStyle = function (aCss) {
+    	let head = document.getElementsByTagName('head')[0];
+      if (head) {
+        let style = document.createElement('style');
+        style.setAttribute('type', 'text/css');
+        style.textContent = aCss;
+        head.appendChild(style);
+        return style;
+      }
+      return null;
+    };
 
-    GM_addStyle(`
+    addStyle(`
 .YT-HWV-WATCHED {
     display: none !important;
 }
@@ -32,7 +45,7 @@
 .YT-HWV-BUTTON {
     background: transparent;
     border: 0;
-    color: #888888;
+    color: #888;
     cursor: pointer;
     height: 40px;
     outline: 0;
@@ -41,14 +54,13 @@
     width: 40px;
 }
 
+html[dark] .YT-HWV-BUTTON {
+    color: #EFEFEF;
+}
+
 .YT-HWV-BUTTON svg {
     height: 24px;
     width: 24px;
-}
-
-.YT-HWV-BUTTON:focus,
-.YT-HWV-BUTTON:hover {
-    color: #FFF;
 }
 
 .YT-HWV-MENU {
@@ -69,7 +81,6 @@
 
 .YT-HWV-MENU-ON { display: block; }
 .YT-HWV-MENUBUTTON-ON span { transform: rotate(180deg) }
-
 `);
 
     var visibilityIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
