@@ -111,7 +111,7 @@ html[dark] .YT-HWV-BUTTON {
         if (__DEV__) console.log(`[YT-HWV] Found ${watched.length} watched elements`);
 
         return watched.filter(function (i, bar) {
-            return bar.style.width && parseInt(bar.style.width, 10) > 0;
+            return bar.style.width && parseInt(bar.style.width, 10) === 100;
         });
     };
 
@@ -285,4 +285,6 @@ html[dark] .YT-HWV-BUTTON {
     observeDOM(document.body, run);
 
     run();
+  
+    $('ytd-app').css('min-height', '101%');
 }());
