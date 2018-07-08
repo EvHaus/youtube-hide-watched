@@ -182,6 +182,13 @@ html[dark] .YT-HWV-BUTTON {
 
             itemsToHide.addClass('YT-HWV-WATCHED');
         });
+      
+      	//Hide rows without videos
+      	$('ytd-item-section-renderer').each(function(i, item) {
+          if ($(this).find('ytd-grid-video-renderer').not('.YT-HWV-WATCHED').length === 0) {
+             $(this).hide();
+          }
+        });
     };
 
     // ===========================================================
