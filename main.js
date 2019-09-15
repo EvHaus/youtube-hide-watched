@@ -18,19 +18,19 @@
 
 (function (undefined) {
     
-	// ===================================================================
-	// How much of the video needs to be watched before it will be hidden?
-	// 
-	// For example, when set to 10 the video will *not* be hidden until 
+    // ===================================================================
+    // How much of the video needs to be watched before it will be hidden?
+    // 
+    // For example, when set to 10 the video will *not* be hidden until 
     // you've watched at least 10 percent of the video.	
-	//
-	// If you set to 0 (zero) percent, then if you watch even one second 
-	// of the video, it will be hidden.
-	var HiddenThresholdPercent = 10;
-	
-	//====================================================================
-		
-	// Enable for debugging
+    //
+    // If you set to 0 (zero) percent, then if you watch even one second 
+    // of the video, it will be hidden.
+    var HiddenThresholdPercent = 10;
+    
+    //====================================================================
+    
+    // Enable for debugging
     var __DEV__ = false;
 
     // Set defaults
