@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    http://www.globexdesigns.com/
-// @version      2.8
+// @version      2.8.1
 // @description  Hides watched videos from your YouTube subscriptions page.
 // @author       Ev Haus
 // @include      http://*.youtube.com/*
@@ -17,6 +17,19 @@
 // https://github.com/globexdesigns/youtube-hide-watched/issues
 
 (function (undefined) {
+    
+    // ===================================================================
+    // How much of the video needs to be watched before it will be hidden?
+    // 
+    // For example, when set to 10 the video will *not* be hidden until 
+    // you've watched at least 10 percent of the video.	
+    //
+    // If you set to 0 (zero) percent, then if you watch even one second 
+    // of the video, it will be hidden.
+    var HiddenThresholdPercent = 10;
+    
+    //====================================================================
+    
     // Enable for debugging
     var __DEV__ = false;
 
@@ -111,7 +124,7 @@ html[dark] .YT-HWV-BUTTON {
         if (__DEV__) console.log(`[YT-HWV] Found ${watched.length} watched elements`);
 
         return watched.filter(function (i, bar) {
-            return bar.style.width && parseInt(bar.style.width, 10) > 0;
+            return bar.style.width && parseInt(bar.style.width, 10) > HiddenThresholdPercent;
         });
     };
 
