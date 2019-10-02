@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
-// @namespace    http://www.globexdesigns.com/
-// @version      2.9.0
+// @namespace    https://www.haus.gg/
+// @version      3.0.0
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @include      http://*.youtube.com/*
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
 // @include      https://youtube.com/*
-// @require      https://code.jquery.com/jquery-3.1.1.slim.min.js
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -122,27 +121,32 @@ html[dark] .YT-HWV-BUTTON {
 	// ===========================================================
 
 	const findWatchedElements = function () {
-		const watched = $('.ytd-thumbnail-overlay-resume-playback-renderer');
+		const watched = document.querySelectorAll('.ytd-thumbnail-overlay-resume-playback-renderer');
 
-		// eslint-disable-next-line no-console
-		if (__DEV__) console.log(`[YT-HWV] Found ${watched.length} watched elements`);
-
-		return watched.filter((i, bar) => {
+		const withThreshold = Array.from(watched).filter((bar) => {
 			return bar.style.width && parseInt(bar.style.width, 10) > HiddenThresholdPercent;
 		});
+
+		// eslint-disable-next-line no-console
+		if (__DEV__) console.log(
+			`[YT-HWV] Found ${watched.length} watched elements ` +
+			`(${withThreshold.length} within threshold)`
+		);
+
+		return withThreshold;
 	};
 
 	// ===========================================================
 
 	const findButtonTarget = function () {
 		// Button will be injected into the main header menu
-		return $('#container #end #buttons');
+		return document.querySelector('#container #end #buttons');
 	};
 
 	// ===========================================================
 
 	const isButtonAlreadyThere = function () {
-		return $('.YT-HWV-BUTTON').length > 0;
+		return document.querySelectorAll('.YT-HWV-BUTTON').length > 0;
 	};
 
 	// ===========================================================
@@ -157,7 +161,7 @@ html[dark] .YT-HWV-BUTTON {
 		// [TODO] If we're on the Trending page -- we don't support it yet.
 		if (window.location.href.indexOf('/feed/trending') >= 0) return;
 
-		$(findWatchedElements()).each((i, item) => {
+		findWatchedElements().forEach((item, i) => {
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
@@ -167,8 +171,8 @@ html[dark] .YT-HWV-BUTTON {
 				// their entire parent because then we'll get the infinite
 				// page loader to load forever.
 				row = item.closest('#grid-container');
-				row = $(row).add($(item.closest('#dismissable.ytd-shelf-renderer')).children('.grid-subheader'));
 
+				// Check to see if a grid item exists
 				gridItem = item.closest('.ytd-grid-renderer');
 			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
 				// Channel "Videos" section needs special handling
@@ -179,26 +183,28 @@ html[dark] .YT-HWV-BUTTON {
 
 			// If we're in grid view, we will hide the "grid" item,
 			// otherwise we'll hide the item row
-			let itemsToHide = gridItem ? $(gridItem) : $(row);
+			let itemsToHide = gridItem ? gridItem : row;
 
 			// If this is the first row in the list, then we can't hide it entirely,
 			// otherwise it will also hide the menu. So, we'll have to hide various
 			// inner components instead.
-			const hasMenu = itemsToHide.find('.menu-container.shelf-title-cell .yt-uix-menu-container').length > 0;
+			const hasMenu = itemsToHide.querySelectorAll('.menu-container.shelf-title-cell .yt-uix-menu-container').length > 0;
 			if (hasMenu) {
 				const itemToHide = itemsToHide;
-				itemsToHide = itemToHide.find('.expanded-shelf').add(itemToHide.find('.branded-page-module-title'));
+				itemsToHide = itemToHide.querySelectorAll('.expanded-shelf').appendChild(
+					itemToHide.querySelectorAll('.branded-page-module-title')
+				);
 			}
 
-			itemsToHide.addClass('YT-HWV-WATCHED');
+			itemsToHide.classList.add('YT-HWV-WATCHED');
 		});
 	};
 
 	// ===========================================================
 
 	const removeClassFromWatchedRows = function () {
-		$('.YT-HWV-WATCHED').each((i, item) => {
-			$(item).removeClass('YT-HWV-WATCHED');
+		document.querySelectorAll('.YT-HWV-WATCHED').forEach((item) => {
+			item.classList.remove('YT-HWV-WATCHED');
 		});
 	};
 
@@ -213,23 +219,26 @@ html[dark] .YT-HWV-BUTTON {
 
 		// Generate button DOM
 		const icon = localStorage.YTHWV_WATCHED === 'true' ? visibilityIcon : visibilityOffIcon;
-		const button = $(`<button class="YT-HWV-BUTTON" title="Toggle Watched Videos">${icon}</button>`);
+		const button = document.createElement('button');
+		button.classList.add('YT-HWV-BUTTON');
+		button.setAttribute('title', 'Toggle Watched Videos');
+		button.innerHTML = icon;
 
 		// Attach events
-		button.on('click', function () {
+		button.addEventListener('click', () => {
 			const value = localStorage.YTHWV_WATCHED === 'true' ? 'false' : 'true';
 			localStorage.YTHWV_WATCHED = value;
 			if (value === 'true') {
 				addClassToWatchedRows();
-				$(this).html(visibilityIcon);
+				button.innerHTML = visibilityIcon;
 			} else {
 				removeClassFromWatchedRows();
-				$(this).html(visibilityOffIcon);
+				button.innerHTML = visibilityOffIcon;
 			}
 		});
 
 		// Insert button into DOM
-		target.prepend(button);
+		target.parentNode.insertBefore(button, target);
 	};
 
 	const run = debounce(() => {

@@ -1,8 +1,5 @@
 {
     extends: "eslint-config-globex",
-    globals: {
-      "$": true
-    },
     rules: {
       "flowtype/require-parameter-type": "off",
       "flowtype/require-return-type": "off",
