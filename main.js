@@ -165,38 +165,32 @@ html[dark] .YT-HWV-BUTTON {
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
-			let gridItem, row;
+			let itemToHide;
 			if (window.location.href.indexOf('/feed/subscriptions') > 0) {
 				// For rows, hide the row and the header too. We can't hide
 				// their entire parent because then we'll get the infinite
 				// page loader to load forever.
-				row = item.closest('#grid-container');
-
-				// Check to see if a grid item exists
-				gridItem = item.closest('.ytd-grid-renderer');
+				itemToHide = (
+					// Grid item
+					item.closest('.ytd-grid-renderer') ||
+					// List item
+					item.closest('#grid-container')
+				);
 			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
 				// Channel "Videos" section needs special handling
-				row = item.closest('.ytd-grid-renderer');
+				itemToHide = item.closest('.ytd-grid-renderer');
 			} else {
-				row = item.closest('ytd-video-renderer');
-			}
-
-			// If we're in grid view, we will hide the "grid" item,
-			// otherwise we'll hide the item row
-			let itemsToHide = gridItem ? gridItem : row;
-
-			// If this is the first row in the list, then we can't hide it entirely,
-			// otherwise it will also hide the menu. So, we'll have to hide various
-			// inner components instead.
-			const hasMenu = itemsToHide.querySelectorAll('.menu-container.shelf-title-cell .yt-uix-menu-container').length > 0;
-			if (hasMenu) {
-				const itemToHide = itemsToHide;
-				itemsToHide = itemToHide.querySelectorAll('.expanded-shelf').appendChild(
-					itemToHide.querySelectorAll('.branded-page-module-title')
+				// For home page and other areas
+				itemToHide = (
+					item.closest('ytd-video-renderer') ||
+					item.closest('ytd-grid-video-renderer') ||
+					item.closest('ytd-compact-video-renderer')
 				);
 			}
 
-			itemsToHide.classList.add('YT-HWV-WATCHED');
+			if (itemToHide) {
+				itemToHide.classList.add('YT-HWV-WATCHED');
+			}
 		});
 	};
 
