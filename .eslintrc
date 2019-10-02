@@ -1,0 +1,16 @@
+{
+    extends: "eslint-config-globex",
+    globals: {
+      "$": true
+    },
+    rules: {
+      "flowtype/require-parameter-type": "off",
+      "flowtype/require-return-type": "off",
+      "flowtype/require-valid-file-annotation": "off"
+    },
+    settings: {
+        react: {
+            version: '16.0.0'
+        }
+    }
+}
