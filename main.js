@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      3.0.0
+// @version      3.0.1
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @include      http://*.youtube.com/*
@@ -54,6 +54,8 @@
 .YT-HWV-WATCHED {
     display: none !important;
 }
+
+.YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
 
 .YT-HWV-BUTTON {
     background: transparent;
@@ -128,10 +130,12 @@ html[dark] .YT-HWV-BUTTON {
 		});
 
 		// eslint-disable-next-line no-console
-		if (__DEV__) console.log(
-			`[YT-HWV] Found ${watched.length} watched elements ` +
-			`(${withThreshold.length} within threshold)`
-		);
+		if (__DEV__) {
+            console.log(
+                `[YT-HWV] Found ${watched.length} watched elements ` +
+                `(${withThreshold.length} within threshold)`
+            );
+        }
 
 		return withThreshold;
 	};
@@ -173,9 +177,17 @@ html[dark] .YT-HWV-BUTTON {
 				itemToHide = (
 					// Grid item
 					item.closest('.ytd-grid-renderer') ||
+                    item.closest('.ytd-item-section-renderer') ||
 					// List item
 					item.closest('#grid-container')
 				);
+
+                // If we're hiding the .ytd-item-section-renderer element, we need to give it
+                // some extra spacing otherwise we'll get stuck in infinite page loading
+                if (itemToHide && itemToHide.classList.contains('ytd-item-section-renderer')) {
+                    itemToHide.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT')
+                }
+
 			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
 				// Channel "Videos" section needs special handling
 				itemToHide = item.closest('.ytd-grid-renderer');
