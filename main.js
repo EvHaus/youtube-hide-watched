@@ -129,13 +129,13 @@ html[dark] .YT-HWV-BUTTON {
 			return bar.style.width && parseInt(bar.style.width, 10) > HiddenThresholdPercent;
 		});
 
-		// eslint-disable-next-line no-console
 		if (__DEV__) {
-            console.log(
-                `[YT-HWV] Found ${watched.length} watched elements ` +
+			// eslint-disable-next-line no-console
+			console.log(
+				`[YT-HWV] Found ${watched.length} watched elements ` +
                 `(${withThreshold.length} within threshold)`
-            );
-        }
+			);
+		}
 
 		return withThreshold;
 	};
@@ -182,11 +182,11 @@ html[dark] .YT-HWV-BUTTON {
 					item.closest('#grid-container')
 				);
 
-                // If we're hiding the .ytd-item-section-renderer element, we need to give it
-                // some extra spacing otherwise we'll get stuck in infinite page loading
-                if (itemToHide && itemToHide.classList.contains('ytd-item-section-renderer')) {
-                    itemToHide.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT')
-                }
+				// If we're hiding the .ytd-item-section-renderer element, we need to give it
+				// some extra spacing otherwise we'll get stuck in infinite page loading
+				if (itemToHide && itemToHide.classList.contains('ytd-item-section-renderer')) {
+					itemToHide.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+				}
 
 			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
 				// Channel "Videos" section needs special handling
