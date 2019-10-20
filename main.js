@@ -26,6 +26,9 @@
 	//
 	// If you set to 0 (zero) percent, then if you watch even one second
 	// of the video, it will be hidden.
+	//
+	// Note that YouTube is kind of fuzzy on the watched percent,
+	// so trying to be very specific with this value may not work
 	const HiddenThresholdPercent = 10;
 
 	// ====================================================================
@@ -51,11 +54,16 @@
 	};
 
 	addStyle(`
-.YT-HWV-WATCHED {
+.YT-HWV-WATCHED-NORMAL {
+    display: block;
+}
+
+.YT-HWV-WATCHED-HIDDEN {
     display: none !important;
 }
 
 .YT-HWV-WATCHED-DIMMED {
+    display: block;
     position: relative;
 }
 
@@ -66,11 +74,17 @@
     top: 0;
     left: 0;
     right: 0;
+    pointer-events: none; /* pointer works on the underlying video */
     z-index: 9;
     background: rgba(
-                     250,250,250,    /* YouTube light theme 2019 */
-                     /*30,30,30,*/   /* YouTube dark theme 2019 */
-                     0.8             /* 0.1 slight dimming, 0.9 extreme dimming */
+                     250,250,250,
+                     0.8             /* 0.1 minor dimming, 0.9 extreme dimming */
+                    );
+}
+
+html[dark] .YT-HWV-WATCHED-DIMMED:after {
+    background: rgba(30,30,30,
+                     0.8       /* 0.1 minor dimming, 0.9 extreme dimming */
                     );
 }
 
@@ -79,7 +93,7 @@
 .YT-HWV-BUTTON {
     background: transparent;
     border: 0;
-    color: #888;
+    color: rgb(96,96,96);
     cursor: pointer;
     height: 40px;
     outline: 0;
@@ -118,13 +132,13 @@ html[dark] .YT-HWV-BUTTON {
 `);
 
 	// eslint-disable-next-line max-len
-	const visibilityIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
+	const iconWatchedNormal = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
 
 	// eslint-disable-next-line max-len
-	const visibilityDimmedIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.4"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
+	const iconWatchedDimmed = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.4"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
 
     // eslint-disable-next-line max-len
-	const visibilityOffIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.4"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>';
+	const iconWatchedHidden = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.4"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>';
 
 	// ===========================================================
 
@@ -177,10 +191,9 @@ html[dark] .YT-HWV-BUTTON {
 
 	// ===========================================================
 
-	const addClassToWatchedRows = function () {
-		if (localStorage.YTHWV_WATCHED !== 'true') return;
+	const updateClassOnWatchedItems = function () {
 
-		// If we're on the HIstory page -- do nothing. We don't want to hide
+		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
 		if (window.location.href.indexOf('/feed/history') >= 0) return;
 
@@ -191,12 +204,12 @@ html[dark] .YT-HWV-BUTTON {
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
-			let itemToHide;
+			let watchedItem;
 			if (window.location.href.indexOf('/feed/subscriptions') > 0) {
 				// For rows, hide the row and the header too. We can't hide
 				// their entire parent because then we'll get the infinite
 				// page loader to load forever.
-				itemToHide = (
+				watchedItem = (
 					// Grid item
 					item.closest('.ytd-grid-renderer') ||
                     item.closest('.ytd-item-section-renderer') ||
@@ -206,33 +219,43 @@ html[dark] .YT-HWV-BUTTON {
 
 				// If we're hiding the .ytd-item-section-renderer element, we need to give it
 				// some extra spacing otherwise we'll get stuck in infinite page loading
-				if (itemToHide && itemToHide.classList.contains('ytd-item-section-renderer')) {
-					itemToHide.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+				if (watchedItem && watchedItem.classList.contains('ytd-item-section-renderer')) {
+					watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
 				}
 
 			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
 				// Channel "Videos" section needs special handling
-				itemToHide = item.closest('.ytd-grid-renderer');
+				watchedItem = item.closest('.ytd-grid-renderer');
 			} else {
 				// For home page and other areas
-				itemToHide = (
+				watchedItem = (
 					item.closest('ytd-video-renderer') ||
 					item.closest('ytd-grid-video-renderer') ||
 					item.closest('ytd-compact-video-renderer')
 				);
 			}
 
-			if (itemToHide) {
-				itemToHide.classList.add('YT-HWV-WATCHED');
+			if (watchedItem) {
+
+				// Remove existing classes
+				watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
+				//watchedItem.classList.remove('YT-HWV-WATCHED-NORMAL');
+
+				// Add current class
+				const state = localStorage.YTHWV_STATE;
+                if (__DEV__) console.log('[YT-HWV] setting class for state: '+state);
+
+				if ('dimmed' === state) {
+					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+				}
+				else if ('hidden' === state) {
+					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+				}
+				else { // 'normal' or unknown
+					//watchedItem.classList.add('YT-HWV-WATCHED-NORMAL');
+				}
 			}
-		});
-	};
-
-	// ===========================================================
-
-	const removeClassFromWatchedRows = function () {
-		document.querySelectorAll('.YT-HWV-WATCHED').forEach((item) => {
-			item.classList.remove('YT-HWV-WATCHED');
 		});
 	};
 
@@ -246,34 +269,55 @@ html[dark] .YT-HWV-BUTTON {
 		if (!target) return;
 
 		// Generate button DOM
-		const icon = localStorage.YTHWV_WATCHED === 'true' ? visibilityIcon : visibilityOffIcon;
 		const button = document.createElement('button');
 		button.classList.add('YT-HWV-BUTTON');
 		button.setAttribute('title', 'Toggle Watched Videos');
-		button.innerHTML = icon;
+		const state = localStorage.YTHWV_STATE;
+		if ('dimmed' === state) {
+			button.innerHTML = iconWatchedDimmed;
+		}
+		else if ('hidden' === state) {
+			button.innerHTML = iconWatchedHidden;
+		}
+		else { // 'normal' or unknown
+			button.innerHTML = iconWatchedNormal;
+		}
 
 		// Attach events
 		button.addEventListener('click', () => {
-			const value = localStorage.YTHWV_WATCHED === 'true' ? 'false' : 'true';
-			localStorage.YTHWV_WATCHED = value;
-			if (value === 'true') {
-				addClassToWatchedRows();
-				button.innerHTML = visibilityIcon;
-			} else {
-				removeClassFromWatchedRows();
-				button.innerHTML = visibilityOffIcon;
+
+			const state = localStorage.YTHWV_STATE;
+
+            if (__DEV__) console.log('[YT-HWV] button clicked while state: '+state);
+
+			 if ('dimmed' === state) {
+				// go from dimmed to hidden
+				localStorage.YTHWV_STATE = 'hidden';
+				button.innerHTML = iconWatchedHidden;
 			}
+			else if ('hidden' === state) {
+				// go from hidden to normal
+				localStorage.YTHWV_STATE = 'normal';
+				button.innerHTML = iconWatchedNormal;
+			}
+			else {
+				// go from normal to dimmed
+				localStorage.YTHWV_STATE = 'dimmed';
+				button.innerHTML = iconWatchedDimmed;
+			}
+			updateClassOnWatchedItems();
 		});
 
 		// Insert button into DOM
 		target.parentNode.insertBefore(button, target);
 	};
 
+
+
 	const run = debounce(() => {
 		// eslint-disable-next-line no-console
 		if (__DEV__) console.log('[YT-HWV] Running check for watched videos');
-		removeClassFromWatchedRows();
-		addClassToWatchedRows();
+		updateClassOnWatchedItems();
 		addButton();
 	}, 250);
 
