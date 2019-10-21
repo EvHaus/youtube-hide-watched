@@ -132,7 +132,7 @@ html[dark] .YT-HWV-BUTTON {
 	// eslint-disable-next-line max-len
 	const iconWatchedDimmed = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>';
 
-    // eslint-disable-next-line max-len
+	// eslint-disable-next-line max-len
 	const iconWatchedHidden = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>';
 
 	// ===========================================================
@@ -164,7 +164,7 @@ html[dark] .YT-HWV-BUTTON {
 			// eslint-disable-next-line no-console
 			console.log(
 				`[YT-HWV] Found ${watched.length} watched elements ` +
-                `(${withThreshold.length} within threshold)`
+				`(${withThreshold.length} within threshold)`
 			);
 		}
 
@@ -207,7 +207,7 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem = (
 					// Grid item
 					item.closest('.ytd-grid-renderer') ||
-                    item.closest('.ytd-item-section-renderer') ||
+					item.closest('.ytd-item-section-renderer') ||
 					// List item
 					item.closest('#grid-container')
 				);
@@ -235,7 +235,6 @@ html[dark] .YT-HWV-BUTTON {
 				// Remove existing classes
 				watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
 				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
-				//watchedItem.classList.remove('YT-HWV-WATCHED-NORMAL');
 
 				// Add current class
 				const state = localStorage.YTHWV_STATE;
@@ -268,15 +267,15 @@ html[dark] .YT-HWV-BUTTON {
 		const state = localStorage.YTHWV_STATE;
 		if ('dimmed' === state) {
 			button.innerHTML = iconWatchedDimmed;
-	        button.setAttribute('title', 'Toggle Watched Videos (currently dimmed)');
+			button.setAttribute('title', 'Toggle Watched Videos (currently dimmed)');
 		}
 		else if ('hidden' === state) {
 			button.innerHTML = iconWatchedHidden;
-	        button.setAttribute('title', 'Toggle Watched Videos (currently hidden)');
-        }
+			button.setAttribute('title', 'Toggle Watched Videos (currently hidden)');
+		}
 		else { // 'normal' or unknown
 			button.innerHTML = iconWatchedNormal;
-	        button.setAttribute('title', 'Toggle Watched Videos (currently shown)');
+			button.setAttribute('title', 'Toggle Watched Videos (currently shown)');
 		}
 
 
@@ -285,25 +284,25 @@ html[dark] .YT-HWV-BUTTON {
 
 			const state = localStorage.YTHWV_STATE;
 
-            if (__DEV__) console.log('[YT-HWV] button clicked while state: '+state);
+			if (__DEV__) console.log('[YT-HWV] button clicked while state: '+state);
 
-			 if ('dimmed' === state) {
+			if ('dimmed' === state) {
 				// go from dimmed to hidden
 				localStorage.YTHWV_STATE = 'hidden';
 				button.innerHTML = iconWatchedHidden;
-                button.setAttribute('title', 'Toggle Watched Videos (currently hidden)');
+				button.setAttribute('title', 'Toggle Watched Videos (currently hidden)');
 			}
 			else if ('hidden' === state) {
 				// go from hidden to normal
 				localStorage.YTHWV_STATE = 'normal';
 				button.innerHTML = iconWatchedNormal;
-                button.setAttribute('title', 'Toggle Watched Videos (currently shown)');
+				button.setAttribute('title', 'Toggle Watched Videos (currently shown)');
 			}
 			else {
 				// go from normal to dimmed
 				localStorage.YTHWV_STATE = 'dimmed';
 				button.innerHTML = iconWatchedDimmed;
-                button.setAttribute('title', 'Toggle Watched Videos (currently dimmed)');
+				button.setAttribute('title', 'Toggle Watched Videos (currently dimmed)');
 			}
 			updateClassOnWatchedItems();
 		});
