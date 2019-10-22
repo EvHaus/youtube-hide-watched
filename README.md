@@ -12,8 +12,6 @@ The script is published on GreasyFork at: https://greasyfork.org/en/scripts/1304
 
 # How to Use
 
-The script will add a little icon to the main YouTube menu:
+The script adds a small button at the top of the page.  Pressing the button cycles through showing watched videos normally, then dimmed, then entirely hidden.
 
 ![screenshot](screenshot.png "Screenshot")
-
-Press this button to toggle watched videos on/off.
