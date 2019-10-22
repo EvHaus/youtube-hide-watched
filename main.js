@@ -35,7 +35,7 @@
 	// ====================================================================
 
 	// Enable for debugging
-	const __DEV__ = true;
+	const __DEV__ = false;
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
