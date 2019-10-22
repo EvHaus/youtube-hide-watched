@@ -3,7 +3,7 @@
 // @namespace    https://www.haus.gg/
 // @version      4.0
 // @description  Hides watched videos from your YouTube subscriptions page
-// @author       Ev Haus
+// @author       Ev Haus and netjeff
 // @include      http://*.youtube.com/*
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
@@ -59,28 +59,7 @@
 }
 
 .YT-HWV-WATCHED-DIMMED {
-    position: relative;
-}
-
-.YT-HWV-WATCHED-DIMMED:after {
-    content: " ";
-    position: absolute;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    pointer-events: none; /* pointer works on the underlying video */
-    z-index: 9;
-    background: rgba(
-                     250,250,250,
-                     0.8             /* 0.1 minor dimming, 0.9 extreme dimming */
-                    );
-}
-
-html[dark] .YT-HWV-WATCHED-DIMMED:after {
-    background: rgba(30,30,30,
-                     0.8       /* 0.1 minor dimming, 0.9 extreme dimming */
-                    );
+    opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
 }
 
 .YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
@@ -244,9 +223,7 @@ html[dark] .YT-HWV-BUTTON {
 				else if ('hidden' === state) {
 					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
 				}
-				else { // 'normal' or unknown
-					// custom class not needed
-				}
+				// for 'normal' no class needed
 			}
 		});
 	};
