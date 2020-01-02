@@ -16,8 +16,11 @@
 // You can open new issues at:
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
+/* jshint esversion: 6 */
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
 // eslint-disable-next-line no-shadow-restricted-names
-(function (undefined) {
+(function (_undefined) {
 
 	// ===================================================================
 	// How much of the video needs to be watched before it will be hidden?
@@ -311,7 +314,7 @@ html[dark] .YT-HWV-BUTTON {
 			if (!obj) return;
 
 			if (MutationObserver) {
-				const obs = new MutationObserver(((mutations, observer) => {
+				const obs = new MutationObserver(((mutations, _observer) => {
 					if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
 						// eslint-disable-next-line callback-return
 						callback(mutations);
