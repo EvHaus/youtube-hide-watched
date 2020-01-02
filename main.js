@@ -61,50 +61,50 @@
 
 	addStyle(`
 .YT-HWV-WATCHED-HIDDEN {
-    display: none !important;
+	display: none !important;
 }
 
 .YT-HWV-WATCHED-DIMMED {
-    opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
+	opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
 }
 
 .YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
 
 .YT-HWV-BUTTON {
-    background: transparent;
-    border: 0;
-    color: rgb(96,96,96);
-    cursor: pointer;
-    height: 40px;
-    outline: 0;
-    margin-right: 8px;
-    padding: 0 8px;
-    width: 40px;
+	background: transparent;
+	border: 0;
+	color: rgb(96,96,96);
+	cursor: pointer;
+	height: 40px;
+	outline: 0;
+	margin-right: 8px;
+	padding: 0 8px;
+	width: 40px;
 }
 
 html[dark] .YT-HWV-BUTTON {
-    color: #EFEFEF;
+	color: #EFEFEF;
 }
 
 .YT-HWV-BUTTON svg {
-    height: 24px;
-    width: 24px;
+	height: 24px;
+	width: 24px;
 }
 
 .YT-HWV-MENU {
-    background: #F8F8F8;
-    border: 1px solid #D3D3D3;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-    display: none;
-    font-size: 12px;
-    margin-top: -1px;
-    padding: 10px;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    top: 100%;
-    white-space: normal;
-    z-index: 9999;
+	background: #F8F8F8;
+	border: 1px solid #D3D3D3;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+	display: none;
+	font-size: 12px;
+	margin-top: -1px;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	top: 100%;
+	white-space: normal;
+	z-index: 9999;
 }
 
 .YT-HWV-MENU-ON { display: block; }
