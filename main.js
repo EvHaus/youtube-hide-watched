@@ -5,6 +5,7 @@
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @author       netjeff
+// @author       actionless
 // @include      http://*.youtube.com/*
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
@@ -170,6 +171,20 @@ html[dark] .YT-HWV-BUTTON {
 
 	// ===========================================================
 
+	const determineYoutubeSection = function () {
+		let youtubeSection = 'misc';
+		if (window.location.href.indexOf('/watch?') > 0) {
+			youtubeSection = 'watch';
+		} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
+			youtubeSection = 'channel';
+		} else if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+			youtubeSection = 'subscriptions';
+		}
+		return youtubeSection;
+	};
+
+	// ===========================================================
+
 	const updateClassOnWatchedItems = function () {
 
 		// If we're on the History page -- do nothing. We don't want to hide
@@ -179,12 +194,15 @@ html[dark] .YT-HWV-BUTTON {
 		// [TODO] If we're on the Trending page -- we don't support it yet.
 		if (window.location.href.indexOf('/feed/trending') >= 0) return;
 
-		findWatchedElements().forEach((item, i) => {
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_${section}`];
+
+		findWatchedElements().forEach((item, _i) => {
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
 			let watchedItem;
-			if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+			if (section === 'subscriptions') {
 				// For rows, hide the row and the header too. We can't hide
 				// their entire parent because then we'll get the infinite
 				// page loader to load forever.
@@ -202,12 +220,13 @@ html[dark] .YT-HWV-BUTTON {
 					watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
 				}
 
-			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
+			} else if (section === 'channel') {
 				// Channel "Videos" section needs special handling
 				watchedItem = item.closest('.ytd-grid-renderer');
 			} else {
 				// For home page and other areas
 				watchedItem = (
+					item.closest('ytd-rich-item-renderer') ||
 					item.closest('ytd-video-renderer') ||
 					item.closest('ytd-grid-video-renderer') ||
 					item.closest('ytd-compact-video-renderer')
@@ -220,7 +239,6 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
 
 				// Add current class
-				const state = localStorage.YTHWV_STATE;
 				if (state === 'dimmed') {
 					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				} else if (state === 'hidden') {
@@ -233,7 +251,10 @@ html[dark] .YT-HWV-BUTTON {
 	// ===========================================================
 
 	const addButton = function () {
-		if (isButtonAlreadyThere()) return;
+		if (isButtonAlreadyThere()) {
+			setButtonState();
+			return;
+		}
 
 		// Find button target
 		const target = findButtonTarget();
@@ -245,7 +266,8 @@ html[dark] .YT-HWV-BUTTON {
 
 		// Attach events
 		button.addEventListener('click', () => {
-			const state = localStorage.YTHWV_STATE;
+			const section = determineYoutubeSection();
+			const state = localStorage[`YTHWV_STATE_${section}`];
 
 			logDebug(`[YT-HWV] button clicked while state: ${state}`);
 
@@ -256,7 +278,7 @@ html[dark] .YT-HWV-BUTTON {
 				newState = 'normal';
 			}
 
-			localStorage.YTHWV_STATE = newState;
+			localStorage[`YTHWV_STATE_${section}`] = newState;
 
 			setButtonState();
 			updateClassOnWatchedItems();
@@ -269,12 +291,13 @@ html[dark] .YT-HWV-BUTTON {
 	};
 
 	const setButtonState = () => {
-		const state = localStorage.YTHWV_STATE;
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_${section}`] || 'normal';
 		const button = document.querySelector('.YT-HWV-BUTTON');
 		if (!button) return;
 
 		button.innerHTML = icons[state];
-		button.setAttribute('title', `Toggle Watched Videos (currently ${state})`);
+		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
 	};
 
 	const run = debounce(() => {
