@@ -14,15 +14,13 @@
 	"version": "3.0.0",
 	"scripts": {
 		"eslint": "eslint-globex main.js",
-		"jshint": "jshint main.js",
-		"lint": "yarn packagelint && yarn eslint && yarn jshint",
+		"lint": "yarn packagelint && yarn eslint",
 		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
 		"test": "yarn lint"
 	},
 	"devDependencies": {
 		"eslint-config-globex": "^2.7.1",
-		"prettier-package-json": "^2.1.3",
-		"jshint": "^2.11.0-rc1"
+		"prettier-package-json": "^2.1.3"
 	},
 	"publishConfig": {
 		"access": "public"

@@ -17,9 +17,6 @@
 // You can open new issues at:
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
-/* jshint esversion: 6 */
-/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
-
 // eslint-disable-next-line no-shadow-restricted-names
 (function (_undefined) {
 
