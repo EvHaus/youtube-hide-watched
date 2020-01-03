@@ -179,6 +179,8 @@ html[dark] .YT-HWV-BUTTON {
 			youtubeSection = 'channel';
 		} else if (window.location.href.indexOf('/feed/subscriptions') > 0) {
 			youtubeSection = 'subscriptions';
+		} else if (window.location.href.indexOf('/feed/trending') >= 0) {
+			youtubeSection = 'trending';
 		}
 		return youtubeSection;
 	};
@@ -190,9 +192,6 @@ html[dark] .YT-HWV-BUTTON {
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
 		if (window.location.href.indexOf('/feed/history') >= 0) return;
-
-		// [TODO] If we're on the Trending page -- we don't support it yet.
-		if (window.location.href.indexOf('/feed/trending') >= 0) return;
 
 		const section = determineYoutubeSection();
 		const state = localStorage[`YTHWV_STATE_${section}`];
