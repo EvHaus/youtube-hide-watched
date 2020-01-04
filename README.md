@@ -1,6 +1,6 @@
 # youtube-hide-watched
 
-A simple userscript for toggling watched videos in the YouTube subscriptions list.
+A simple userscript for toggling watched videos in the YouTube subscriptions list, in right recommendations sidebar or on the main page.
 
 The script is published on GreasyFork at: https://greasyfork.org/en/scripts/13040-youtube-hide-watched-videos
 

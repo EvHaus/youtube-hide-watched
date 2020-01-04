@@ -5,6 +5,7 @@
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @author       netjeff
+// @author       actionless
 // @include      http://*.youtube.com/*
 // @include      http://youtube.com/*
 // @include      https://*.youtube.com/*
@@ -17,7 +18,7 @@
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
 // eslint-disable-next-line no-shadow-restricted-names
-(function (undefined) {
+(function (_undefined) {
 
 	// ===================================================================
 	// How much of the video needs to be watched before it will be hidden?
@@ -61,50 +62,50 @@
 
 	addStyle(`
 .YT-HWV-WATCHED-HIDDEN {
-    display: none !important;
+	display: none !important;
 }
 
 .YT-HWV-WATCHED-DIMMED {
-    opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
+	opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
 }
 
 .YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
 
 .YT-HWV-BUTTON {
-    background: transparent;
-    border: 0;
-    color: rgb(96,96,96);
-    cursor: pointer;
-    height: 40px;
-    outline: 0;
-    margin-right: 8px;
-    padding: 0 8px;
-    width: 40px;
+	background: transparent;
+	border: 0;
+	color: rgb(96,96,96);
+	cursor: pointer;
+	height: 40px;
+	outline: 0;
+	margin-right: 8px;
+	padding: 0 8px;
+	width: 40px;
 }
 
 html[dark] .YT-HWV-BUTTON {
-    color: #EFEFEF;
+	color: #EFEFEF;
 }
 
 .YT-HWV-BUTTON svg {
-    height: 24px;
-    width: 24px;
+	height: 24px;
+	width: 24px;
 }
 
 .YT-HWV-MENU {
-    background: #F8F8F8;
-    border: 1px solid #D3D3D3;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-    display: none;
-    font-size: 12px;
-    margin-top: -1px;
-    padding: 10px;
-    position: absolute;
-    right: 0;
-    text-align: center;
-    top: 100%;
-    white-space: normal;
-    z-index: 9999;
+	background: #F8F8F8;
+	border: 1px solid #D3D3D3;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+	display: none;
+	font-size: 12px;
+	margin-top: -1px;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	top: 100%;
+	white-space: normal;
+	z-index: 9999;
 }
 
 .YT-HWV-MENU-ON { display: block; }
@@ -167,21 +168,37 @@ html[dark] .YT-HWV-BUTTON {
 
 	// ===========================================================
 
+	const determineYoutubeSection = function () {
+		let youtubeSection = 'misc';
+		if (window.location.href.indexOf('/watch?') > 0) {
+			youtubeSection = 'watch';
+		} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
+			youtubeSection = 'channel';
+		} else if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+			youtubeSection = 'subscriptions';
+		} else if (window.location.href.indexOf('/feed/trending') >= 0) {
+			youtubeSection = 'trending';
+		}
+		return youtubeSection;
+	};
+
+	// ===========================================================
+
 	const updateClassOnWatchedItems = function () {
 
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
 		if (window.location.href.indexOf('/feed/history') >= 0) return;
 
-		// [TODO] If we're on the Trending page -- we don't support it yet.
-		if (window.location.href.indexOf('/feed/trending') >= 0) return;
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_${section}`];
 
-		findWatchedElements().forEach((item, i) => {
+		findWatchedElements().forEach((item, _i) => {
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
 			let watchedItem;
-			if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+			if (section === 'subscriptions') {
 				// For rows, hide the row and the header too. We can't hide
 				// their entire parent because then we'll get the infinite
 				// page loader to load forever.
@@ -199,12 +216,13 @@ html[dark] .YT-HWV-BUTTON {
 					watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
 				}
 
-			} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
+			} else if (section === 'channel') {
 				// Channel "Videos" section needs special handling
 				watchedItem = item.closest('.ytd-grid-renderer');
 			} else {
 				// For home page and other areas
 				watchedItem = (
+					item.closest('ytd-rich-item-renderer') ||
 					item.closest('ytd-video-renderer') ||
 					item.closest('ytd-grid-video-renderer') ||
 					item.closest('ytd-compact-video-renderer')
@@ -217,7 +235,6 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
 
 				// Add current class
-				const state = localStorage.YTHWV_STATE;
 				if (state === 'dimmed') {
 					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				} else if (state === 'hidden') {
@@ -230,7 +247,10 @@ html[dark] .YT-HWV-BUTTON {
 	// ===========================================================
 
 	const addButton = function () {
-		if (isButtonAlreadyThere()) return;
+		if (isButtonAlreadyThere()) {
+			setButtonState();
+			return;
+		}
 
 		// Find button target
 		const target = findButtonTarget();
@@ -242,7 +262,8 @@ html[dark] .YT-HWV-BUTTON {
 
 		// Attach events
 		button.addEventListener('click', () => {
-			const state = localStorage.YTHWV_STATE;
+			const section = determineYoutubeSection();
+			const state = localStorage[`YTHWV_STATE_${section}`];
 
 			logDebug(`[YT-HWV] button clicked while state: ${state}`);
 
@@ -253,7 +274,7 @@ html[dark] .YT-HWV-BUTTON {
 				newState = 'normal';
 			}
 
-			localStorage.YTHWV_STATE = newState;
+			localStorage[`YTHWV_STATE_${section}`] = newState;
 
 			setButtonState();
 			updateClassOnWatchedItems();
@@ -266,12 +287,13 @@ html[dark] .YT-HWV-BUTTON {
 	};
 
 	const setButtonState = () => {
-		const state = localStorage.YTHWV_STATE;
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_${section}`] || 'normal';
 		const button = document.querySelector('.YT-HWV-BUTTON');
 		if (!button) return;
 
 		button.innerHTML = icons[state];
-		button.setAttribute('title', `Toggle Watched Videos (currently ${state})`);
+		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
 	};
 
 	const run = debounce(() => {
@@ -311,7 +333,7 @@ html[dark] .YT-HWV-BUTTON {
 			if (!obj) return;
 
 			if (MutationObserver) {
-				const obs = new MutationObserver(((mutations, observer) => {
+				const obs = new MutationObserver(((mutations, _observer) => {
 					if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
 						// eslint-disable-next-line callback-return
 						callback(mutations);
