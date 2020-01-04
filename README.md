@@ -12,6 +12,6 @@ The script is published on GreasyFork at: https://greasyfork.org/en/scripts/1304
 
 # How to Use
 
-The script adds a small button at the top of the page.  Pressing the button cycles through showing watched videos normally, then dimmed, then entirely hidden.
+The script adds a small button at the top of the page. Pressing the button cycles through showing watched videos normally, then dimmed, then entirely hidden. The state of the button is configured per page which allows you hide watched videos on the Subscriptions page, but keep them visible on the Trending page.
 
-![screenshot](screenshot.png "Screenshot")
+![screenshot](screenshot.png 'Screenshot')

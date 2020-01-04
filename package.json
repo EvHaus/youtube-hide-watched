@@ -11,7 +11,7 @@
 	"bugs": {
 		"url": "https://github.com/EvHaus/youtube-hide-watched/issues"
 	},
-	"version": "3.0.0",
+	"version": "3.1.0",
 	"scripts": {
 		"eslint": "eslint-globex main.js",
 		"lint": "yarn packagelint && yarn eslint",

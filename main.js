@@ -17,7 +17,6 @@
 // You can open new issues at:
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
-// eslint-disable-next-line no-shadow-restricted-names
 (function (_undefined) {
 
 	// ===================================================================
