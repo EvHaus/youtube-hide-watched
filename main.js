@@ -177,6 +177,8 @@ html[dark] .YT-HWV-BUTTON {
 			youtubeSection = 'subscriptions';
 		} else if (window.location.href.indexOf('/feed/trending') >= 0) {
 			youtubeSection = 'trending';
+		} else if (window.location.href.indexOf('/playlist?') >= 0) {
+			youtubeSection = 'playlist';
 		}
 		return youtubeSection;
 	};
@@ -218,6 +220,8 @@ html[dark] .YT-HWV-BUTTON {
 			} else if (section === 'channel') {
 				// Channel "Videos" section needs special handling
 				watchedItem = item.closest('.ytd-grid-renderer');
+			} else if (section === 'playlist') {
+				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else {
 				// For home page and other areas
 				watchedItem = (
