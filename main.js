@@ -302,7 +302,16 @@ html[dark] .YT-HWV-BUTTON {
 		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
 	};
 
-	const run = debounce(() => {
+	const run = debounce((mutations) => {
+		if (
+			mutations && mutations.length === 1 &&
+			mutations[0].target.classList.length === 1 &&
+			mutations[0].target.classList[0] === 'YT-HWV-BUTTON'
+		) {
+			// don't react if only our own button changed its state
+			// to avoid running an endless loop:
+			return;
+		}
 		logDebug('[YT-HWV] Running check for watched videos');
 		updateClassOnWatchedItems();
 		addButton();
