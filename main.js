@@ -222,13 +222,16 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem = item.closest('.ytd-grid-renderer');
 			} else if (section === 'playlist') {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
+			} else if (section === 'watch') {
+				watchedItem = item.closest('ytd-compact-video-renderer');
+				// don't hide video if it's going to play next:
+				if (watchedItem.closest('ytd-compact-autoplay-renderer')) watchedItem = null;
 			} else {
 				// For home page and other areas
 				watchedItem = (
 					item.closest('ytd-rich-item-renderer') ||
 					item.closest('ytd-video-renderer') ||
-					item.closest('ytd-grid-video-renderer') ||
-					item.closest('ytd-compact-video-renderer')
+					item.closest('ytd-grid-video-renderer')
 				);
 			}
 
