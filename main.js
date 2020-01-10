@@ -224,8 +224,16 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else if (section === 'watch') {
 				watchedItem = item.closest('ytd-compact-video-renderer');
-				// don't hide video if it's going to play next:
-				if (watchedItem.closest('ytd-compact-autoplay-renderer')) watchedItem = null;
+				// Don't hide video if it's going to play next.
+				//
+				// If there is no watchedItem - we probably got
+				// `ytd-playlist-panel-video-renderer`:
+				// let's also ignore it as in case of shuffle enabled
+				// we could accidentially hide the item which gonna play next.
+				if (
+					watchedItem &&
+					watchedItem.closest('ytd-compact-autoplay-renderer')
+				) watchedItem = null;
 			} else {
 				// For home page and other areas
 				watchedItem = (
