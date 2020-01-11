@@ -222,13 +222,24 @@ html[dark] .YT-HWV-BUTTON {
 				watchedItem = item.closest('.ytd-grid-renderer');
 			} else if (section === 'playlist') {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
+			} else if (section === 'watch') {
+				watchedItem = item.closest('ytd-compact-video-renderer');
+				// Don't hide video if it's going to play next.
+				//
+				// If there is no watchedItem - we probably got
+				// `ytd-playlist-panel-video-renderer`:
+				// let's also ignore it as in case of shuffle enabled
+				// we could accidentially hide the item which gonna play next.
+				if (
+					watchedItem &&
+					watchedItem.closest('ytd-compact-autoplay-renderer')
+				) watchedItem = null;
 			} else {
 				// For home page and other areas
 				watchedItem = (
 					item.closest('ytd-rich-item-renderer') ||
 					item.closest('ytd-video-renderer') ||
-					item.closest('ytd-grid-video-renderer') ||
-					item.closest('ytd-compact-video-renderer')
+					item.closest('ytd-grid-video-renderer')
 				);
 			}
 
@@ -299,7 +310,16 @@ html[dark] .YT-HWV-BUTTON {
 		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
 	};
 
-	const run = debounce(() => {
+	const run = debounce((mutations) => {
+		if (
+			mutations && mutations.length === 1 &&
+			mutations[0].target.classList.length === 1 &&
+			mutations[0].target.classList[0] === 'YT-HWV-BUTTON'
+		) {
+			// don't react if only our own button changed its state
+			// to avoid running an endless loop:
+			return;
+		}
 		logDebug('[YT-HWV] Running check for watched videos');
 		updateClassOnWatchedItems();
 		addButton();
