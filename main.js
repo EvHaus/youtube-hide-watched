@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      4.3.0
+// @version      4.3.1
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @author       netjeff
@@ -82,7 +82,10 @@
 	width: 40px;
 }
 
-html[dark] .YT-HWV-BUTTON {
+/* Match the button color to "dark" background (as of Feb 2020) */
+html[dark]         .YT-HWV-BUTTON,  /* for the "Dark theme" overall */
+ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
+{
 	color: #EFEFEF;
 }
 
