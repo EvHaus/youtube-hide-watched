@@ -521,6 +521,13 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON
 		checkMenuState('YTHWV_OLDVIDEOS_MONTH_STATE', 'Toggle videos older than month', ['search_results', 'frontpage']);
 		checkMenuState('YTHWV_OLDVIDEOS_WEEK_STATE', 'Toggle videos older than week', ['search_results', 'frontpage']);
 
+		const separator = document.querySelector('.YT-HWV-MENU .separator');
+		if (['search_results', 'frontpage'].includes(section)) {
+			separator.classList.remove('hidden');
+		} else {
+			separator.classList.add('hidden');
+		}
+
 		checkMenuState('YTHWV_MIXVIDEOS_STATE', 'Toggle mix videos', null);
 	};
 
