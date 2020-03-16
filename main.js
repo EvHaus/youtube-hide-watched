@@ -31,14 +31,16 @@
 	// Note that YouTube is kind of fuzzy on the watched percent,
 	// so trying to be very specific with this value may not work
 	const HiddenThresholdPercent = 10;
+	const HideDates = [
+		'month',
+		'year',
+		//'week',
+	];
 
 	// ====================================================================
 
 	// Enable for debugging
 	const __DEV__ = false;
-
-	// Set defaults
-	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
 
 	const logDebug = (msg) => {
 		// eslint-disable-next-line no-console
@@ -70,7 +72,7 @@
 
 .YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
 
-.YT-HWV-BUTTON {
+.YT-HWV-BUTTON, .YT-HWV-DROPDOWN-BUTTON {
 	background: transparent;
 	border: 0;
 	color: rgb(96,96,96);
@@ -80,16 +82,30 @@
 	margin-right: 8px;
 	padding: 0 8px;
 	width: 40px;
+	text-align: center;
+}
+.YT-HWV-BUTTON {
+	padding-right: 0;
+}
+.YT-HWV-DROPDOWN-BUTTON {
+	padding-left: 0;
+	margin-left: -18px;
+	margin-right: 0;
+	fill: #606060;
 }
 
 /* Match the button color to "dark" background (as of Feb 2020) */
 html[dark]         .YT-HWV-BUTTON,  /* for the "Dark theme" overall */
-ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
+ytd-masthead[dark] .YT-HWV-BUTTON,   /* When watching in "theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
+html[dark]         .YT-HWV-MENUBUTTON,  /* for the "Dark theme" overall */
+ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
 {
 	color: #EFEFEF;
+	fill: #EFEFEF;
 }
 
-.YT-HWV-BUTTON svg {
+.YT-HWV-BUTTON svg,
+.YT-HWV-DROPDOWN-BUTTON svg{
 	height: 24px;
 	width: 24px;
 }
@@ -104,21 +120,48 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 	padding: 10px;
 	position: absolute;
 	right: 0;
-	text-align: center;
 	top: 100%;
 	white-space: normal;
 	z-index: 9999;
+	margin-right: 230px;
 }
 
 .YT-HWV-MENU-ON { display: block; }
-.YT-HWV-MENUBUTTON-ON span { transform: rotate(180deg) }
+
+.YT-HWV-MENUBUTTON {
+	cursor: pointer;
+	opacity: 0.9;
+}
+.YT-HWV-MENUBUTTON yt-icon {
+	opacity: 0;
+}
+.YT-HWV-MENUBUTTON.hidden {
+	display: none;
+}
+
+.YT-HWV-MENUBUTTON-ON {
+	opacity: 1;
+	/*color: #ff0000;*/
+}
+.YT-HWV-MENUBUTTON-ON yt-icon{
+	opacity: 1;
+}
+
+.YT-HWV-MENUBUTTON-ON span {
+	transform: rotate(180deg);
+}
+
+.YT-HWV-MENUBUTTON span {
+	padding: 6px;
+}
 `);
 
 	/* eslint-disable max-len */
 	const icons = {
-		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
-		dimmed: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
-		hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>',
+		normal:   '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
+		dimmed:   '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
+		hidden:   '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>',
+		dropdown: '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><path d="M10.5 15l7.5 7.5 7.5-7.5z"/><path d="M0 0h36v36h-36z" fill="none"/></svg>',
 	};
 	/* eslint-enable max-len */
 
@@ -151,9 +194,36 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 			`[YT-HWV] Found ${watched.length} watched elements ` +
 			`(${withThreshold.length} within threshold)`
 		);
-
 		return withThreshold;
 	};
+
+	const findOldElements = function () {
+		const dates = document.querySelectorAll('#metadata-line .ytd-video-meta-block:nth-child(2)');
+		const datesWithThreshold = Array.from(dates).filter((span) => {
+			for (let dateName of HideDates) {
+				if (span.innerText.includes(dateName)) return true;
+			}
+			return false;
+		});
+		logDebug(
+			`[YT-HWV] Found ${dates.length} too old elements ` +
+			`(${datesWithThreshold.length} within threshold)`
+		);
+		return datesWithThreshold;
+	}
+
+	const findMixElements = function () {
+		const names = document.querySelectorAll('h3 #video-title');
+		const namesWithThreshold = Array.from(names).filter((span) => {
+			return span.innerText.indexOf('Mix - ') === 0;
+		});
+		logDebug(
+			`[YT-HWV] Found ${names.length} text elements ` +
+			`(${namesWithThreshold.length} within threshold)`
+		);
+		return namesWithThreshold;
+	};
+
 
 	// ===========================================================
 
@@ -182,9 +252,69 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 			youtubeSection = 'trending';
 		} else if (window.location.href.indexOf('/playlist?') >= 0) {
 			youtubeSection = 'playlist';
+		} else if (window.location.href === "https://www.youtube.com/") {
+			youtubeSection = 'frontpage';
+		} else if (window.location.href.indexOf('/results') >= 0) {
+			youtubeSection = 'search_results';
 		}
 		return youtubeSection;
 	};
+
+	// ===========================================================
+
+	const findVideoElement = function (item, section) {
+		// "Subscription" section needs us to hide the "#contents",
+		// but in the "Trending" section, that class will hide everything.
+		// So there, we need to hide the "ytd-video-renderer"
+		let watchedItem;
+		if (section === 'subscriptions') {
+			// For rows, hide the row and the header too. We can't hide
+			// their entire parent because then we'll get the infinite
+			// page loader to load forever.
+			watchedItem = (
+				// Grid item
+				item.closest('.ytd-grid-renderer') ||
+				item.closest('.ytd-item-section-renderer') ||
+				// List item
+				item.closest('#grid-container')
+			);
+
+			// If we're hiding the .ytd-item-section-renderer element, we need to give it
+			// some extra spacing otherwise we'll get stuck in infinite page loading
+			if (watchedItem && watchedItem.classList.contains('ytd-item-section-renderer')) {
+				watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+			}
+
+		} else if (section === 'channel') {
+			// Channel "Videos" section needs special handling
+			watchedItem = item.closest('.ytd-grid-renderer');
+		} else if (section === 'playlist') {
+			watchedItem = item.closest('ytd-playlist-video-renderer');
+		} else if (section === 'watch') {
+			watchedItem = (
+				item.closest('ytd-compact-video-renderer') ||
+				item.closest('ytd-compact-radio-renderer')
+			);
+			// Don't hide video if it's going to play next.
+			//
+			// If there is no watchedItem - we probably got
+			// `ytd-playlist-panel-video-renderer`:
+			// let's also ignore it as in case of shuffle enabled
+			// we could accidentially hide the item which gonna play next.
+			if (
+				watchedItem &&
+				watchedItem.closest('ytd-compact-autoplay-renderer')
+			) watchedItem = null;
+		} else {
+			// For home page and other areas
+			watchedItem = (
+				item.closest('ytd-rich-item-renderer') ||
+				item.closest('ytd-video-renderer') ||
+				item.closest('ytd-grid-video-renderer')
+			);
+		}
+		return watchedItem;
+	}
 
 	// ===========================================================
 
@@ -198,67 +328,48 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		const state = localStorage[`YTHWV_STATE_${section}`];
 
 		findWatchedElements().forEach((item, _i) => {
-			// "Subscription" section needs us to hide the "#contents",
-			// but in the "Trending" section, that class will hide everything.
-			// So there, we need to hide the "ytd-video-renderer"
-			let watchedItem;
-			if (section === 'subscriptions') {
-				// For rows, hide the row and the header too. We can't hide
-				// their entire parent because then we'll get the infinite
-				// page loader to load forever.
-				watchedItem = (
-					// Grid item
-					item.closest('.ytd-grid-renderer') ||
-					item.closest('.ytd-item-section-renderer') ||
-					// List item
-					item.closest('#grid-container')
-				);
-
-				// If we're hiding the .ytd-item-section-renderer element, we need to give it
-				// some extra spacing otherwise we'll get stuck in infinite page loading
-				if (watchedItem && watchedItem.classList.contains('ytd-item-section-renderer')) {
-					watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
-				}
-
-			} else if (section === 'channel') {
-				// Channel "Videos" section needs special handling
-				watchedItem = item.closest('.ytd-grid-renderer');
-			} else if (section === 'playlist') {
-				watchedItem = item.closest('ytd-playlist-video-renderer');
-			} else if (section === 'watch') {
-				watchedItem = item.closest('ytd-compact-video-renderer');
-				// Don't hide video if it's going to play next.
-				//
-				// If there is no watchedItem - we probably got
-				// `ytd-playlist-panel-video-renderer`:
-				// let's also ignore it as in case of shuffle enabled
-				// we could accidentially hide the item which gonna play next.
-				if (
-					watchedItem &&
-					watchedItem.closest('ytd-compact-autoplay-renderer')
-				) watchedItem = null;
-			} else {
-				// For home page and other areas
-				watchedItem = (
-					item.closest('ytd-rich-item-renderer') ||
-					item.closest('ytd-video-renderer') ||
-					item.closest('ytd-grid-video-renderer')
-				);
-			}
-
+			const watchedItem = findVideoElement(item, section);
 			if (watchedItem) {
-				// Remove existing classes
-				watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
-				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
-
-				// Add current class
 				if (state === 'dimmed') {
 					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+					watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
 				} else if (state === 'hidden') {
 					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+					watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+				} else {
+					watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
+					watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
 				}
 			}
 		});
+
+		const updateFilterStatus = (localStoragePrefix, locatorFunction) => {
+			const filterVideosState = localStorage[`${localStoragePrefix}_${section}`];
+			locatorFunction().forEach((item, _i) => {
+				const watchedItem = findVideoElement(item, section);
+				if (watchedItem) {
+					if (filterVideosState == 'true') {
+						if (state === 'dimmed') {
+							watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+							watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
+						} else if (state === 'hidden') {
+							watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+							watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+						} else {
+							watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
+							watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+						}
+					} else {
+						watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
+						watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+					}
+				}
+			});
+		}
+
+		updateFilterStatus('YTHWV_OLDVIDEOS_STATE', findOldElements);
+		updateFilterStatus('YTHWV_MIXVIDEOS_STATE', findMixElements);
+
 	};
 
 	// ===========================================================
@@ -300,24 +411,97 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		// Insert button into DOM
 		target.parentNode.insertBefore(button, target);
 
+		// Generate button DOM
+		const dropDownButton = document.createElement('button');
+		dropDownButton.classList.add('YT-HWV-DROPDOWN-BUTTON');
+		dropDownButton.innerHTML = icons.dropdown;
+		dropDownButton.addEventListener('click', () => {
+
+			const menu = document.querySelector('.YT-HWV-MENU');
+			if (menu.classList.contains('YT-HWV-MENU-ON')) {
+					menu.classList.remove('YT-HWV-MENU-ON');
+			} else {
+					menu.classList.add('YT-HWV-MENU-ON');
+			}
+		});
+		target.parentNode.insertBefore(dropDownButton, button.nextSibling);
+
+		const menu = document.createElement('div');
+		menu.classList.add('YT-HWV-MENU');
+		target.parentNode.insertBefore(menu, button);
+
+		const addMenuItem = (localStoragePrefix, label) => {
+			const menuItem = document.createElement('div');
+			menu.appendChild(menuItem);
+
+			const checkMark = document.createElement('yt-icon');
+			checkMark.setAttribute('icon', 'yt-icons:check');
+			menuItem.appendChild(checkMark);
+
+			const menuText = document.createElement('span');
+			menuText.innerHTML = label;
+			menuItem.appendChild(menuText);
+			menuItem.classList.add(localStoragePrefix);
+			menuItem.classList.add('YT-HWV-MENUBUTTON');
+			menuItem.addEventListener('click', () => {
+				const section = determineYoutubeSection();
+				const state = localStorage[`${localStoragePrefix}_${section}`];
+				logDebug(`[YT-HWV] ${label} button clicked while state: ${state}`);
+				let newState = 'true';
+				if (state === 'true') {
+					newState = 'false';
+				}
+				localStorage[`${localStoragePrefix}_${section}`] = newState;
+				setButtonState();
+				updateClassOnWatchedItems();
+			});
+		}
+
+		addMenuItem('YTHWV_OLDVIDEOS_STATE', 'Hide old videos');
+		addMenuItem('YTHWV_MIXVIDEOS_STATE', 'Hide Mixes');
+
 		setButtonState();
 	};
 
+	// ===========================================================
+
 	const setButtonState = () => {
-		const section = determineYoutubeSection();
-		const state = localStorage[`YTHWV_STATE_${section}`] || 'normal';
 		const button = document.querySelector('.YT-HWV-BUTTON');
 		if (!button) return;
 
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_${section}`] || 'normal';
 		button.innerHTML = icons[state];
 		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
+
+		const checkMenuState = (localStoragePrefix, popupMessage, allowedSections) => {
+			const menuButton = document.querySelector(`.${localStoragePrefix}`);
+			const filterState = (localStorage[`${localStoragePrefix}_${section}`] === "true") ? "hide" : "show";
+			if (filterState === "hide") {
+				menuButton.classList.add('YT-HWV-MENUBUTTON-ON');
+			} else {
+				menuButton.classList.remove('YT-HWV-MENUBUTTON-ON');
+			}
+			menuButton.setAttribute('title', `${popupMessage} (currently "${filterState}" for "${section}" section)`);
+			if (!allowedSections || allowedSections.includes(section)) {
+				menuButton.classList.remove('hidden');
+			} else {
+				menuButton.classList.add('hidden');
+			}
+		}
+
+		checkMenuState('YTHWV_OLDVIDEOS_STATE', 'Toggle old videos', ['search_results', 'frontpage']);
+		checkMenuState('YTHWV_MIXVIDEOS_STATE', 'Toggle mix videos', null);
 	};
 
 	const run = debounce((mutations) => {
 		if (
-			mutations && mutations.length === 1 &&
+			mutations && mutations.length >= 1 &&
 			mutations[0].target.classList.length === 1 &&
-			mutations[0].target.classList[0] === 'YT-HWV-BUTTON'
+			(
+				mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
+				mutations[0].target.classList.contains('YT-HWV-MENUBUTTON')
+			)
 		) {
 			// don't react if only our own button changed its state
 			// to avoid running an endless loop:
