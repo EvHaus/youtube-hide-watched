@@ -31,11 +31,6 @@
 	// Note that YouTube is kind of fuzzy on the watched percent,
 	// so trying to be very specific with this value may not work
 	const HiddenThresholdPercent = 10;
-	const HideDates = [
-		'month',
-		'year',
-		//'week',
-	];
 
 	// ====================================================================
 
@@ -111,11 +106,11 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 }
 
 .YT-HWV-MENU {
-	background: #F8F8F8;
+	background: #fff;
 	border: 1px solid #D3D3D3;
 	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 	display: none;
-	font-size: 12px;
+	font-size: 1.4rem;
 	margin-top: -1px;
 	padding: 10px;
 	position: absolute;
@@ -124,6 +119,14 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 	white-space: normal;
 	z-index: 9999;
 	margin-right: 230px;
+}
+.YT-HWV-MENU .separator {
+	border-bottom: 1px solid #606060;
+	opacity: 0.15;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	margin-left: -10px;
+	margin-right: -10px;
 }
 
 .YT-HWV-MENU-ON { display: block; }
@@ -197,16 +200,13 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 		return withThreshold;
 	};
 
-	const findOldElements = function () {
+	const findOldElements = function (dateName) {
 		const dates = document.querySelectorAll('#metadata-line .ytd-video-meta-block:nth-child(2)');
 		const datesWithThreshold = Array.from(dates).filter((span) => {
-			for (let dateName of HideDates) {
-				if (span.innerText.includes(dateName)) return true;
-			}
-			return false;
+			return span.innerText.includes(dateName);
 		});
 		logDebug(
-			`[YT-HWV] Found ${dates.length} too old elements ` +
+			`[YT-HWV] Found ${dates.length} too old (${dateName}) elements ` +
 			`(${datesWithThreshold.length} within threshold)`
 		);
 		return datesWithThreshold;
@@ -367,7 +367,9 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 			});
 		}
 
-		updateFilterStatus('YTHWV_OLDVIDEOS_STATE', findOldElements);
+		updateFilterStatus('YTHWV_OLDVIDEOS_YEAR_STATE', () => {return findOldElements('year')});
+		updateFilterStatus('YTHWV_OLDVIDEOS_MONTH_STATE', () => {return findOldElements('month')});
+		updateFilterStatus('YTHWV_OLDVIDEOS_WEEK_STATE', () => {return findOldElements('week')});
 		updateFilterStatus('YTHWV_MIXVIDEOS_STATE', findMixElements);
 
 	};
@@ -430,7 +432,7 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 		menu.classList.add('YT-HWV-MENU');
 		target.parentNode.insertBefore(menu, button);
 
-		const addMenuItem = (localStoragePrefix, label) => {
+		const addMenuItem = (localStoragePrefix, label, callback) => {
 			const menuItem = document.createElement('div');
 			menu.appendChild(menuItem);
 
@@ -452,12 +454,36 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 					newState = 'false';
 				}
 				localStorage[`${localStoragePrefix}_${section}`] = newState;
+				if (callback) callback();
 				setButtonState();
 				updateClassOnWatchedItems();
 			});
 		}
 
-		addMenuItem('YTHWV_OLDVIDEOS_STATE', 'Hide old videos');
+		addMenuItem('YTHWV_OLDVIDEOS_YEAR_STATE', 'Hide videos older than year', () => {
+			const section = determineYoutubeSection();
+			if (localStorage[`YTHWV_OLDVIDEOS_YEAR_STATE_${section}`] == 'false') {
+				localStorage[`YTHWV_OLDVIDEOS_MONTH_STATE_${section}`] = 'false';
+				localStorage[`YTHWV_OLDVIDEOS_WEEK_STATE_${section}`] = 'false';
+			}
+		});
+		addMenuItem('YTHWV_OLDVIDEOS_MONTH_STATE', 'Hide videos older than month', () => {
+			const section = determineYoutubeSection();
+			if (localStorage[`YTHWV_OLDVIDEOS_MONTH_STATE_${section}`] == 'true') localStorage[`YTHWV_OLDVIDEOS_YEAR_STATE_${section}`] = 'true';
+			if (localStorage[`YTHWV_OLDVIDEOS_MONTH_STATE_${section}`] == 'false') localStorage[`YTHWV_OLDVIDEOS_WEEK_STATE_${section}`] = 'false';
+		});
+		addMenuItem('YTHWV_OLDVIDEOS_WEEK_STATE', 'Hide videos older than week', () => {
+			const section = determineYoutubeSection();
+			if (localStorage[`YTHWV_OLDVIDEOS_WEEK_STATE_${section}`] == 'true') {
+				localStorage[`YTHWV_OLDVIDEOS_MONTH_STATE_${section}`] = 'true';
+				localStorage[`YTHWV_OLDVIDEOS_YEAR_STATE_${section}`] = 'true';
+			}
+		});
+
+		const separator = document.createElement('div');
+		separator.classList.add('separator');
+		menu.appendChild(separator);
+
 		addMenuItem('YTHWV_MIXVIDEOS_STATE', 'Hide Mixes');
 
 		setButtonState();
@@ -490,7 +516,10 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON   /* When watching in "theater mode" the t
 			}
 		}
 
-		checkMenuState('YTHWV_OLDVIDEOS_STATE', 'Toggle old videos', ['search_results', 'frontpage']);
+		checkMenuState('YTHWV_OLDVIDEOS_YEAR_STATE', 'Toggle videos older than year', ['search_results', 'frontpage']);
+		checkMenuState('YTHWV_OLDVIDEOS_MONTH_STATE', 'Toggle videos older than month', ['search_results', 'frontpage']);
+		checkMenuState('YTHWV_OLDVIDEOS_WEEK_STATE', 'Toggle videos older than week', ['search_results', 'frontpage']);
+
 		checkMenuState('YTHWV_MIXVIDEOS_STATE', 'Toggle mix videos', null);
 	};
 
