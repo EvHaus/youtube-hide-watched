@@ -215,7 +215,7 @@ ytd-masthead[dark] .YT-HWV-MENUBUTTON
 	const findMixElements = function () {
 		const names = document.querySelectorAll('h3 #video-title');
 		const namesWithThreshold = Array.from(names).filter((span) => {
-			return span.innerText.indexOf('Mix - ') === 0;
+			return span.innerText.trim().indexOf('Mix - ') === 0;
 		});
 		logDebug(
 			`[YT-HWV] Found ${names.length} text elements ` +
