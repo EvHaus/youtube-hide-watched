@@ -144,7 +144,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		const watched = document.querySelectorAll('.ytd-thumbnail-overlay-resume-playback-renderer');
 
 		const withThreshold = Array.from(watched).filter((bar) => {
-			return bar.style.width && parseInt(bar.style.width, 10) > HiddenThresholdPercent;
+			return bar.style.width && parseInt(bar.style.width, 10) >= HiddenThresholdPercent;
 		});
 
 		logDebug(
