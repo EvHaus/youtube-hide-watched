@@ -568,10 +568,10 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-config-globex@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-globex/-/eslint-config-globex-4.0.1.tgz#6606017f5b830ca4bd920eb3849dd3fdc38690f1"
-  integrity sha512-GaW/ao8jXLZ75e+qarmGf1x+/HDtFwy83i/ji7A4Ig9PD/4mYyNxyzY+Z3qwSXagWv138H9oLI9DQBqjuwQhog==
+eslint-config-globex@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-globex/-/eslint-config-globex-4.1.0.tgz#5c9c051536b1e9338c76eb3379d28c5e17aff516"
+  integrity sha512-uWcZ+KK16XQMhHIdyBbReRS12vzAxCsNKPIW4pkB37EARrm/9ALgcCYZpFIAhkHaFJJg7yQpH9/T3QPDV2lpxA==
   dependencies:
     babel-eslint "10.1.0"
     eslint "7.9.0"
