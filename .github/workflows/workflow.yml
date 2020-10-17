@@ -13,5 +13,5 @@ jobs:
         node-version: 12.x
     - name: Test
       run: |
-        yarn install --immutable --immutable-cache
+        yarn install --pure-lockfile
         yarn test
