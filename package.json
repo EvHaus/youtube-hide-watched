@@ -1,5 +1,6 @@
 {
 	"name": "youtube-hide-watched",
+	"version": "4.3.1",
 	"description": "Hides watched videos from your YouTube subscriptions page",
 	"license": "MIT",
 	"author": "Ev Haus",
@@ -11,7 +12,6 @@
 	"bugs": {
 		"url": "https://github.com/EvHaus/youtube-hide-watched/issues"
 	},
-	"version": "4.3.1",
 	"scripts": {
 		"eslint": "eslint-globex main.js",
 		"lint": "yarn packagelint && yarn eslint",
@@ -19,7 +19,7 @@
 		"test": "yarn lint"
 	},
 	"devDependencies": {
-		"eslint-config-globex": "^5.3.0",
+		"eslint-config-globex": "^5.3.1",
 		"prettier-package-json": "^2.5.0"
 	},
 	"publishConfig": {
