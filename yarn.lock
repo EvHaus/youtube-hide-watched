@@ -1749,10 +1749,10 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-prettier-package-json@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/prettier-package-json/-/prettier-package-json-2.5.0.tgz#9f10c2634f4f176e83c9151e6df41f740125d74b"
-  integrity sha512-0S55YC6va8oJ9qMLM7gxGZxr0T7YrSAMrvu3HwkDlZcsAC+qq8xuUxHWwjm8xqKpogYaM8PfGC0rdlJsG66N6g==
+prettier-package-json@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/prettier-package-json/-/prettier-package-json-2.6.0.tgz#624eeb604a4c19af146c1d1c824d31afd2690e2a"
+  integrity sha512-CS7utu4Jfm6xxCrIA4zZiOtNIwZhq0EyHnK01vmliV2QRU+L6/Ywy1tB6uUpT9Lwt5qpvRMHNApa6jxoRHfafA==
   dependencies:
     commander "^4.0.1"
     cosmiconfig "^7.0.0"
