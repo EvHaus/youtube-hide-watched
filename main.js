@@ -174,7 +174,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		let youtubeSection = 'misc';
 		if (window.location.href.indexOf('/watch?') > 0) {
 			youtubeSection = 'watch';
-		} else if (window.location.href.match(/.*\/(user|channel)\/.+\/videos/u)) {
+		} else if (window.location.href.match(/.*\/(user|channel|c)\/.+\/videos/u)) {
 			youtubeSection = 'channel';
 		} else if (window.location.href.indexOf('/feed/subscriptions') > 0) {
 			youtubeSection = 'subscriptions';
