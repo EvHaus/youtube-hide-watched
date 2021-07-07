@@ -268,6 +268,20 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@humanwhocodes/config-array@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
+  integrity sha512-FagtKFz74XrTl7y6HCzQpwDfXP0yhxe9lHLD1UZxjvZIcbyRz8zTFF/yYNfSfzU414eDwZ1SrO0Qvtyf+wFMQg==
+  dependencies:
+    "@humanwhocodes/object-schema" "^1.2.0"
+    debug "^4.1.1"
+    minimatch "^3.0.4"
+
+"@humanwhocodes/object-schema@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz#87de7af9c231826fdd68ac7258f77c429e0e5fcf"
+  integrity sha512-wdppn25U8z/2yiaT6YGquE6X8sSv7hNMWSXYSSU1jGv/yd6XqjXgTDJ8KP4NgjTXfJ3GbRjeeb8RTV7a/VpM+w==
+
 "@next/eslint-plugin-next@11.0.1":
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/@next/eslint-plugin-next/-/eslint-plugin-next-11.0.1.tgz#5dd3264a40fadcf28eba00d914d69103422bb7e6"
@@ -777,15 +791,15 @@ escape-string-regexp@^4.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
-eslint-config-globex@^5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-globex/-/eslint-config-globex-5.5.0.tgz#be42118c31933b474e855f66b7076c267730e9f8"
-  integrity sha512-HL3YImU+n2BCVkF0RsNNrdiXNnnzNAnB92yhXpgAnOJoAKQJTvhzTxCE5e2Ylg3ciy+2yRuzmOtOGcRicxZ6Uw==
+eslint-config-globex@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-globex/-/eslint-config-globex-5.6.0.tgz#a9060e528fc23d00e0c0ba3086e477fe8a256781"
+  integrity sha512-PgBsyDTlBDo54vAHy5ikn+OEtmOuEsGjPZHkg/APysDIDfs5YhRRLzLdLoc91KUyPaZmI2fhUoH/4DqBRXwVkA==
   dependencies:
     "@babel/core" "7.14.6"
     "@babel/eslint-parser" "7.14.7"
     "@next/eslint-plugin-next" "11.0.1"
-    eslint "7.29.0"
+    eslint "7.30.0"
     eslint-plugin-babel "5.3.1"
     eslint-plugin-cumul8 "1.4.56"
     eslint-plugin-filenames "1.3.2"
@@ -799,7 +813,7 @@ eslint-config-globex@^5.5.0:
     eslint-plugin-promise "5.1.0"
     eslint-plugin-react "7.24.0"
     eslint-plugin-react-hooks "4.2.0"
-    eslint-plugin-sonarjs "0.8.0-125"
+    eslint-plugin-sonarjs "0.9.1"
 
 eslint-import-resolver-node@^0.3.4:
   version "0.3.4"
@@ -953,10 +967,10 @@ eslint-plugin-react@7.24.0:
     resolve "^2.0.0-next.3"
     string.prototype.matchall "^4.0.5"
 
-eslint-plugin-sonarjs@0.8.0-125:
-  version "0.8.0-125"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sonarjs/-/eslint-plugin-sonarjs-0.8.0-125.tgz#d19fc8a579bb3b2a16879b6375516c9c3c12e60c"
-  integrity sha512-/nl3Yzy8cHxCj5ohQL8dEqK2AhQqjTM/oXz5K3bU/7XbsBTz0BgyEsDvdz7gdtRlAe0Hzrf2v3qLVHA506Qheg==
+eslint-plugin-sonarjs@0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sonarjs/-/eslint-plugin-sonarjs-0.9.1.tgz#a3c63ab0d267bfb69863159e42c8081b01fd3ac6"
+  integrity sha512-KKFofk1LPjGHWeAZijYWv32c/C4mz+OAeBNVxhxHu1hknrTOhu415MWC8qKdAdsmOlBPShs9evM4mI1o7MNMhw==
 
 eslint-rule-composer@^0.3.0:
   version "0.3.0"
@@ -988,13 +1002,14 @@ eslint-visitor-keys@^2.0.0, eslint-visitor-keys@^2.1.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-2.1.0.tgz#f65328259305927392c938ed44eb0a5c9b2bd303"
   integrity sha512-0rSmRBzXgDzIsD6mGdJgevzgezI534Cer5L/vyMX0kHzT/jiB43jRhd9YUlMGYLQy2zprNmoT8qasCGtY+QaKw==
 
-eslint@7.29.0:
-  version "7.29.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.29.0.tgz#ee2a7648f2e729485e4d0bd6383ec1deabc8b3c0"
-  integrity sha512-82G/JToB9qIy/ArBzIWG9xvvwL3R86AlCjtGw+A29OMZDqhTybz/MByORSukGxeI+YPCR4coYyITKk8BFH9nDA==
+eslint@7.30.0:
+  version "7.30.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.30.0.tgz#6d34ab51aaa56112fd97166226c9a97f505474f8"
+  integrity sha512-VLqz80i3as3NdloY44BQSJpFw534L9Oh+6zJOUaViV4JPd+DaHwutqP7tcpkW3YiXbK6s05RZl7yl7cQn+lijg==
   dependencies:
     "@babel/code-frame" "7.12.11"
     "@eslint/eslintrc" "^0.4.2"
+    "@humanwhocodes/config-array" "^0.5.0"
     ajv "^6.10.0"
     chalk "^4.0.0"
     cross-spawn "^7.0.2"
