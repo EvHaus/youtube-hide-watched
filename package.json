@@ -19,8 +19,8 @@
 		"test": "yarn lint"
 	},
 	"devDependencies": {
-		"eslint-config-globex": "^5.10.0",
-		"prettier-package-json": "^2.6.0"
+		"eslint-config-globex": "6.0.0-beta.1",
+		"prettier-package-json": "2.6.0"
 	},
 	"publishConfig": {
 		"access": "public"
