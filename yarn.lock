@@ -410,6 +410,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/parse-author@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "@types/parse-author@npm:2.0.1"
+  checksum: a1329d0a9c87317c1ba526943ea94aff009760f0b517cabb55a07818ef9df2983b411ba2f25124c3aadb20738e30a38a95c99fea2ad6002def1a1c7e8a9ef43e
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -2366,10 +2373,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-package-json@npm:2.6.0":
-  version: 2.6.0
-  resolution: "prettier-package-json@npm:2.6.0"
+"prettier-package-json@npm:2.6.3":
+  version: 2.6.3
+  resolution: "prettier-package-json@npm:2.6.3"
   dependencies:
+    "@types/parse-author": ^2.0.0
     commander: ^4.0.1
     cosmiconfig: ^7.0.0
     fs-extra: ^10.0.0
@@ -2380,7 +2388,7 @@ __metadata:
     sort-order: ^1.0.1
   bin:
     prettier-package-json: bin/prettier-package-json
-  checksum: 37e9e343e43943d6bfdd10bcab7daabfa4f4e70cac789991f749d82361581a8c30429f692b5bcaba3b55ceaafc41b1de51a2cdef24ecbc63ba4bac327f23cb0e
+  checksum: b8bbec16649a0a73ba0c3116d8510be9bcab0664130e2877b067a732afac3fcb41ed53199159e9723855f4224cb4ffb1fbd10ac24203e8efbba6735ce1f4e610
   languageName: node
   linkType: hard
 
@@ -2889,6 +2897,6 @@ __metadata:
   resolution: "youtube-hide-watched@workspace:."
   dependencies:
     eslint-config-globex: 6.3.0
-    prettier-package-json: 2.6.0
+    prettier-package-json: 2.6.3
   languageName: unknown
   linkType: soft
