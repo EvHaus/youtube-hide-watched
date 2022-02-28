@@ -1099,9 +1099,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-globex@npm:6.5.0":
-  version: 6.5.0
-  resolution: "eslint-config-globex@npm:6.5.0"
+"eslint-config-globex@npm:6.6.0":
+  version: 6.6.0
+  resolution: "eslint-config-globex@npm:6.6.0"
   dependencies:
     "@babel/core": ^7.17.5
     "@babel/eslint-parser": ^7.17.0
@@ -1110,7 +1110,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.12.1
     "@typescript-eslint/parser": ^5.12.1
     eslint: ^8.10.0
-    eslint-plugin-cumul8: ^1.4.56
     eslint-plugin-filenames: ^1.3.2
     eslint-plugin-flowtype: ^8.0.3
     eslint-plugin-import: ^2.25.4
@@ -1125,7 +1124,7 @@ __metadata:
     eslint-plugin-sonarjs: ^0.12.0
   bin:
     eslint-globex: bin/eslint-globex.js
-  checksum: 29286887195be99decb1f9c73161ebb34b1c05e943c39fcded20c9e66af0acda8b0ec09bae74bf416edb5e70e77fe33d93081d3ba3ae0f20df2e92c4174a253c
+  checksum: 60e667619f623ff1e9948ecc930db81ca6a01d4d0e966b4a7f09be4f2f8772176b511288157b9ed4cb1bc8215c294fb12e022117babbb4087b7452bdee17bcb2
   languageName: node
   linkType: hard
 
@@ -1146,15 +1145,6 @@ __metadata:
     debug: ^3.2.7
     find-up: ^2.1.0
   checksum: 3e6407461d12b1568556fc9a84668415693ecce92d17d7407353defcfcafec5d3d8dfa2d9eda3743b3b53ef04101d8aa69072b3d634d92e766c3dfa10505542d
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-cumul8@npm:^1.4.56":
-  version: 1.4.56
-  resolution: "eslint-plugin-cumul8@npm:1.4.56"
-  peerDependencies:
-    eslint: ">=3.0.0"
-  checksum: 4f6782ac26307242fbd32bbd495e10d2c3449ba30a0b555a514cb53714e86ff7a010287cc26dde7da1dfc2a8cd3ed6b414b6be63ec0d39f173783bb933fe3510
   languageName: node
   linkType: hard
 
@@ -3005,7 +2995,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "youtube-hide-watched@workspace:."
   dependencies:
-    eslint-config-globex: 6.5.0
+    eslint-config-globex: 6.6.0
     prettier-package-json: 2.6.3
   languageName: unknown
   linkType: soft
