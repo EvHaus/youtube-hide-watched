@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"eslint-config-globex": "6.13.0",
-		"prettier-package-json": "2.6.3"
+		"prettier-package-json": "2.6.4"
 	},
 	"publishConfig": {
 		"access": "public"
