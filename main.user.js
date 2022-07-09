@@ -2,6 +2,7 @@
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
 // @version      4.4.0
+// @license      MIT
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @author       netjeff
