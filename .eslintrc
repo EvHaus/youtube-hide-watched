@@ -1,5 +1,6 @@
 {
-    extends: [
-      "eslint-config-globex"
+    "extends": [
+      "eslint-config-globex",
+      "plugin:userscripts/recommended"
     ]
 }

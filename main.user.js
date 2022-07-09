@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      4.3.2
+// @version      4.4.0
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
 // @author       netjeff
 // @author       actionless
-// @include      http://*.youtube.com/*
-// @include      http://youtube.com/*
-// @include      https://*.youtube.com/*
-// @include      https://youtube.com/*
+// @match        http://*.youtube.com/*
+// @match        http://youtube.com/*
+// @match        https://*.youtube.com/*
+// @match        https://youtube.com/*
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -29,20 +29,18 @@
 	// of the video, it will be hidden.
 	//
 	// Note that YouTube is kind of fuzzy on the watched percent,
-	// so trying to be very specific with this value may not work
-	const HiddenThresholdPercent = 10;
-
-	// ====================================================================
+	// so trying to be very specific with this value may not work.
+	const HIDDEN_THRESHOLD_PERCENT = 10;
 
 	// Enable for debugging
-	const __DEV__ = false;
+	const DEBUG = false;
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
 
 	const logDebug = (msg) => {
 		// eslint-disable-next-line no-console
-		if (__DEV__) console.log(msg);
+		if (DEBUG) console.log(msg);
 	};
 
 	// GreaseMonkey no longer supports GM_addStyle. So we have to define
@@ -144,7 +142,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		const watched = document.querySelectorAll('.ytd-thumbnail-overlay-resume-playback-renderer');
 
 		const withThreshold = Array.from(watched).filter((bar) => {
-			return bar.style.width && parseInt(bar.style.width, 10) >= HiddenThresholdPercent;
+			return bar.style.width && parseInt(bar.style.width, 10) >= HIDDEN_THRESHOLD_PERCENT;
 		});
 
 		logDebug(

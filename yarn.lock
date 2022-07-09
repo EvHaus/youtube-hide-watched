@@ -1272,6 +1272,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-userscripts@npm:0.2.8":
+  version: 0.2.8
+  resolution: "eslint-plugin-userscripts@npm:0.2.8"
+  dependencies:
+    requireindex: ~1.2.0
+    semver: ^7.3.5
+  peerDependencies:
+    eslint: ">=6.0.0 <9"
+  checksum: 440e72e514859c9dfa1b30d11ce088d8e743023db2873b4d30f749b330046ce49fd6e4cebb6c1d24b133e1bc76c1e90d915c3537b42264a4c8b48e8f1ab83be3
+  languageName: node
+  linkType: hard
+
 "eslint-rule-composer@npm:^0.3.0":
   version: 0.3.0
   resolution: "eslint-rule-composer@npm:0.3.0"
@@ -2491,6 +2503,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"requireindex@npm:~1.2.0":
+  version: 1.2.0
+  resolution: "requireindex@npm:1.2.0"
+  checksum: 50d8b10a1ff1fdf6aea7a1870bc7bd238b0fb1917d8d7ca17fd03afc38a65dcd7a8a4eddd031f89128b5f0065833d5c92c4fef67f2c04e8624057fe626c9cf94
+  languageName: node
+  linkType: hard
+
 "resolve-from@npm:^4.0.0":
   version: 4.0.0
   resolution: "resolve-from@npm:4.0.0"
@@ -2593,7 +2612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.7":
+"semver@npm:^7.3.5, semver@npm:^7.3.7":
   version: 7.3.7
   resolution: "semver@npm:7.3.7"
   dependencies:
@@ -2961,6 +2980,7 @@ __metadata:
   resolution: "youtube-hide-watched@workspace:."
   dependencies:
     eslint-config-globex: 6.14.0
+    eslint-plugin-userscripts: 0.2.8
     prettier-package-json: 2.6.4
   languageName: unknown
   linkType: soft
