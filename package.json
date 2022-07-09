@@ -13,7 +13,7 @@
 		"url": "https://github.com/EvHaus/youtube-hide-watched/issues"
 	},
 	"scripts": {
-		"eslint": "eslint-globex main.js",
+		"eslint": "eslint-globex main.user.js",
 		"lint": "yarn packagelint && yarn eslint",
 		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
 		"test": "yarn lint"
