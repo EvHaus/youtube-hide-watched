@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      4.4.0
+// @version      4.4.1
 // @license      MIT
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
@@ -185,6 +185,10 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 
 	const updateClassOnWatchedItems = function () {
 
+		// Remove existing classes
+		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
+		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
+
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
 		if (window.location.href.indexOf('/feed/history') >= 0) return;
@@ -255,10 +259,6 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 			}
 
 			if (watchedItem) {
-				// Remove existing classes
-				watchedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
-				watchedItem.classList.remove('YT-HWV-WATCHED-HIDDEN');
-
 				// Add current class
 				if (state === 'dimmed') {
 					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
@@ -267,11 +267,8 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 				}
 			}
 
-			if (dimmedItem) {
-				dimmedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
-				if (state === 'dimmed' || state === 'hidden') {
-					dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
-				}
+			if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
+				dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 			}
 		});
 	};
