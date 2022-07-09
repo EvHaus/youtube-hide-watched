@@ -19,7 +19,6 @@
 
 (function (_undefined) {
 
-	// ===================================================================
 	// How much of the video needs to be watched before it will be hidden?
 	//
 	// For example, when set to 10 the video will *not* be hidden until
@@ -58,15 +57,11 @@
 	};
 
 	addStyle(`
-.YT-HWV-WATCHED-HIDDEN {
-	display: none !important;
-}
+.YT-HWV-WATCHED-HIDDEN { display: none !important }
 
-.YT-HWV-WATCHED-DIMMED {
-	opacity: 0.2  /* 0.9 minor dimming, 0.1 extreme dimming */
-}
+.YT-HWV-WATCHED-DIMMED { opacity: 0.3 }
 
-.YT-HWV-HIDDEN-ROW-PARENT {padding-bottom: 10px}
+.YT-HWV-HIDDEN-ROW-PARENT { padding-bottom: 10px }
 
 .YT-HWV-BUTTON {
 	background: transparent;
@@ -80,9 +75,8 @@
 	width: 40px;
 }
 
-/* Match the button color to "dark" background (as of Feb 2020) */
-html[dark]         .YT-HWV-BUTTON,  /* for the "Dark theme" overall */
-ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
+html[dark]         .YT-HWV-BUTTON,  /* "Dark" theme support */
+ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
 {
 	color: #EFEFEF;
 }
@@ -169,16 +163,18 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 	// ===========================================================
 
 	const determineYoutubeSection = function () {
+		const {href} = window.location;
+
 		let youtubeSection = 'misc';
-		if (window.location.href.indexOf('/watch?') > 0) {
+		if (href.includes('/watch?')) {
 			youtubeSection = 'watch';
-		} else if (window.location.href.match(/.*\/(user|channel|c)\/.+\/videos/u)) {
+		} else if (href.match(/.*\/(user|channel|c)\/.+\/videos/u)) {
 			youtubeSection = 'channel';
-		} else if (window.location.href.indexOf('/feed/subscriptions') > 0) {
+		} else if (href.includes('/feed/subscriptions')) {
 			youtubeSection = 'subscriptions';
-		} else if (window.location.href.indexOf('/feed/trending') >= 0) {
+		} else if (href.includes('/feed/trending')) {
 			youtubeSection = 'trending';
-		} else if (window.location.href.indexOf('/playlist?') >= 0) {
+		} else if (href.includes('/playlist?')) {
 			youtubeSection = 'playlist';
 		}
 		return youtubeSection;
@@ -195,11 +191,14 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 		const section = determineYoutubeSection();
 		const state = localStorage[`YTHWV_STATE_${section}`];
 
+		// eslint-disable-next-line complexity
 		findWatchedElements().forEach((item, _i) => {
+			let watchedItem;
+			let dimmedItem;
+
 			// "Subscription" section needs us to hide the "#contents",
 			// but in the "Trending" section, that class will hide everything.
 			// So there, we need to hide the "ytd-video-renderer"
-			let watchedItem;
 			if (section === 'subscriptions') {
 				// For rows, hide the row and the header too. We can't hide
 				// their entire parent because then we'll get the infinite
@@ -225,6 +224,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else if (section === 'watch') {
 				watchedItem = item.closest('ytd-compact-video-renderer');
+
 				// Don't hide video if it's going to play next.
 				//
 				// If there is no watchedItem - we probably got
@@ -234,7 +234,16 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 				if (
 					watchedItem &&
 					watchedItem.closest('ytd-compact-autoplay-renderer')
-				) watchedItem = null;
+				) {
+					watchedItem = null;
+				}
+
+				// For playlist items, we never hide them, but we will dim
+				// them even if current mode is to hide rather than dim.
+				const watchedItemInPlaylist = item.closest('ytd-playlist-panel-video-renderer');
+				if (!watchedItem && watchedItemInPlaylist) {
+					dimmedItem = watchedItemInPlaylist;
+				}
 			} else {
 				// For home page and other areas
 				watchedItem = (
@@ -254,6 +263,13 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* When watching in "theater mode" the top b
 					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				} else if (state === 'hidden') {
 					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+				}
+			}
+
+			if (dimmedItem) {
+				dimmedItem.classList.remove('YT-HWV-WATCHED-DIMMED');
+				if (state === 'dimmed' || state === 'hidden') {
+					dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				}
 			}
 		});
