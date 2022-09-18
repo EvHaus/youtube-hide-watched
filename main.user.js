@@ -373,7 +373,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 			if (MutationObserver) {
 				const obs = new MutationObserver(((mutations, _observer) => {
 					if (mutations[0].addedNodes.length || mutations[0].removedNodes.length) {
-						// eslint-disable-next-line callback-return
+
 						callback(mutations);
 					}
 				}));
