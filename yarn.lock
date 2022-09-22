@@ -615,15 +615,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-userscripts@npm:0.2.9":
-  version: 0.2.9
-  resolution: "eslint-plugin-userscripts@npm:0.2.9"
+"eslint-plugin-userscripts@npm:0.2.10":
+  version: 0.2.10
+  resolution: "eslint-plugin-userscripts@npm:0.2.10"
   dependencies:
     requireindex: ~1.2.0
     semver: ^7.3.5
   peerDependencies:
     eslint: ">=6.0.0 <9"
-  checksum: 36c946251f13d41969dfc44bf99ff2ba581d485926ed0be161e914f0cdf87fcb815249e06faa23838815dad812d05bc75ac9312fd3f688f367ec3b9ce0418737
+  checksum: 7d71c5790aae02091145359a0714659e0ed9c068b865f5e7ad4da710cabb5274e5edbfe2ea28e221a78ae5eba911b5ec37016355dc34421a20651db61318d448
   languageName: node
   linkType: hard
 
@@ -2022,7 +2022,7 @@ __metadata:
   resolution: "youtube-hide-watched@workspace:."
   dependencies:
     eslint-config-globex: 7.0.0
-    eslint-plugin-userscripts: 0.2.9
+    eslint-plugin-userscripts: 0.2.10
     prettier-package-json: 2.6.4
   languageName: unknown
   linkType: soft
