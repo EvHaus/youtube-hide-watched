@@ -21,7 +21,7 @@
 	"devDependencies": {
 		"eslint-config-globex": "7.0.0",
 		"eslint-plugin-userscripts": "0.2.10",
-		"prettier-package-json": "2.6.4"
+		"prettier-package-json": "2.7.0"
 	},
 	"publishConfig": {
 		"access": "public"
