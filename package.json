@@ -19,7 +19,7 @@
 		"test": "yarn lint"
 	},
 	"devDependencies": {
-		"eslint-config-globex": "7.0.0",
+		"eslint-config-globex": "7.2.0",
 		"eslint-plugin-userscripts": "0.2.10",
 		"prettier-package-json": "2.7.0"
 	},
