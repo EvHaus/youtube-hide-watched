@@ -224,7 +224,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 
 			} else if (section === 'channel') {
 				// Channel "Videos" section needs special handling
-				watchedItem = item.closest('.ytd-grid-renderer');
+				watchedItem = item.closest('.ytd-rich-item-renderer');
 			} else if (section === 'playlist') {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else if (section === 'watch') {
