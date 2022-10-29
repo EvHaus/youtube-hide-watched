@@ -221,10 +221,6 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 				if (watchedItem && watchedItem.classList.contains('ytd-item-section-renderer')) {
 					watchedItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
 				}
-
-			} else if (section === 'channel') {
-				// Channel "Videos" section needs special handling
-				watchedItem = item.closest('.ytd-grid-renderer');
 			} else if (section === 'playlist') {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else if (section === 'watch') {
