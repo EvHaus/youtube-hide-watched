@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      4.4.1
+// @version      4.4.2
 // @license      MIT
 // @description  Hides watched videos from your YouTube subscriptions page
 // @author       Ev Haus
@@ -196,7 +196,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 		const section = determineYoutubeSection();
 		const state = localStorage[`YTHWV_STATE_${section}`];
 
-		// eslint-disable-next-line complexity
+
 		findWatchedElements().forEach((item, _i) => {
 			let watchedItem;
 			let dimmedItem;
