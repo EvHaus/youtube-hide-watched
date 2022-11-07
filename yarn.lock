@@ -481,11 +481,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-globex@npm:7.3.0":
-  version: 7.3.0
-  resolution: "eslint-config-globex@npm:7.3.0"
+"eslint-config-globex@npm:7.4.0":
+  version: 7.4.0
+  resolution: "eslint-config-globex@npm:7.4.0"
   dependencies:
-    eslint: ^8.26.0
+    eslint: ^8.27.0
     eslint-plugin-filenames: ^1.3.2
     eslint-plugin-import: ^2.26.0
     eslint-plugin-json: ^3.1.0
@@ -493,7 +493,7 @@ __metadata:
     eslint-plugin-sonarjs: ^0.16.0
   bin:
     eslint-globex: ./bin/eslint-globex.js
-  checksum: b19bb240278e03b18cd1301117c1962e69e75e856e41245685ea8e7239c55cd3134805ea4896bd2c6b2ae0ed83030d892cb3d0727820981ae4fe15f042858e25
+  checksum: 388124ab0bee581ed5bf5aadecf635e4c07b4e799fb34b5fff5ecc15e4a5f92539bab01bcba73fda5d7d3872b59b8bde6a03fe9f55fb6db06a8efe3cd9ddf8c7
   languageName: node
   linkType: hard
 
@@ -631,9 +631,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.26.0":
-  version: 8.26.0
-  resolution: "eslint@npm:8.26.0"
+"eslint@npm:^8.27.0":
+  version: 8.27.0
+  resolution: "eslint@npm:8.27.0"
   dependencies:
     "@eslint/eslintrc": ^1.3.3
     "@humanwhocodes/config-array": ^0.11.6
@@ -676,7 +676,7 @@ __metadata:
     text-table: ^0.2.0
   bin:
     eslint: bin/eslint.js
-  checksum: a2aced939ea060f77d10dcfced5cfeb940f63f383fd7ab1decadea64170ab552582e1c5909db1db641d4283178c9bc569f19b0f8900e00314a5f783e4b3f759d
+  checksum: 153b022d309e1b647a73b1bb0fa98912add699b06e279084155f23c6f2b5fc5abd05411fc1ba81608a24bbfaf044ca079544c16fffa6fc987b8f676c9960a2c4
   languageName: node
   linkType: hard
 
@@ -1987,7 +1987,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "youtube-hide-watched@workspace:."
   dependencies:
-    eslint-config-globex: 7.3.0
+    eslint-config-globex: 7.4.0
     eslint-plugin-userscripts: 0.2.10
     lefthook: 1.2.0
     prettier-package-json: 2.7.0
