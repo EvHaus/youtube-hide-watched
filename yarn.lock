@@ -1227,58 +1227,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook-darwin-arm64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-darwin-arm64@npm:1.1.4"
+"lefthook-darwin-arm64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-darwin-arm64@npm:1.2.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-darwin-x64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-darwin-x64@npm:1.1.4"
+"lefthook-darwin-x64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-darwin-x64@npm:1.2.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-linux-arm64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-linux-arm64@npm:1.1.4"
+"lefthook-linux-arm64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-linux-arm64@npm:1.2.0"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-linux-x64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-linux-x64@npm:1.1.4"
+"lefthook-linux-x64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-linux-x64@npm:1.2.0"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-windows-arm64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-windows-arm64@npm:1.1.4"
+"lefthook-windows-arm64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-windows-arm64@npm:1.2.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-windows-x64@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook-windows-x64@npm:1.1.4"
+"lefthook-windows-x64@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook-windows-x64@npm:1.2.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook@npm:1.1.4":
-  version: 1.1.4
-  resolution: "lefthook@npm:1.1.4"
+"lefthook@npm:1.2.0":
+  version: 1.2.0
+  resolution: "lefthook@npm:1.2.0"
   dependencies:
-    lefthook-darwin-arm64: 1.1.4
-    lefthook-darwin-x64: 1.1.4
-    lefthook-linux-arm64: 1.1.4
-    lefthook-linux-x64: 1.1.4
-    lefthook-windows-arm64: 1.1.4
-    lefthook-windows-x64: 1.1.4
+    lefthook-darwin-arm64: 1.2.0
+    lefthook-darwin-x64: 1.2.0
+    lefthook-linux-arm64: 1.2.0
+    lefthook-linux-x64: 1.2.0
+    lefthook-windows-arm64: 1.2.0
+    lefthook-windows-x64: 1.2.0
   dependenciesMeta:
     lefthook-darwin-arm64:
       optional: true
@@ -1294,7 +1294,7 @@ __metadata:
       optional: true
   bin:
     lefthook: bin/index.js
-  checksum: 7c25e5514311dcc131a7a6a883df667bb4772e47a9306ba904c6cac352548bc1fe090621940203f33733de5d8716fdac2103dfc938c1c42f13f9ebe4ba7a0796
+  checksum: df57429422d5454b684ea461b6a0a34edc13e64d8cc97eff2d56cccc65e9d56ee19ce436355ec9731502eacf440eed6e8ead8e52d031a92977f6b9f9e21fbe32
   languageName: node
   linkType: hard
 
@@ -1989,7 +1989,7 @@ __metadata:
   dependencies:
     eslint-config-globex: 7.3.0
     eslint-plugin-userscripts: 0.2.10
-    lefthook: 1.1.4
+    lefthook: 1.2.0
     prettier-package-json: 2.7.0
   languageName: unknown
   linkType: soft
