@@ -3,19 +3,19 @@ colors: false
 post-merge:
   commands:
     install:
-      run: yarn install --frozen-lockfile
+      run: pnpm install
 
 post-rebase:
   commands:
     install:
-      run: yarn install
+      run: pnpm install
 
 pre-commit:
   parallel: true
   commands:
     eslint:
       glob: "*.{js,jsx,ts,tsx}"
-      run: yarn eslint-globex --fix {staged_files} && git add {staged_files}
+      run: pnpm eslint-globex --fix {staged_files} && git add {staged_files}
     prettier-package-json:
       glob: "package.json"
-      run: yarn prettier-package-json --use-tabs --write {staged_files} && git add {staged_files}
+      run: pnpm prettier-package-json --use-tabs --write {staged_files} && git add {staged_files}

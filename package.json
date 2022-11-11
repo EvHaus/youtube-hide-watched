@@ -14,9 +14,9 @@
 	},
 	"scripts": {
 		"eslint": "eslint-globex main.user.js",
-		"lint": "yarn packagelint && yarn eslint",
+		"lint": "pnpm packagelint && pnpm eslint",
 		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
-		"test": "yarn lint"
+		"test": "pnpm lint"
 	},
 	"devDependencies": {
 		"eslint-config-globex": "7.4.0",
@@ -26,6 +26,5 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"packageManager": "yarn@3.2.4"
+	}
 }
