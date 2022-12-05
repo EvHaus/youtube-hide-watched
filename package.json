@@ -21,7 +21,7 @@
 	"devDependencies": {
 		"eslint-config-globex": "7.5.1",
 		"eslint-plugin-userscripts": "0.2.10",
-		"lefthook": "1.2.3",
+		"lefthook": "1.2.4",
 		"prettier-package-json": "2.7.0"
 	},
 	"publishConfig": {
