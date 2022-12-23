@@ -4,13 +4,13 @@ specifiers:
   eslint-config-globex: 7.5.1
   eslint-plugin-userscripts: 0.2.10
   lefthook: 1.2.6
-  prettier-package-json: 2.7.0
+  prettier-package-json: 2.8.0
 
 devDependencies:
   eslint-config-globex: 7.5.1
   eslint-plugin-userscripts: 0.2.10
   lefthook: 1.2.6
-  prettier-package-json: 2.7.0
+  prettier-package-json: 2.8.0
 
 packages:
 
@@ -244,7 +244,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
 
   /cosmiconfig/7.0.1:
@@ -1248,8 +1248,8 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /prettier-package-json/2.7.0:
-    resolution: {integrity: sha512-51I3/fYpBTLDXQDQK7+dfNlJzh5wdKhK8QteSZTZMppQd6aGpr1wqpwlKKZF1KdWA+91rwfpHUBrKwd2PXdXag==}
+  /prettier-package-json/2.8.0:
+    resolution: {integrity: sha512-WxtodH/wWavfw3MR7yK/GrS4pASEQ+iSTkdtSxPJWvqzG55ir5nvbLt9rw5AOiEcqqPCRM92WCtR1rk3TG3JSQ==}
     hasBin: true
     dependencies:
       '@types/parse-author': 2.0.1
