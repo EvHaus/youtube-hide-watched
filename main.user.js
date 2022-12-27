@@ -70,25 +70,26 @@
 	margin: 0 16px;
 }
 
-.YT-HWV-BUTTON {
+.YT-HWV-BUTTON-STYLE {
 	background: transparent;
 	border: 0;
 	color: rgb(96,96,96);
 	cursor: pointer;
 	height: 40px;
 	outline: 0;
-	margin: 8px;
-	padding: 8px;
 	width: 40px;
 }
 
-html[dark]         .YT-HWV-BUTTON,  /* "Dark" theme support */
-ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
+.YT-HWV-BUTTON { }
+.YT-HWV-BUTTON-SHORTS { }
+
+html[dark]         .YT-HWV-BUTTON-STYLE,  /* "Dark" theme support */
+ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar containing the button is always dark regardless of "Dark theme" */
 {
 	color: #EFEFEF;
 }
 
-.YT-HWV-BUTTON svg {
+.YT-HWV-BUTTON-STYLE svg {
 	height: 24px;
 	width: 24px;
 }
@@ -118,6 +119,9 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
 		dimmed: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
 		hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>',
+		short_normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path transform="scale(3.0)" d="M10.65,1C10.65,1,10.65,1,10.65,1c-0.37,0-0.75,0.1-1.09,0.31L4.25,4.46C3.44,4.93,2.96,5.89,3,6.9  C3.05,7.9,3.58,8.77,4.39,9.18c0.02,0.01,0.75,0.35,0.75,0.35l-0.9,0.53c-1.14,0.68-1.58,2.27-0.98,3.55C3.69,14.49,4.5,15,5.35,15  c0.37,0,0.74-0.1,1.09-0.31l5.31-3.15c0.8-0.48,1.29-1.43,1.24-2.45c-0.04-0.99-0.58-1.87-1.39-2.27c-0.02-0.01-0.75-0.35-0.75-0.35  l0.9-0.53c1.14-0.68,1.58-2.27,0.97-3.55C12.31,1.51,11.49,1,10.65,1L10.65,1z" /></g></svg>',
+		short_dimmed: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path transform="scale(3.0)" d="M10.65,1C10.65,1,10.65,1,10.65,1c-0.37,0-0.75,0.1-1.09,0.31L4.25,4.46C3.44,4.93,2.96,5.89,3,6.9  C3.05,7.9,3.58,8.77,4.39,9.18c0.02,0.01,0.75,0.35,0.75,0.35l-0.9,0.53c-1.14,0.68-1.58,2.27-0.98,3.55C3.69,14.49,4.5,15,5.35,15  c0.37,0,0.74-0.1,1.09-0.31l5.31-3.15c0.8-0.48,1.29-1.43,1.24-2.45c-0.04-0.99-0.58-1.87-1.39-2.27c-0.02-0.01-0.75-0.35-0.75-0.35  l0.9-0.53c1.14-0.68,1.58-2.27,0.97-3.55C12.31,1.51,11.49,1,10.65,1L10.65,1z" /></g></svg>',
+		short_hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g><title>layer_1</title><g id="svg_1" fill-opacity="0.3" fill="currentColor"><path id="svg_2" transform="scale(3.0)" d="m10.65,1c0,0 0,0 0,0c-0.37,0 -0.75,0.1 -1.09,0.31l-5.31,3.15c-0.81,0.47 -1.29,1.43 -1.25,2.44c0.05,1 0.58,1.87 1.39,2.28c0.02,0.01 0.75,0.35 0.75,0.35l-0.9,0.53c-1.14,0.68 -1.58,2.27 -0.98,3.55c0.43,0.88 1.24,1.39 2.09,1.39c0.37,0 0.74,-0.1 1.09,-0.31l5.31,-3.15c0.8,-0.48 1.29,-1.43 1.24,-2.45c-0.04,-0.99 -0.58,-1.87 -1.39,-2.27c-0.02,-0.01 -0.75,-0.35 -0.75,-0.35l0.9,-0.53c1.14,-0.68 1.58,-2.27 0.97,-3.55c-0.41,-0.88 -1.23,-1.39 -2.07,-1.39l0,0z"/></g><rect fill="#000000" stroke-width=" 0px" x="22.77485" y="1.42931" width="4.2" height="43.34631" id="svg_2" transform="rotate(-28.0567, 24.8749, 23.1025)"/></g></svg>',
 	};
 	/* eslint-enable max-len */
 
@@ -288,11 +292,20 @@ ytd-masthead[dark] .YT-HWV-BUTTON   /* In "Theater mode" the top bar containing 
 		if (!target) return;
 
 		// Generate buttons DOM
+
 		const buttonArea = document.createElement('div');
         buttonArea.classList.add('YT-HWV-BUTTON-AREA');
+
         const button = document.createElement('button');
-		button.classList.add('YT-HWV-BUTTON');
+		button.classList.add('YT-HWV-BUTTON','YT-HWV-BUTTON-STYLE');
         buttonArea.appendChild(button);
+
+        const button_shorts = document.createElement('button');
+        button_shorts.setAttribute('size','48');
+		button_shorts.classList.add('YT-HWV-BUTTON-SHORTS','YT-HWV-BUTTON-STYLE');
+            button_shorts.innerHTML = icons['short_hidden'];
+		    button_shorts.setAttribute('title', 'Toggle Shorts');
+        buttonArea.appendChild(button_shorts);
 
 		// Attach events
 		button.addEventListener('click', () => {
