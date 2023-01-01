@@ -62,6 +62,10 @@
 
 .YT-HWV-WATCHED-DIMMED { opacity: 0.3 }
 
+.YT-HWV-SHORTS-HIDDEN { display: none !important }
+
+.YT-HWV-SHORTS-DIMMED { opacity: 0.3 }
+
 .YT-HWV-HIDDEN-ROW-PARENT { padding-bottom: 10px }
 
 .YT-HWV-BUTTON-AREA {
@@ -158,6 +162,18 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		);
 
 		return withThreshold;
+	};
+
+	// ===========================================================
+
+	const findAllShortsElements_OnSubscriptions = function () {
+		const shorts = document.querySelectorAll('[overlay-style=SHORTS]');
+
+		logDebug(
+			`[YT-HWV] Found ${shorts.length} shorts elements`
+		);
+
+		return shorts;
 	};
 
 	// ===========================================================
@@ -283,6 +299,52 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 	// ===========================================================
 
+	const updateClassOnShortsItems = function () {
+
+		const section = determineYoutubeSection();
+
+		// As of January 2023, only the Subscriptions page mixes Shorts with regular videos.
+		// So do nothing, *UNLESS* we're on Subscriptions page
+		if ( section != 'subscriptions') return;
+
+		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
+		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => el.classList.remove('YT-HWV-SHORTS-HIDDEN'));
+
+		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
+
+		findAllShortsElements_OnSubscriptions().forEach((item, _i) => {
+			let shortsItem;
+
+			// For rows, hide the row and the header too. We can't hide
+			// their entire parent because then we'll get the infinite
+			// page loader to load forever.
+			shortsItem = (
+				// Grid item
+				item.closest('.ytd-grid-renderer') ||
+				item.closest('.ytd-item-section-renderer') ||
+				// List item
+				item.closest('#grid-container')
+			);
+
+			// If we're hiding the .ytd-item-section-renderer element, we need to give it
+			// some extra spacing otherwise we'll get stuck in infinite page loading
+			if (shortsItem && shortsItem.classList.contains('ytd-item-section-renderer')) {
+				shortsItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+			}
+
+			if (shortsItem) {
+				// Add current class
+				if (state === 'dimmed') {
+					shortsItem.classList.add('YT-HWV-SHORTS-DIMMED');
+				} else if (state === 'hidden') {
+					shortsItem.classList.add('YT-HWV-SHORTS-HIDDEN');
+				}
+			}
+		});
+	};
+
+	// ===========================================================
+
 	const addButtons = function () {
 		if (isButtonAlreadyThere()) {
 			setButtonState();
@@ -346,7 +408,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 			localStorage[`YTHWV_STATE_SHORTS_${section}`] = newState;
 
 			setButtonState_shorts();
-			// TODO updateClassOnWatchedItems();
+			updateClassOnShortsItems();
 		});
 
 		// Insert buttons into DOM
@@ -391,8 +453,9 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		// something *ELSE* changed state (not our buttons), so keep going
 
-		logDebug('[YT-HWV] Running check for watched videos');
+		logDebug('[YT-HWV] debounce: Running check for watched videos, and shorts');
 		updateClassOnWatchedItems();
+		updateClassOnShortsItems();
 		addButtons();
 	}, 250);
 
