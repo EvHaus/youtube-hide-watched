@@ -3,7 +3,7 @@
 // @namespace    https://www.haus.gg/
 // @version      5.0
 // @license      MIT
-// @description  Hides watched videos from your YouTube subscriptions page
+// @description  Hides watched videos from your YouTube subscriptions page. Also lets you hide shorts.
 // @author       Ev Haus
 // @author       netjeff
 // @author       actionless
@@ -120,14 +120,14 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 	/* eslint-disable max-len */
 	const icons = {
-		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
 		dimmed: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
-		hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>'
+		hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57l6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></g></svg>',
+		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></g></svg>',
 	};
 	const icons_shorts = {
-		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path transform="scale(3.0)" d="M10.65,1C10.65,1,10.65,1,10.65,1c-0.37,0-0.75,0.1-1.09,0.31L4.25,4.46C3.44,4.93,2.96,5.89,3,6.9  C3.05,7.9,3.58,8.77,4.39,9.18c0.02,0.01,0.75,0.35,0.75,0.35l-0.9,0.53c-1.14,0.68-1.58,2.27-0.98,3.55C3.69,14.49,4.5,15,5.35,15  c0.37,0,0.74-0.1,1.09-0.31l5.31-3.15c0.8-0.48,1.29-1.43,1.24-2.45c-0.04-0.99-0.58-1.87-1.39-2.27c-0.02-0.01-0.75-0.35-0.75-0.35  l0.9-0.53c1.14-0.68,1.58-2.27,0.97-3.55C12.31,1.51,11.49,1,10.65,1L10.65,1z" /></g></svg>',
 		dimmed: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor" fill-opacity="0.3"><path transform="scale(3.0)" d="M10.65,1C10.65,1,10.65,1,10.65,1c-0.37,0-0.75,0.1-1.09,0.31L4.25,4.46C3.44,4.93,2.96,5.89,3,6.9  C3.05,7.9,3.58,8.77,4.39,9.18c0.02,0.01,0.75,0.35,0.75,0.35l-0.9,0.53c-1.14,0.68-1.58,2.27-0.98,3.55C3.69,14.49,4.5,15,5.35,15  c0.37,0,0.74-0.1,1.09-0.31l5.31-3.15c0.8-0.48,1.29-1.43,1.24-2.45c-0.04-0.99-0.58-1.87-1.39-2.27c-0.02-0.01-0.75-0.35-0.75-0.35  l0.9-0.53c1.14-0.68,1.58-2.27,0.97-3.55C12.31,1.51,11.49,1,10.65,1L10.65,1z" /></g></svg>',
 		hidden: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g><title>layer_1</title><g id="svg_1" fill-opacity="0.3" fill="currentColor"><path id="svg_2" transform="scale(3.0)" d="m10.65,1c0,0 0,0 0,0c-0.37,0 -0.75,0.1 -1.09,0.31l-5.31,3.15c-0.81,0.47 -1.29,1.43 -1.25,2.44c0.05,1 0.58,1.87 1.39,2.28c0.02,0.01 0.75,0.35 0.75,0.35l-0.9,0.53c-1.14,0.68 -1.58,2.27 -0.98,3.55c0.43,0.88 1.24,1.39 2.09,1.39c0.37,0 0.74,-0.1 1.09,-0.31l5.31,-3.15c0.8,-0.48 1.29,-1.43 1.24,-2.45c-0.04,-0.99 -0.58,-1.87 -1.39,-2.27c-0.02,-0.01 -0.75,-0.35 -0.75,-0.35l0.9,-0.53c1.14,-0.68 1.58,-2.27 0.97,-3.55c-0.41,-0.88 -1.23,-1.39 -2.07,-1.39l0,0z"/></g><rect fill="#000000" stroke-width=" 0px" x="22.77485" y="1.42931" width="4.2" height="43.34631" id="svg_2" transform="rotate(-28.0567, 24.8749, 23.1025)"/></g></svg>',
+		normal: '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="currentColor"><path transform="scale(3.0)" d="M10.65,1C10.65,1,10.65,1,10.65,1c-0.37,0-0.75,0.1-1.09,0.31L4.25,4.46C3.44,4.93,2.96,5.89,3,6.9  C3.05,7.9,3.58,8.77,4.39,9.18c0.02,0.01,0.75,0.35,0.75,0.35l-0.9,0.53c-1.14,0.68-1.58,2.27-0.98,3.55C3.69,14.49,4.5,15,5.35,15  c0.37,0,0.74-0.1,1.09-0.31l5.31-3.15c0.8-0.48,1.29-1.43,1.24-2.45c-0.04-0.99-0.58-1.87-1.39-2.27c-0.02-0.01-0.75-0.35-0.75-0.35  l0.9-0.53c1.14-0.68,1.58-2.27,0.97-3.55C12.31,1.51,11.49,1,10.65,1L10.65,1z" /></g></svg>',
 	};
 	/* eslint-enable max-len */
 
@@ -305,7 +305,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		// As of January 2023, only the Subscriptions page mixes Shorts with regular videos.
 		// So do nothing, *UNLESS* we're on Subscriptions page
-		if ( section != 'subscriptions') return;
+		if (section !== 'subscriptions') return;
 
 		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
 		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => el.classList.remove('YT-HWV-SHORTS-HIDDEN'));
@@ -313,12 +313,11 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
 
 		findAllShortsElements_OnSubscriptions().forEach((item, _i) => {
-			let shortsItem;
 
 			// For rows, hide the row and the header too. We can't hide
 			// their entire parent because then we'll get the infinite
 			// page loader to load forever.
-			shortsItem = (
+			const shortsItem = (
 				// Grid item
 				item.closest('.ytd-grid-renderer') ||
 				item.closest('.ytd-item-section-renderer') ||
@@ -362,7 +361,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		// Generate "hide watched" button DOM
 		const button = document.createElement('button');
-		button.classList.add('YT-HWV-BUTTON','YT-HWV-BUTTON-STYLE');
+		button.classList.add('YT-HWV-BUTTON', 'YT-HWV-BUTTON-STYLE');
 		buttonArea.appendChild(button);
 
 		// Attach events to "hide watched" button
@@ -387,8 +386,8 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		// Generate "hide shorts" button DOM
 		const button_shorts = document.createElement('button');
-		button_shorts.setAttribute('size','48');
-		button_shorts.classList.add('YT-HWV-BUTTON-SHORTS','YT-HWV-BUTTON-STYLE');
+		button_shorts.setAttribute('size', '48');
+		button_shorts.classList.add('YT-HWV-BUTTON-SHORTS', 'YT-HWV-BUTTON-STYLE');
 		buttonArea.appendChild(button_shorts);
 
 		// Attach events to "hide shorts" button
@@ -443,13 +442,12 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		// don't react if only *OUR* own buttons changed state
 		// to avoid running an endless loop
 
-		if ( mutations && mutations.length === 1 ) { return; }
+		if (mutations && mutations.length === 1) { return; }
 
-		// const classList = mutations[0].target.classList;
-
-		if ( mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
-		     mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS') )
-		{ return; }
+		if (mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
+			mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS')) {
+			return;
+		}
 
 		// something *ELSE* changed state (not our buttons), so keep going
 
