@@ -19,9 +19,9 @@
 		"test": "pnpm lint"
 	},
 	"devDependencies": {
-		"eslint-config-globex": "7.5.1",
+		"eslint-config-globex": "7.7.0",
 		"eslint-plugin-userscripts": "0.2.10",
-		"lefthook": "1.2.6",
+		"lefthook": "1.2.7",
 		"prettier-package-json": "2.8.0"
 	},
 	"publishConfig": {
