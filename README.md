@@ -1,6 +1,6 @@
 # youtube-hide-watched
 
-A simple userscript for toggling visibility of watched videos in YouTube.
+A simple userscript for toggling visibility of watched videos in YouTube, on your Subscriptions page and elsewhere on the site.  Can also toggles Shorts on your subscriptions page.
 
 # Installation
 
@@ -10,9 +10,13 @@ A simple userscript for toggling visibility of watched videos in YouTube.
 
 # How to Use
 
-The script adds a small button at the top of the page. Pressing the button cycles through showing watched videos normally, then dimmed, then entirely hidden.  See screenshot below.
+The script adds two small buttons at the top of the page, see screenshot below. Pressing the "Watched Videos" button cycles through showing watched videos normally, then dimmed, then entirely hidden.  Pressing the "Shorts" button cycles through showing shorts normally, then dimmed, then entirely hidden.
 
-The button keeps track of different areas of YouTube separately.  This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages.  Here are the areas that the button keeps track of separately:
+You will see the buttons at the top of the page, to right of the Search box.
+
+![screenshot](screenshot.png 'Screenshot')
+
+The "Watched Videos" button keeps track of different areas of YouTube separately.  This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages.  Here are the areas that the button keeps track of separately:
 - Subscriptions page 
 - Channel pages
 - Trending page
@@ -20,6 +24,4 @@ The button keeps track of different areas of YouTube separately.  This allows yo
 - Playlist pages
 - Everywhere else
 
-You will see the the button at the top of the page, to right of the Search box.
-
-![screenshot](screenshot.png 'Screenshot')
+YouTube does not keep track of which Shorts you've watched.  So the "Shorts" button dims/hides all Shorts.
