@@ -1,6 +1,6 @@
 # youtube-hide-watched
 
-A simple userscript for toggling visibility of watched videos in YouTube, on your Subscriptions page and elsewhere on the site.  Can also toggles Shorts on your subscriptions page.
+A simple userscript for toggling visibility of watched videos in YouTube, on your Subscriptions page and elsewhere on the site. Also provides a toggle to hide YouTube Shorts on your subscriptions page.
 
 # Installation
 
@@ -10,13 +10,13 @@ A simple userscript for toggling visibility of watched videos in YouTube, on you
 
 # How to Use
 
-The script adds two small buttons at the top of the page, see screenshot below. Pressing the "Watched Videos" button cycles through showing watched videos normally, then dimmed, then entirely hidden.  Pressing the "Shorts" button cycles through showing shorts normally, then dimmed, then entirely hidden.
+The script adds two small buttons at the top of the page, see screenshot below. Pressing the "Watched Videos" button cycles through showing watched videos normally, then dimmed, then entirely hidden. Pressing the "Shorts" button cycles through showing shorts normally, then dimmed, then entirely hidden.
 
 You will see the buttons at the top of the page, to right of the Search box.
 
 ![screenshot](screenshot.png 'Screenshot')
 
-The "Watched Videos" button keeps track of different areas of YouTube separately.  This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages.  Here are the areas that the button keeps track of separately:
+The "Watched Videos" button keeps track of different areas of YouTube separately. This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages. Here are the areas that the button keeps track of separately:
 - Subscriptions page 
 - Channel pages
 - Trending page
@@ -24,4 +24,4 @@ The "Watched Videos" button keeps track of different areas of YouTube separately
 - Playlist pages
 - Everywhere else
 
-YouTube does not keep track of which Shorts you've watched.  So the "Shorts" button dims/hides all Shorts.
+YouTube does not keep track of which Shorts you've watched, s the "Shorts" button dims/hides all Shorts.

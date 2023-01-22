@@ -3,7 +3,7 @@
 // @namespace    https://www.haus.gg/
 // @version      5.0
 // @license      MIT
-// @description  Hides watched videos from your YouTube subscriptions page. Also lets you hide shorts.
+// @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
 // @author       netjeff
 // @author       actionless
@@ -21,7 +21,6 @@
 (function (_undefined) {
 
 	// How much of the video needs to be watched before it will be hidden?
-	//
 	// For example, when set to 10 the video will *not* be hidden until
 	// you've watched at least 10 percent of the video.
 	//
@@ -33,14 +32,14 @@
 	const HIDDEN_THRESHOLD_PERCENT = 10;
 
 	// Enable for debugging
-	const DEBUG = false;
+	const DEBUG = true;
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
 
-	const logDebug = (msg) => {
+	const logDebug = (...msgs) => {
 		// eslint-disable-next-line no-console
-		if (DEBUG) console.log(msg);
+		if (DEBUG) console.log('[YT-HWV]', msgs);
 	};
 
 	// GreaseMonkey no longer supports GM_addStyle. So we have to define
@@ -157,7 +156,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		});
 
 		logDebug(
-			`[YT-HWV] Found ${watched.length} watched elements ` +
+			`Found ${watched.length} watched elements ` +
 			`(${withThreshold.length} within threshold)`
 		);
 
@@ -170,7 +169,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		const shorts = document.querySelectorAll('[overlay-style=SHORTS]');
 
 		logDebug(
-			`[YT-HWV] Found ${shorts.length} shorts elements`
+			`Found ${shorts.length} shorts elements`
 		);
 
 		return shorts;
@@ -347,7 +346,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 	const addButtons = function () {
 		if (isButtonAlreadyThere()) {
 			setButtonState();
-			setButtonState_shorts();
+			setButtonStateShorts();
 			return;
 		}
 
@@ -369,7 +368,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 			const section = determineYoutubeSection();
 			const state = localStorage[`YTHWV_STATE_${section}`];
 
-			logDebug(`[YT-HWV] button clicked while state: ${state}`);
+			logDebug(`Hide watched button clicked while state: ${state}`);
 
 			let newState = 'dimmed';
 			if (state === 'dimmed') {
@@ -385,17 +384,17 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		});
 
 		// Generate "hide shorts" button DOM
-		const button_shorts = document.createElement('button');
-		button_shorts.setAttribute('size', '48');
-		button_shorts.classList.add('YT-HWV-BUTTON-SHORTS', 'YT-HWV-BUTTON-STYLE');
-		buttonArea.appendChild(button_shorts);
+		const buttonShorts = document.createElement('button');
+		buttonShorts.setAttribute('size', '48');
+		buttonShorts.classList.add('YT-HWV-BUTTON-SHORTS', 'YT-HWV-BUTTON-STYLE');
+		buttonArea.appendChild(buttonShorts);
 
 		// Attach events to "hide shorts" button
-		button_shorts.addEventListener('click', () => {
+		buttonShorts.addEventListener('click', () => {
 			const section = determineYoutubeSection();
 			const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
 
-			logDebug(`[YT-HWV-SHORTS] button clicked while state: ${state}`);
+			logDebug(`Shorts button clicked while state: ${state}`);
 
 			let newState = 'dimmed';
 			if (state === 'dimmed') {
@@ -406,7 +405,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 			localStorage[`YTHWV_STATE_SHORTS_${section}`] = newState;
 
-			setButtonState_shorts();
+			setButtonStateShorts();
 			updateClassOnShortsItems();
 		});
 
@@ -414,7 +413,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		target.parentNode.insertBefore(buttonArea, target);
 
 		setButtonState();
-		setButtonState_shorts();
+		setButtonStateShorts();
 	};
 
 	const setButtonState = () => {
@@ -427,7 +426,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		button.setAttribute('title', `Toggle Watched Videos (currently "${state}" for "${section}" section)`);
 	};
 
-	const setButtonState_shorts = () => {
+	const setButtonStateShorts = () => {
 		const section = determineYoutubeSection();
 		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`] || 'normal';
 		const button = document.querySelector('.YT-HWV-BUTTON-SHORTS');
@@ -451,7 +450,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		// something *ELSE* changed state (not our buttons), so keep going
 
-		logDebug('[YT-HWV] debounce: Running check for watched videos, and shorts');
+		logDebug('Running check for watched videos, and shorts');
 		updateClassOnWatchedItems();
 		updateClassOnShortsItems();
 		addButtons();
@@ -464,7 +463,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 	XMLHttpRequest.prototype.send = function (data) {
 		this.addEventListener('readystatechange', function () {
 			if (
-			// Anytime more videos are fetched -- re-run script
+				// Anytime more videos are fetched -- re-run script
 				this.responseURL.indexOf('browse_ajax?action_continuation') > 0
 			) {
 				setTimeout(() => {
@@ -482,7 +481,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		const eventListenerSupported = window.addEventListener;
 
 		return function (obj, callback) {
-			logDebug('[YT-HWV] Attaching DOM listener');
+			logDebug('Attaching DOM listener');
 
 			// Invalid `obj` given
 			if (!obj) return;
@@ -505,7 +504,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 	// ===========================================================
 
-	logDebug('[YT-HWV] Starting Script');
+	logDebug('Starting Script');
 
 	// YouTube does navigation via history and also does a bunch
 	// of AJAX video loading. In order to ensure we're always up
