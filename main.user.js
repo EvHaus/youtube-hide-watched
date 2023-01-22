@@ -32,7 +32,7 @@
 	const HIDDEN_THRESHOLD_PERCENT = 10;
 
 	// Enable for debugging
-	const DEBUG = true;
+	const DEBUG = false;
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
