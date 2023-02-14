@@ -2,13 +2,13 @@ lockfileVersion: 5.4
 
 specifiers:
   eslint-config-globex: 7.7.0
-  eslint-plugin-userscripts: 0.2.10
+  eslint-plugin-userscripts: 0.2.11
   lefthook: 1.2.9
   prettier-package-json: 2.8.0
 
 devDependencies:
   eslint-config-globex: 7.7.0
-  eslint-plugin-userscripts: 0.2.10
+  eslint-plugin-userscripts: 0.2.11
   lefthook: 1.2.9
   prettier-package-json: 2.8.0
 
@@ -512,8 +512,8 @@ packages:
       eslint: 8.32.0
     dev: true
 
-  /eslint-plugin-userscripts/0.2.10:
-    resolution: {integrity: sha512-wBincpFWAvJG7xBgN79wm6oBRwZFee6eF2PtP9Nu81AZkEfspQw2ulMQK2bi7vlssD0Cbx1ERCb7yay8b/CHAA==}
+  /eslint-plugin-userscripts/0.2.11:
+    resolution: {integrity: sha512-CGbeKtKRRi+l/eznGGV7lZXzUte2pEPZMPU1PK98OVqVSAj0NrvMQtK5jyDFMmkAtZNTC5AZOhzI5Owa+u6i/g==}
     engines: {node: '>=14.0.0 <19.0.0'}
     peerDependencies:
       eslint: '>=6.0.0 <9'
