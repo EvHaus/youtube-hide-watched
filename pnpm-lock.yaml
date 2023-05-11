@@ -5,8 +5,8 @@ devDependencies:
     specifier: 7.7.2
     version: 7.7.2
   eslint-plugin-userscripts:
-    specifier: 0.2.12
-    version: 0.2.12(eslint@8.36.0)
+    specifier: 0.2.13
+    version: 0.2.13(eslint@8.36.0)
   lefthook:
     specifier: 1.3.12
     version: 1.3.12
@@ -534,9 +534,9 @@ packages:
       eslint: 8.36.0
     dev: true
 
-  /eslint-plugin-userscripts@0.2.12(eslint@8.36.0):
-    resolution: {integrity: sha512-y6W+b+PAv0ZTquPrNyHhWxv4gI4p37Vt9vtrn5T5Vyq/r9+hkleYHsZ+WZdZFsO8nxXvXw9ACWib4ewdUF+iJA==}
-    engines: {node: '>=14.0.0 <20.0.0'}
+  /eslint-plugin-userscripts@0.2.13(eslint@8.36.0):
+    resolution: {integrity: sha512-IubA8DsbVlsYAZhW5ovmLZjyEn62xzgDN7zQEl58tkGu6DjuYRIZ4qfUj3NtPqbm6f+NhKxygqCY+jNyTYoMLg==}
+    engines: {node: '>=14.0.0 <21.0.0'}
     peerDependencies:
       eslint: '>=6.0.0 <9'
     dependencies:
