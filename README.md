@@ -4,7 +4,7 @@ A simple userscript for toggling visibility of watched videos in YouTube, on you
 
 # Installation
 
-- Install TamperMonkey or GreaseMonkey extension for your browser
+- Install [TamperMonkey](https://www.tampermonkey.net), [GreaseMonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) or [UserScripts](https://github.com/quoid/userscripts) extension for your browser
 - Visit https://greasyfork.org/en/scripts/13040-youtube-hide-watched-videos and hit the Install button
 - Visit YouTube (or refresh the YouTube page if it's already open)
 
