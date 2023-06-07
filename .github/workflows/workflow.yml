@@ -8,17 +8,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: pnpm/action-setup@v2.2.4
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
       with:
-        version: 7
+        version: 8.6.0
     
     - uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'pnpm'
     
-    - name: Install
-      run: pnpm install
+    - name: Install dependencies
+      run: pnpm i
     
     - name: Test
       run: pnpm test

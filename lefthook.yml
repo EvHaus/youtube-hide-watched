@@ -1,15 +1,5 @@
 colors: false
 
-post-merge:
-  commands:
-    install:
-      run: pnpm install
-
-post-rebase:
-  commands:
-    install:
-      run: pnpm install
-
 pre-commit:
   parallel: true
   commands:
