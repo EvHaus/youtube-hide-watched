@@ -11,6 +11,10 @@
 // @match        http://youtube.com/*
 // @match        https://*.youtube.com/*
 // @match        https://youtube.com/*
+// @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -19,20 +23,33 @@
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
 (function (_undefined) {
-
-	// How much of the video needs to be watched before it will be hidden?
-	// For example, when set to 10 the video will *not* be hidden until
-	// you've watched at least 10 percent of the video.
-	//
-	// If you set to 0 (zero) percent, then if you watch even one second
-	// of the video, it will be hidden.
-	//
-	// Note that YouTube is kind of fuzzy on the watched percent,
-	// so trying to be very specific with this value may not work.
-	const HIDDEN_THRESHOLD_PERCENT = 10;
-
 	// Enable for debugging
 	const DEBUG = false;
+
+    // GM_config setup
+    let gmc = new GM_config({
+        'id': 'YouTubeHideWatchedVideos',
+        'title': 'YouTube: Hide Watched Videos Settings',
+        'fields': {
+            'HIDDEN_THRESHOLD_PERCENT': {
+                'label': 'Hidden Threshold Percent',
+                'type': 'int',
+                'default': 10,
+                'min': 0,
+                'max': 100
+            },
+        },
+        'events': {
+            save: function() {
+                this.close();
+            }
+        }
+    });
+
+    GM_registerMenuCommand('YouTube: Hide Watched Videos Settings', opencfg);
+    function opencfg(){
+        gmc.open();
+    }
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
@@ -152,7 +169,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		const watched = document.querySelectorAll('.ytd-thumbnail-overlay-resume-playback-renderer');
 
 		const withThreshold = Array.from(watched).filter((bar) => {
-			return bar.style.width && parseInt(bar.style.width, 10) >= HIDDEN_THRESHOLD_PERCENT;
+			return bar.style.width && parseInt(bar.style.width, 10) >= gmc.get('HIDDEN_THRESHOLD_PERCENT');
 		});
 
 		logDebug(
@@ -320,7 +337,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 				// Grid item
 				item.closest('.ytd-grid-renderer') ||
 				item.closest('.ytd-item-section-renderer') ||
-				item.closest('.ytd-rich-grid-row') ||
+                item.closest('.ytd-rich-grid-row') ||
 				// List item
 				item.closest('#grid-container')
 			);
