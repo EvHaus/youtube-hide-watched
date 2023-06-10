@@ -32,7 +32,7 @@
         'title': 'YouTube: Hide Watched Videos Settings',
         'fields': {
             'HIDDEN_THRESHOLD_PERCENT': {
-                'label': 'Hidden Threshold Percent',
+                'label': 'Hide/Dim Videos Above Percent',
                 'type': 'int',
                 'default': 10,
                 'min': 0,
