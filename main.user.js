@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.3
+// @version      5.4
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -14,7 +14,7 @@
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_registerMenuCommand
+// @grant        GM.registerMenuCommand
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -46,7 +46,7 @@
 		title: 'YouTube: Hide Watched Videos Settings',
 	});
 
-	GM_registerMenuCommand('YouTube: Hide Watched Videos Settings', () => gmc.open());
+	GM.registerMenuCommand('YouTube: Hide Watched Videos Settings', () => gmc.open());
 
 	// Set defaults
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
