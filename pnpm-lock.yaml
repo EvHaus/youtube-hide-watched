@@ -9,8 +9,8 @@ devDependencies:
     specifier: 7.7.2
     version: 7.7.2
   eslint-plugin-userscripts:
-    specifier: 0.3.0
-    version: 0.3.0(eslint@8.42.0)
+    specifier: 0.4.0
+    version: 0.4.0(eslint@8.42.0)
   lefthook:
     specifier: 1.4.5
     version: 1.4.5
@@ -569,8 +569,8 @@ packages:
       eslint: 8.42.0
     dev: true
 
-  /eslint-plugin-userscripts@0.3.0(eslint@8.42.0):
-    resolution: {integrity: sha512-2pmZOPKBtv1iy0LMXmq7KC9AWjGc6eyovnyxNyyNJvWOZnjaw4uBnIf70D37EqfWSscJ0Go+/kzfEY4vcxnMPQ==}
+  /eslint-plugin-userscripts@0.4.0(eslint@8.42.0):
+    resolution: {integrity: sha512-SqYXsAo4Lb4jLYjMYh4ws/SX4kWXO6Iq4l2eQUqqxitmbnkYXr18SPIGY8/MjV2G3X3ckGVLgZAL5ynlsqNo7g==}
     engines: {node: '>=16.0.0 <21.0.0'}
     peerDependencies:
       eslint: '>=8.0.0 <9'
