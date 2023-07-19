@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.4
+// @version      5.5
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -179,14 +179,17 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 	// ===========================================================
 
-	const findAllShortsElements_OnSubscriptions = function () {
-		const shorts = document.querySelectorAll('[overlay-style=SHORTS]');
+	const findShortsContainers = function () {
+		const shortsContainers = [
+			// Subscriptions Page (List View)
+			document.querySelector('ytd-reel-shelf-renderer:has(ytd-reel-item-renderer)'),
+			// Home Page & Subscriptions Page (Grid View)
+			document.querySelector('ytd-rich-shelf-renderer:has(ytd-rich-item-renderer)'),
+		].filter(Boolean);
 
-		logDebug(
-			`Found ${shorts.length} shorts elements`
-		);
+		logDebug(`Found ${shortsContainers.length} shorts container elements`);
 
-		return shorts;
+		return shortsContainers;
 	};
 
 	// ===========================================================
@@ -316,42 +319,19 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 
 		const section = determineYoutubeSection();
 
-		// As of January 2023, only the Subscriptions page mixes Shorts with regular videos.
-		// So do nothing, *UNLESS* we're on Subscriptions page
-		if (section !== 'subscriptions') return;
-
 		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
 		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => el.classList.remove('YT-HWV-SHORTS-HIDDEN'));
 
 		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
 
-		findAllShortsElements_OnSubscriptions().forEach((item, _i) => {
+		const shortsContainers = findShortsContainers();
 
-			// For rows, hide the row and the header too. We can't hide
-			// their entire parent because then we'll get the infinite
-			// page loader to load forever.
-			const shortsItem = (
-				// Grid item
-				item.closest('.ytd-grid-renderer') ||
-				item.closest('.ytd-item-section-renderer') ||
-                item.closest('.ytd-rich-grid-row') ||
-				// List item
-				item.closest('#grid-container')
-			);
-
-			// If we're hiding the .ytd-item-section-renderer element, we need to give it
-			// some extra spacing otherwise we'll get stuck in infinite page loading
-			if (shortsItem && shortsItem.classList.contains('ytd-item-section-renderer')) {
-				shortsItem.closest('ytd-item-section-renderer').classList.add('YT-HWV-HIDDEN-ROW-PARENT');
-			}
-
-			if (shortsItem) {
-				// Add current class
-				if (state === 'dimmed') {
-					shortsItem.classList.add('YT-HWV-SHORTS-DIMMED');
-				} else if (state === 'hidden') {
-					shortsItem.classList.add('YT-HWV-SHORTS-HIDDEN');
-				}
+		shortsContainers.forEach((item) => {
+			// Add current class
+			if (state === 'dimmed') {
+				item.classList.add('YT-HWV-SHORTS-DIMMED');
+			} else if (state === 'hidden') {
+				item.classList.add('YT-HWV-SHORTS-HIDDEN');
 			}
 		});
 	};

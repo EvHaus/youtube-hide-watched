@@ -1,6 +1,6 @@
 # youtube-hide-watched
 
-A simple userscript for toggling visibility of watched videos in YouTube, on your Subscriptions page and elsewhere on the site. Also provides a toggle to hide YouTube Shorts on your subscriptions page.
+A simple userscript for toggling visibility of watched videos in YouTube, on your Subscriptions page and elsewhere on the site. Also provides a toggle to hide YouTube Shorts.
 
 # Installation
 
@@ -17,7 +17,8 @@ You will see the buttons at the top of the page, to right of the Search box.
 ![screenshot](screenshot.png 'Screenshot')
 
 The "Watched Videos" button keeps track of different areas of YouTube separately. This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages. Here are the areas that the button keeps track of separately:
-- Subscriptions page 
+
+- Subscriptions page
 - Channel pages
 - Trending page
 - Recommendations sidebar when watching a video
