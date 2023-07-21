@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.6
+// @version      5.7
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -185,10 +185,12 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 			// FUTURE: Switch to this once Firefox has :has() selector support
 			// document.querySelector('ytd-reel-shelf-renderer:has(ytd-reel-item-renderer)'),
 			document.querySelector('ytd-reel-shelf-renderer ytd-reel-item-renderer')?.closest('ytd-reel-shelf-renderer'),
+			document.querySelector('ytd-rich-shelf-renderer ytd-rich-grid-slim-media')?.closest('ytd-rich-shelf-renderer'),
 			// Home Page & Subscriptions Page (Grid View)
 			// FUTURE: Switch to this once Firefox has :has() selector support
 			// document.querySelector('ytd-rich-shelf-renderer:has(ytd-rich-item-renderer)'),
 			document.querySelector('ytd-rich-shelf-renderer ytd-rich-item-renderer')?.closest('ytd-rich-shelf-renderer'),
+			document.querySelector('ytd-reel-shelf-renderer ytd-thumbnail')?.closest('ytd-reel-shelf-renderer'),
 		].filter(Boolean);
 
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
