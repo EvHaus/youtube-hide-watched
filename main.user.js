@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.7
+// @version      5.8
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -191,6 +191,8 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 			// document.querySelector('ytd-rich-shelf-renderer:has(ytd-rich-item-renderer)'),
 			document.querySelector('ytd-rich-shelf-renderer ytd-rich-item-renderer')?.closest('ytd-rich-shelf-renderer'),
 			document.querySelector('ytd-reel-shelf-renderer ytd-thumbnail')?.closest('ytd-reel-shelf-renderer'),
+			// Search results page
+			document.querySelector('ytd-reel-shelf-renderer .ytd-reel-shelf-renderer')?.closest('ytd-reel-shelf-renderer'),
 		].filter(Boolean);
 
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
@@ -234,7 +236,6 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 	// ===========================================================
 
 	const updateClassOnWatchedItems = function () {
-
 		// Remove existing classes
 		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
 		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
@@ -322,7 +323,6 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 	// ===========================================================
 
 	const updateClassOnShortsItems = function () {
-
 		const section = determineYoutubeSection();
 
 		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
