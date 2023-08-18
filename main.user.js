@@ -221,7 +221,7 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 		let youtubeSection = 'misc';
 		if (href.includes('/watch?')) {
 			youtubeSection = 'watch';
-		} else if (href.match(/.*\/(user|channel|c)\/.+\/videos/u)) {
+		} else if (href.match(/.*\/(user|channel|c)\/.+\/videos/u) || href.match(/.*\/@.*/u)) {
 			youtubeSection = 'channel';
 		} else if (href.includes('/feed/subscriptions')) {
 			youtubeSection = 'subscriptions';
