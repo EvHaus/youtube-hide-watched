@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.9
+// @version      5.10
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -182,18 +182,19 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 	const findShortsContainers = function () {
 		const shortsContainers = [
 			// Subscriptions Page (List View)
-			// FUTURE: Switch to this once Firefox has :has() selector support
-			// document.querySelector('ytd-reel-shelf-renderer:has(ytd-reel-item-renderer)'),
-			document.querySelector('ytd-reel-shelf-renderer ytd-reel-item-renderer')?.closest('ytd-reel-shelf-renderer'),
-			document.querySelector('ytd-rich-shelf-renderer ytd-rich-grid-slim-media')?.closest('ytd-rich-shelf-renderer'),
+			document.querySelectorAll('ytd-reel-shelf-renderer ytd-reel-item-renderer'),
+			document.querySelectorAll('ytd-rich-shelf-renderer ytd-rich-grid-slim-media'),
 			// Home Page & Subscriptions Page (Grid View)
-			// FUTURE: Switch to this once Firefox has :has() selector support
-			// document.querySelector('ytd-rich-shelf-renderer:has(ytd-rich-item-renderer)'),
-			document.querySelector('ytd-rich-shelf-renderer ytd-rich-item-renderer')?.closest('ytd-rich-shelf-renderer'),
-			document.querySelector('ytd-reel-shelf-renderer ytd-thumbnail')?.closest('ytd-reel-shelf-renderer'),
+			document.querySelectorAll('ytd-reel-shelf-renderer ytd-thumbnail'),
 			// Search results page
-			document.querySelector('ytd-reel-shelf-renderer .ytd-reel-shelf-renderer')?.closest('ytd-reel-shelf-renderer'),
-		].filter(Boolean);
+			document.querySelectorAll('ytd-reel-shelf-renderer .ytd-reel-shelf-renderer'),
+		].reduce((acc, matches) => {
+			matches?.forEach((child) => {
+				const container = child.closest('ytd-reel-shelf-renderer') || child.closest('ytd-rich-shelf-renderer');
+				if (container && !acc.includes(container)) acc.push(container);
+			});
+			return acc;
+		}, []);
 
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
 
