@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      5.10
+// @version      5.11
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -195,6 +195,12 @@ ytd-masthead[dark] .YT-HWV-BUTTON-STYLE   /* In "Theater mode" the top bar conta
 			});
 			return acc;
 		}, []);
+
+		// Search results sometimes also show Shorts as if they're regular videos with a little "Shorts" badge
+		document.querySelectorAll('.ytd-thumbnail-overlay-time-status-renderer[aria-label="Shorts"]').forEach((child) => {
+			const container = child.closest('ytd-video-renderer');
+			shortsContainers.push(container);
+		});
 
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
 
