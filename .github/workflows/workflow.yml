@@ -11,7 +11,7 @@ jobs:
     - uses: pnpm/action-setup@v2
       name: Install pnpm
       with:
-        version: 8.6.0
+        version: 'latest'
     
     - uses: actions/setup-node@v3
       with:
