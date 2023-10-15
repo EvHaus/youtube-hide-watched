@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.0
+// @version      6.1
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -92,7 +92,7 @@
 	background: transparent;
 	border: 0;
     border-radius: 40px;
-	color: var(--yt-spec-static-overlay-text-primary);
+	color: var(--yt-spec-icon-inactive);
 	cursor: pointer;
     display: flex;
 	height: 40px;
@@ -106,7 +106,7 @@
 	background: var(--yt-spec-badge-chip-background);
 }
 
-.YT-HWV-BUTTON-HIDDEN { opacity: 0.4 }
+.YT-HWV-BUTTON-HIDDEN { color: var(--yt-spec-icon-disabled) }
 
 .YT-HWV-MENU {
 	background: #F8F8F8;
