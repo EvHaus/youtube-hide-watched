@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.1
+// @version      6.2
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -26,6 +26,10 @@
 	const DEBUG = false;
 
 	// GM_config setup
+	const title = document.createElement('a');
+	title.textContent = 'YouTube: Hide Watched Videos Settings';
+	title.href = 'https://github.com/EvHaus/youtube-hide-watched';
+	title.target = '_blank';
 	const gmc = new GM_config({
 		events: {
 			save () {
@@ -42,7 +46,7 @@
 			},
 		},
 		id: 'YouTubeHideWatchedVideos',
-		title: 'YouTube: Hide Watched Videos Settings',
+		title,
 	});
 
 	// Set defaults
@@ -106,7 +110,7 @@
 	background: var(--yt-spec-badge-chip-background);
 }
 
-.YT-HWV-BUTTON-HIDDEN { color: var(--yt-spec-icon-disabled) }
+.YT-HWV-BUTTON-DISABLED { color: var(--yt-spec-icon-disabled) }
 
 .YT-HWV-MENU {
 	background: #F8F8F8;
@@ -373,9 +377,10 @@
 
 			// Generate button DOM
 			const button = document.createElement('button');
+			button.title = type === 'toggle' ? `${name} : currently "${toggleButtonState}" for section "${section}"` : `${name}`;
 			button.classList.add('YT-HWV-BUTTON');
-			if (toggleButtonState === 'hidden') button.classList.add('YT-HWV-BUTTON-HIDDEN');
-			button.innerHTML = toggleButtonState === 'normal' ? icon : iconHidden;
+			if (toggleButtonState !== 'normal') button.classList.add('YT-HWV-BUTTON-DISABLED');
+			button.innerHTML = toggleButtonState === 'hidden' ? iconHidden : icon;
 			buttonArea.appendChild(button);
 
 			// Attach events for toggle buttons
