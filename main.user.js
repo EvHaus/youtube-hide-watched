@@ -26,10 +26,10 @@
 	const DEBUG = false;
 
 	// GM_config setup
-	let title = document.createElement('a');
+	const title = document.createElement('a');
 	title.textContent = 'YouTube: Hide Watched Videos Settings';
 	title.href = 'https://github.com/EvHaus/youtube-hide-watched';
-	title.target = '_blank';	
+	title.target = '_blank';
 	const gmc = new GM_config({
 		events: {
 			save () {
@@ -46,7 +46,7 @@
 			},
 		},
 		id: 'YouTubeHideWatchedVideos',
-		title: title,
+		title,
 	});
 
 	// Set defaults
