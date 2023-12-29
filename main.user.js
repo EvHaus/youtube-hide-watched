@@ -11,6 +11,7 @@
 // @match        http://youtube.com/*
 // @match        https://*.youtube.com/*
 // @match        https://youtube.com/*
+// @noframes
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
