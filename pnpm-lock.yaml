@@ -12,8 +12,8 @@ devDependencies:
     specifier: 0.5.3
     version: 0.5.3(eslint@8.54.0)
   lefthook:
-    specifier: 1.7.6
-    version: 1.7.6
+    specifier: 1.7.7
+    version: 1.7.7
   prettier-package-json:
     specifier: 2.8.0
     version: 2.8.0
@@ -1126,83 +1126,83 @@ packages:
       json-buffer: 3.0.1
     dev: true
 
-  /lefthook-darwin-arm64@1.7.6:
-    resolution: {integrity: sha512-EFlubEsmUYDpG2eyE/azXlea54VvB34CjYRypeuaLbGr/ok4x2IM1+vRtIbsKrDLmvgLtxYB9oxONcCLo7B3tw==}
+  /lefthook-darwin-arm64@1.7.7:
+    resolution: {integrity: sha512-EtINYW/1jJDMSlBbCwiZhHRMwybJkuawg9/dtHMll9gE63yBTOQSoqLzjOJWioHKK9DrgAfe2Mh5+PSt0cLVRA==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-darwin-x64@1.7.6:
-    resolution: {integrity: sha512-FlZSASqsnovJ17XZKtCEgVJ4OxpuaFAqnVzkRzMFPbmROhpdsqKq1dnqnDNGYomR1s11C4GbQY+kQ/4etNQvRg==}
+  /lefthook-darwin-x64@1.7.7:
+    resolution: {integrity: sha512-77fHVtvLeInztn88fZOsiNMlP5Ql6eG8D233k1G1zndRxwCnVVlB6GVLC/0SRmdE9cR7U66CSphN6EClZrvyHQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-freebsd-arm64@1.7.6:
-    resolution: {integrity: sha512-1Gsxc5TiCpc1WrQ5jnjPUGxbhX4LdrNXwB1ms3D5+PqjfqUzZc48jOVlyeC5ZXPK+u/SnkMCoxrp9eXKexzvrg==}
+  /lefthook-freebsd-arm64@1.7.7:
+    resolution: {integrity: sha512-y2+T2ONfr9DYxyx1JGItBf1ARGx0RJcAOn9pEfSN1LrEOAvcVlQKDE8+evdmt8uhMo5TVi+gFe1tdtsIbsiQTA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-freebsd-x64@1.7.6:
-    resolution: {integrity: sha512-PX3uWFUIoCICPfrZaXSbpmJO4DDL4czBcp6hcvlZHaeNM5vWklT+BXBY6YmLwggavn90IadvIMea395NvdiFjw==}
+  /lefthook-freebsd-x64@1.7.7:
+    resolution: {integrity: sha512-6zbprxvq7bBG7ihSA1R/GCC5iN+q9tbjQXKiOI+d63F/Oo5ld/kF5fIZv50K39ujx1Ykdmg5llEIBeDEHuybZQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-linux-arm64@1.7.6:
-    resolution: {integrity: sha512-QAlH6HCeEzxOgYjVamH+0Lq/PvQBdOWLeko045GVv6p6I4EiWB0FrUYEetdH8Ctv2BK3GlUUWs6KdTdLckxDTA==}
+  /lefthook-linux-arm64@1.7.7:
+    resolution: {integrity: sha512-bUpDortnX1ACCd38uv2+I9vdsyP9Oe9FXZ4E/xX8nl+hnkgC80/nv1KxRI7MlaDdb1z4VgEO/0pT2OU1nM1C/A==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-linux-x64@1.7.6:
-    resolution: {integrity: sha512-PsVW9cby0qghz22ywozOxYrjsepfrCJAvjgV18YNCWJYFCxkxuPZXS8nUK9yMjGyKgyYE2absMWCKeml1I8E3A==}
+  /lefthook-linux-x64@1.7.7:
+    resolution: {integrity: sha512-8dEuO0AzQkWFKSRvd2rzb/LtmgtEoQHhzgTANeq/2EyWgcfVb62b/qib75oZ0m9W4uvRvqTiLdaGELoS8ohWGA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-windows-arm64@1.7.6:
-    resolution: {integrity: sha512-gX4bzcrQY+Ls3zU5YcC0hmg/zoBkQe9JdBMAShzHKTaEGohZZWo+Q51Kg2RPyNc6fLyIn3SFoY09DU0dz4R8eg==}
+  /lefthook-windows-arm64@1.7.7:
+    resolution: {integrity: sha512-ZO45ynUnMPm+I8xGgmSc5BqtfByRJSRrhjXQ2lwNE9V+Zl3oMjCMPrs+3KLmrnKxi/k2bq/VHY86XvIhRo7o+g==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook-windows-x64@1.7.6:
-    resolution: {integrity: sha512-LYJmMI1QWi74J6p+E6DzjL5rmzOy6BkVMRhbe8s6cU1VK3Btu2CKuNnjd6yfSU7vqhCdJDIXgMLiayrP6Y1wTw==}
+  /lefthook-windows-x64@1.7.7:
+    resolution: {integrity: sha512-z4/MxR+GMYZwgCxvLPGU4ebuXNUFdJrtrsAxMVbCw0LU/n7VCP+nfdaxcGO6ELqd4OOfpJCpBhzkvupFefmhhw==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /lefthook@1.7.6:
-    resolution: {integrity: sha512-feAfu0uvkI2eFutBDnd1Wm4lVA5XpGztK9GQWYj9kdlMOyNFlqsLfSfNvfF/ZJv+Gkxo2T8FEtAAem9S4wBJZA==}
+  /lefthook@1.7.7:
+    resolution: {integrity: sha512-b1giMxEuEb4MBcSkrEpQSFs5W9+vPlahAltxhWCqqarNzz8oisD4bMA/UGYAn/lvUhhC6oFo98zetQNpvjXp5Q==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      lefthook-darwin-arm64: 1.7.6
-      lefthook-darwin-x64: 1.7.6
-      lefthook-freebsd-arm64: 1.7.6
-      lefthook-freebsd-x64: 1.7.6
-      lefthook-linux-arm64: 1.7.6
-      lefthook-linux-x64: 1.7.6
-      lefthook-windows-arm64: 1.7.6
-      lefthook-windows-x64: 1.7.6
+      lefthook-darwin-arm64: 1.7.7
+      lefthook-darwin-x64: 1.7.7
+      lefthook-freebsd-arm64: 1.7.7
+      lefthook-freebsd-x64: 1.7.7
+      lefthook-linux-arm64: 1.7.7
+      lefthook-linux-x64: 1.7.7
+      lefthook-windows-arm64: 1.7.7
+      lefthook-windows-x64: 1.7.7
     dev: true
 
   /levn@0.4.1:
