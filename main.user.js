@@ -277,6 +277,7 @@
 					item.closest('.ytd-grid-renderer') ||
 					item.closest('.ytd-item-section-renderer') ||
 					item.closest('.ytd-rich-grid-row') ||
+					item.closest('.ytd-rich-grid-renderer') ||
 					// List item
 					item.closest('#grid-container')
 				);
