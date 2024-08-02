@@ -3,9 +3,11 @@ colors: false
 pre-commit:
   parallel: true
   commands:
-    eslint:
+    biome:
       glob: "*.{js,jsx,ts,tsx}"
-      run: pnpm eslint-globex --fix {staged_files} && git add {staged_files}
+      run: pnpm biome check --apply-unsafe {staged_files}
+      stage_fixed: true
     prettier-package-json:
       glob: "package.json"
-      run: pnpm prettier-package-json --use-tabs --write {staged_files} && git add {staged_files}
+      run: pnpm prettier-package-json --use-tabs --write {staged_files}
+      stage_fixed: true

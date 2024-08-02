@@ -1,0 +1,88 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"css": {
+		"linter": {
+			"enabled": false
+		},
+		"formatter": {
+			"enabled": false,
+			"quoteStyle": "single"
+		}
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "single",
+			"quoteStyle": "single"
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"a11y": {
+				"noAutofocus": "off"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"noVoid": "error",
+				"useArrowFunction": "off"
+			},
+			"correctness": {
+				"noConstantMathMinMaxClamp": "error",
+				"noUnusedImports": "error",
+				"noUnusedPrivateClassMembers": "error",
+				"noUnusedVariables": "error",
+				"useHookAtTopLevel": "error"
+			},
+			"nursery": {
+				"noDuplicateAtImportRules": "error",
+				"noDuplicateFontNames": "error",
+				"noDuplicateJsonKeys": "error",
+				"noDuplicateSelectorsKeyframeBlock": "error",
+				"noEmptyBlock": "error",
+				"noExportedImports": "error",
+				"noImportantInKeyframe": "error",
+				"noInvalidPositionAtImportRule": "error",
+				"noUnknownFunction": "error",
+				"noUnknownMediaFeatureName": "error",
+				"noUnknownProperty": "error",
+				"noUnknownSelectorPseudoElement": "error",
+				"noUnknownUnit": "error",
+				"noUnmatchableAnbSelector": "error",
+				"noUnusedFunctionParameters": "error",
+				"noYodaExpression": "error",
+				"useDeprecatedReason": "error",
+				"useErrorMessage": "error",
+				"useNumberToFixedDigitsArgument": "error",
+				"useSortedClasses": "error",
+				"useThrowNewError": "error",
+				"useThrowOnlyError": "error"
+			},
+			"performance": {
+				"noBarrelFile": "warn"
+			},
+			"style": {
+				"noNamespaceImport": "error",
+				"useCollapsedElseIf": "error",
+				"useConsistentArrayType": {
+					"level": "error",
+					"options": {
+						"syntax": "generic"
+					}
+				},
+				"useShorthandAssign": "error"
+			},
+			"suspicious": {
+				"useAwait": "error",
+				"noConsoleLog": "error",
+				"noEmptyBlockStatements": "error"
+			}
+		}
+	},
+	"organizeImports": {
+		"enabled": true
+	}
+}
