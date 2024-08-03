@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.4
+// @version      6.5
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -25,6 +25,14 @@
 (function (_undefined) {
 	// Enable for debugging
 	const DEBUG = false;
+
+	// Needed to bypass YouTube's Trusted Types restrictions, ie.
+	// Uncaught TypeError: Failed to set the 'innerHTML' property on 'Element': This document requires 'TrustedHTML' assignment.
+	if (window.trustedTypes?.createPolicy) {
+		window.trustedTypes.createPolicy('default', {
+			createHTML: (string, _sink) => string,
+		});
+	}
 
 	// GM_config setup
 	const title = document.createElement('a');
