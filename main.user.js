@@ -24,7 +24,7 @@
 
 ((_undefined) => {
 	// Enable for debugging
-	const DEBUG = true;
+	const DEBUG = false;
 
 	// Needed to bypass YouTube's Trusted Types restrictions, ie.
 	// Uncaught TypeError: Failed to set the 'innerHTML' property on 'Element': This document requires 'TrustedHTML' assignment.
