@@ -24,7 +24,7 @@
 
 ((_undefined) => {
 	// Enable for debugging
-	const DEBUG = false;
+	const DEBUG = true;
 
 	// Needed to bypass YouTube's Trusted Types restrictions, ie.
 	// Uncaught TypeError: Failed to set the 'innerHTML' property on 'Element': This document requires 'TrustedHTML' assignment.
@@ -207,6 +207,10 @@
 
 	const findShortsContainers = () => {
 		const shortsContainers = [
+			// All pages
+			document.querySelectorAll(
+				'[is-shorts]',
+			),
 			// Subscriptions Page (List View)
 			document.querySelectorAll(
 				'ytd-reel-shelf-renderer ytd-reel-item-renderer',
