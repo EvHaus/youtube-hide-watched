@@ -216,7 +216,7 @@
 				'ytd-rich-shelf-renderer ytd-rich-grid-slim-media',
 			),
 			// Home Page & Subscriptions Page (Grid View)
-			document.querySelectorAll('ytd-reel-shelf-renderer ytd-thumbnail'),
+			document.querySelectorAll("[id='content']"),
 			// Search results page
 			document.querySelectorAll(
 				'ytd-reel-shelf-renderer .ytd-reel-shelf-renderer',
