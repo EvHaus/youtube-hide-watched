@@ -1,12 +1,11 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"css": {
-		"linter": {
-			"enabled": false
-		},
 		"formatter": {
-			"enabled": false,
 			"quoteStyle": "single"
+		},
+		"parser": {
+			"cssModules": true
 		}
 	},
 	"formatter": {
@@ -23,49 +22,42 @@
 		"rules": {
 			"recommended": true,
 			"a11y": {
-				"noAutofocus": "off"
+				"noAutofocus": "off",
+				"useSemanticElements": "off"
 			},
 			"complexity": {
 				"noForEach": "off",
+				"noUselessStringConcat": "error",
+				"noUselessUndefinedInitialization": "error",
 				"noVoid": "error",
-				"useArrowFunction": "off"
+				"useDateNow": "error"
 			},
 			"correctness": {
 				"noConstantMathMinMaxClamp": "error",
+				"noUndeclaredDependencies": "off",
+				"noUnusedFunctionParameters": "error",
 				"noUnusedImports": "error",
 				"noUnusedPrivateClassMembers": "error",
 				"noUnusedVariables": "error",
 				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
-				"noDuplicateAtImportRules": "error",
-				"noDuplicateFontNames": "error",
-				"noDuplicateJsonKeys": "error",
-				"noDuplicateSelectorsKeyframeBlock": "error",
-				"noEmptyBlock": "error",
+				"noDuplicateCustomProperties": "error",
+				"noEnum": "error",
 				"noExportedImports": "error",
-				"noImportantInKeyframe": "error",
-				"noInvalidPositionAtImportRule": "error",
-				"noUnknownFunction": "error",
-				"noUnknownMediaFeatureName": "error",
-				"noUnknownProperty": "error",
-				"noUnknownSelectorPseudoElement": "error",
-				"noUnknownUnit": "error",
-				"noUnmatchableAnbSelector": "error",
-				"noUnusedFunctionParameters": "error",
-				"noYodaExpression": "error",
+				"noIrregularWhitespace": "error",
+				"noUnknownPseudoElement": "error",
+				"noUselessEscapeInRegex": "error",
 				"useDeprecatedReason": "error",
-				"useErrorMessage": "error",
-				"useNumberToFixedDigitsArgument": "error",
-				"useSortedClasses": "error",
-				"useThrowNewError": "error",
-				"useThrowOnlyError": "error"
+				"useSortedClasses": "error"
 			},
 			"performance": {
 				"noBarrelFile": "warn"
 			},
 			"style": {
+				"noDoneCallback": "error",
 				"noNamespaceImport": "error",
+				"noYodaExpression": "error",
 				"useCollapsedElseIf": "error",
 				"useConsistentArrayType": {
 					"level": "error",
@@ -73,12 +65,23 @@
 						"syntax": "generic"
 					}
 				},
-				"useShorthandAssign": "error"
+				"useConsistentBuiltinInstantiation": "error",
+				"useShorthandAssign": "error",
+				"useThrowNewError": "error",
+				"useThrowOnlyError": "error"
 			},
 			"suspicious": {
 				"useAwait": "error",
-				"noConsoleLog": "error",
-				"noEmptyBlockStatements": "error"
+				"noConsole": {
+					"level": "error",
+					"options": {
+						"allow": ["error", "warn", "info", "debug"]
+					}
+				},
+				"useErrorMessage": "error",
+				"noEmptyBlockStatements": "error",
+				"noMisplacedAssertion": "error",
+				"useNumberToFixedDigitsArgument": "error"
 			}
 		}
 	},

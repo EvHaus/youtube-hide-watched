@@ -22,7 +22,7 @@
 // You can open new issues at:
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
-(function (_undefined) {
+((_undefined) => {
 	// Enable for debugging
 	const DEBUG = false;
 
@@ -62,13 +62,12 @@
 	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
 
 	const logDebug = (...msgs) => {
-		// biome-ignore lint/suspicious/noConsoleLog: This is a debug log
-		if (DEBUG) console.log('[YT-HWV]', msgs);
+		if (DEBUG) console.debug('[YT-HWV]', msgs);
 	};
 
 	// GreaseMonkey no longer supports GM_addStyle. So we have to define
 	// our own polyfill here
-	const addStyle = function (aCss) {
+	const addStyle = (aCss) => {
 		const head = document.getElementsByTagName('head')[0];
 		if (head) {
 			const style = document.createElement('style');
@@ -183,7 +182,7 @@
 
 	// ===========================================================
 
-	const findWatchedElements = function () {
+	const findWatchedElements = () => {
 		const watched = document.querySelectorAll(
 			'.ytd-thumbnail-overlay-resume-playback-renderer',
 		);
@@ -206,7 +205,7 @@
 
 	// ===========================================================
 
-	const findShortsContainers = function () {
+	const findShortsContainers = () => {
 		const shortsContainers = [
 			// Subscriptions Page (List View)
 			document.querySelectorAll(
@@ -248,14 +247,14 @@
 
 	// ===========================================================
 
-	const findButtonAreaTarget = function () {
+	const findButtonAreaTarget = () => {
 		// Button will be injected into the main header menu
 		return document.querySelector('#container #end #buttons');
 	};
 
 	// ===========================================================
 
-	const determineYoutubeSection = function () {
+	const determineYoutubeSection = () => {
 		const { href } = window.location;
 
 		let youtubeSection = 'misc';
@@ -278,7 +277,7 @@
 
 	// ===========================================================
 
-	const updateClassOnWatchedItems = function () {
+	const updateClassOnWatchedItems = () => {
 		// Remove existing classes
 		document
 			.querySelectorAll('.YT-HWV-WATCHED-DIMMED')
@@ -369,7 +368,7 @@
 
 	// ===========================================================
 
-	const updateClassOnShortsItems = function () {
+	const updateClassOnShortsItems = () => {
 		const section = determineYoutubeSection();
 
 		document
@@ -395,7 +394,7 @@
 
 	// ===========================================================
 
-	const renderButtons = function () {
+	const renderButtons = () => {
 		// Find button area target
 		const target = findButtonAreaTarget();
 		if (!target) return;
@@ -512,12 +511,12 @@
 
 	// ===========================================================
 
-	const observeDOM = (function () {
+	const observeDOM = (() => {
 		const MutationObserver =
 			window.MutationObserver || window.WebKitMutationObserver;
 		const eventListenerSupported = window.addEventListener;
 
-		return function (obj, callback) {
+		return (obj, callback) => {
 			logDebug('Attaching DOM listener');
 
 			// Invalid `obj` given
