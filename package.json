@@ -19,7 +19,7 @@
 		"test": "pnpm lint"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.1",
+		"@biomejs/biome": "1.9.2",
 		"lefthook": "1.7.15",
 		"prettier-package-json": "2.8.0"
 	},
