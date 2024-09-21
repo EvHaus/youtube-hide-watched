@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.5
+// @version      6.6
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -207,10 +207,8 @@
 
 	const findShortsContainers = () => {
 		const shortsContainers = [
-			// All pages
-			document.querySelectorAll(
-				'[is-shorts]',
-			),
+			// All pages (2024-09 update)
+			document.querySelectorAll('[is-shorts]'),
 			// Subscriptions Page (List View)
 			document.querySelectorAll(
 				'ytd-reel-shelf-renderer ytd-reel-item-renderer',
