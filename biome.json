@@ -42,13 +42,27 @@
 				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
+				"noDescendingSpecificity": "error",
+				"noDocumentCookie": "error",
+				"noDocumentImportInPage": "error",
 				"noDuplicateCustomProperties": "error",
+				"noDuplicateProperties": "error",
 				"noEnum": "error",
 				"noExportedImports": "error",
+				"noHeadElement": "error",
+				"noHeadImportInDocument": "error",
+				"noImgElement": "error",
 				"noIrregularWhitespace": "error",
+				"noNestedTernary": "error",
+				"noOctalEscape": "error",
+				"noTemplateCurlyInString": "error",
 				"noUnknownPseudoElement": "error",
+				"noUnknownTypeSelector": "error",
 				"noUselessEscapeInRegex": "error",
+				"noUselessStringRaw": "error",
+				"useCollapsedIf": "error",
 				"useDeprecatedReason": "error",
+				"useGoogleFontDisplay": "error",
 				"useSortedClasses": "error"
 			},
 			"performance": {
