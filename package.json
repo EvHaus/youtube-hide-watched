@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"lefthook": "1.8.5",
+		"lefthook": "1.9.0",
 		"prettier-package-json": "2.8.0"
 	},
 	"publishConfig": {
