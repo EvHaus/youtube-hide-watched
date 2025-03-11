@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.7
+// @version      6.8
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -471,21 +471,16 @@
 	};
 
 	const run = debounce((mutations) => {
-		// don't react if only *OUR* own buttons changed state
+		// Don't react if only our own buttons changed state
 		// to avoid running an endless loop
-
-		if (mutations && mutations.length === 1) {
-			return;
-		}
-
 		if (
-			mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
-			mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS')
+			mutations &&
+			mutations.length === 1 &&
+			(mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
+				mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS'))
 		) {
 			return;
 		}
-
-		// something *ELSE* changed state (not our buttons), so keep going
 
 		logDebug('Running check for watched videos, and shorts');
 		updateClassOnWatchedItems();
