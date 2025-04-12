@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.9
+// @version      6.10
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -15,6 +15,8 @@
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @downloadURL  https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.user.js
+// @updateURL    https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.meta.js
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -531,6 +533,15 @@
 
 			if (MutationObserver) {
 				const obs = new MutationObserver((mutations, _observer) => {
+					// If the mutation is the script's own buttons being injected, ignore the event
+					if (
+						mutations.length === 1 &&
+						mutations[0].addedNodes?.length === 1 &&
+						mutations[0].addedNodes[0].classList.contains('YT-HWV-BUTTONS')
+					) {
+						return;
+					}
+
 					if (
 						mutations[0].addedNodes.length ||
 						mutations[0].removedNodes.length
