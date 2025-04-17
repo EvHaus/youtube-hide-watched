@@ -81,7 +81,7 @@
 			STREAMED_IDENTIFIER: {
 				default: 'Streamed',
 				label:
-					'A Word or Phrase Identifying That the Video is an Ended Stream. See Github for an <a href="https://github.com/EvHaus/youtube-hide-watched" target="_blank" rel="noopener noreferrer">Example</a>',
+					'A Word or Phrase Identifying That the Video is an Ended Stream. See Github for an <a href="https://github.com/EvHaus/youtube-hide-watched##Identifying-streamed-videos" target="_blank" rel="noopener noreferrer">Example</a>',
 				labelPos: 'right',
 				type: 'text',
 			},
