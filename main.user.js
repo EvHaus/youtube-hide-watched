@@ -69,7 +69,8 @@
 			},
 			INCLUDE_SCHEDULED: {
 				default: true,
-				label: 'Include Scheduled Streams When Hiding Streams',
+				label:
+					'Include Scheduled Streams and Upcoming Videos When Hiding Streams',
 				type: 'checkbox',
 			},
 			INCLUDE_STREAMED: {
