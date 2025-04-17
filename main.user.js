@@ -484,8 +484,8 @@
 		if (
 			mutations &&
 			mutations.length === 1 &&
-			(mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
-				mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS'))
+			(mutations[0].target.classList?.contains('YT-HWV-BUTTON') ||
+				mutations[0].target.classList?.contains('YT-HWV-BUTTON-SHORTS'))
 		) {
 			return;
 		}
@@ -537,7 +537,7 @@
 					if (
 						mutations.length === 1 &&
 						mutations[0].addedNodes?.length === 1 &&
-						mutations[0].addedNodes[0].classList.contains('YT-HWV-BUTTONS')
+						mutations[0].addedNodes[0].classList?.contains('YT-HWV-BUTTONS')
 					) {
 						return;
 					}
