@@ -26,3 +26,11 @@ The "Watched Videos" button keeps track of different areas of YouTube separately
 - Everywhere else
 
 YouTube does not keep track of which Shorts you've watched, s the "Shorts" button dims/hides all Shorts.
+
+## Identifying streamed videos
+
+The identifier for finding ended livestreams is different based on the language selected, so if english isn't the
+selected language for YouTube, the identifier has to be selected manually.
+The identifier can be found in the thumbnail description of any past stream.
+
+![streamed_identifier](streamed_identifier.png 'Ended Stream Identifier Example')
