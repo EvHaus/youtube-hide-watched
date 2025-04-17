@@ -61,6 +61,29 @@
 				min: 0,
 				type: 'int',
 			},
+			INCLUDE_LIVE: {
+				section: GM_config.create('Stream Hiding Config'),
+				default: true,
+				label: 'Include Live Streams When Hiding Streams',
+				type: 'checkbox',
+			},
+			INCLUDE_SCHEDULED: {
+				default: true,
+				label: 'Include Scheduled Streams When Hiding Streams',
+				type: 'checkbox',
+			},
+			INCLUDE_STREAMED: {
+				default: true,
+				label: 'Include Past Streams When Hiding Streams',
+				type: 'checkbox',
+			},
+			STREAMED_IDENTIFIER: {
+				default: 'Streamed',
+				label:
+					'A Word or Phrase Identifying That the Video is an Ended Stream. See Github for an <a href="https://github.com/EvHaus/youtube-hide-watched" target="_blank" rel="noopener noreferrer">Example</a>',
+				labelPos: 'right',
+				type: 'text',
+			},
 		},
 		id: 'YouTubeHideWatchedVideos',
 		title,
@@ -166,6 +189,14 @@
 			type: 'toggle',
 		},
 		{
+			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M176,92v96a16.01833,16.01833,0,0,1-16,16H48A40.04584,40.04584,0,0,1,8,164V68A16.01833,16.01833,0,0,1,24,52H136A40.04584,40.04584,0,0,1,176,92Zm68.01562-18.91895a8.00341,8.00341,0,0,0-7.98437-.02734l-40,22.85742A8,8,0,0,0,192,102.85742v50.28516a8,8,0,0,0,4.03125,6.94629l40,22.85742A8.0003,8.0003,0,0,0,248,176V80A7.99807,7.99807,0,0,0,244.01562,73.08105Z"/></svg>',
+			iconHidden:
+				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="currentColor" d="M229.91992,226.61816a8.0006,8.0006,0,0,1-11.83984,10.76368l-42.34229-46.57618A16.01483,16.01483,0,0,1,160,204H48A40.04584,40.04584,0,0,1,8,164V68A16.01833,16.01833,0,0,1,24,52H49.55127l-20.562-22.61816A8.0006,8.0006,0,0,1,40.8291,18.61816Zm14.0957-153.53711a8.00341,8.00341,0,0,0-7.98437-.02734l-40,22.85742A8,8,0,0,0,192,102.85742v50.28516a8,8,0,0,0,4.03125,6.94629l40,22.85742A8.0003,8.0003,0,0,0,248,176V80A7.99807,7.99807,0,0,0,244.01562,73.08105Zm-81.93554,55.12989A8.0004,8.0004,0,0,0,176,122.8291V92a40.04584,40.04584,0,0,0-40-40H110.88281a8.00036,8.00036,0,0,0-5.91992,13.38184Z"/></svg>',
+			name: 'Toggle Streams',
+			stateKey: 'YTHWV_STATE_STREAMS',
+			type: 'toggle',
+		},
+		{
 			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="currentColor" d="M12 9.5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5m0-1c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zM13.22 3l.55 2.2.13.51.5.18c.61.23 1.19.56 1.72.98l.4.32.5-.14 2.17-.62 1.22 2.11-1.63 1.59-.37.36.08.51c.05.32.08.64.08.98s-.03.66-.08.98l-.08.51.37.36 1.63 1.59-1.22 2.11-2.17-.62-.5-.14-.4.32c-.53.43-1.11.76-1.72.98l-.5.18-.13.51-.55 2.24h-2.44l-.55-2.2-.13-.51-.5-.18c-.6-.23-1.18-.56-1.72-.99l-.4-.32-.5.14-2.17.62-1.21-2.12 1.63-1.59.37-.36-.08-.51c-.05-.32-.08-.65-.08-.98s.03-.66.08-.98l.08-.51-.37-.36L3.6 8.56l1.22-2.11 2.17.62.5.14.4-.32c.53-.44 1.11-.77 1.72-.99l.5-.18.13-.51.54-2.21h2.44M14 2h-4l-.74 2.96c-.73.27-1.4.66-2 1.14l-2.92-.83-2 3.46 2.19 2.13c-.06.37-.09.75-.09 1.14s.03.77.09 1.14l-2.19 2.13 2 3.46 2.92-.83c.6.48 1.27.87 2 1.14L10 22h4l.74-2.96c.73-.27 1.4-.66 2-1.14l2.92.83 2-3.46-2.19-2.13c.06-.37.09-.75.09-1.14s-.03-.77-.09-1.14l2.19-2.13-2-3.46-2.92.83c-.6-.48-1.27-.87-2-1.14L14 2z"/></svg>',
 			name: 'Settings',
 			type: 'settings',
@@ -257,6 +288,54 @@
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
 
 		return shortsContainers;
+	};
+
+	// ===========================================================
+
+	const findStreamElements = () => {
+		const videos = document.querySelectorAll('#metadata-line');
+
+		// Find finished streams by searching for the "streamed" identifier in the thumbnail description.
+		// The identifier varies by language, so the user needs the set the identifier for their selected YouTube language.
+		const matchingStreams = Array.from(videos).filter((metadata) => {
+			const metadataText = String(metadata.innerText);
+			const streamedIdentifier = gmc.get('STREAMED_IDENTIFIER');
+
+			return (
+				gmc.get('INCLUDE_STREAMED') &&
+				streamedIdentifier &&
+				metadataText.toLowerCase().includes(streamedIdentifier.toLowerCase())
+			);
+		});
+
+		if (gmc.get('INCLUDE_LIVE')) {
+			// Find currently live streams by searching for the "LIVE" badge
+			document
+				.querySelectorAll(
+					[
+						// Subscription page live streams
+						'.badge-style-type-live-now-alternate',
+						// Channel page live streams
+						'ytd-thumbnail-overlay-time-status-renderer.ytd-thumbnail[overlay-style="LIVE"]',
+					].join(','),
+				)
+				.forEach((child) => {
+					matchingStreams.push(child);
+				});
+		}
+
+		if (gmc.get('INCLUDE_SCHEDULED')) {
+			// Find scheduled streams by searching for the "Notify Me" button
+			document
+				.querySelectorAll('ytd-toggle-button-renderer.ytd-rich-grid-media')
+				.forEach((child) => {
+					matchingStreams.push(child);
+				});
+		}
+
+		logDebug(`Found ${matchingStreams.length} stream elements`);
+
+		return matchingStreams;
 	};
 
 	// ===========================================================
@@ -399,6 +478,14 @@
 
 	// ===========================================================
 
+	const updateClassOnStreamItems = (section) => {
+		const state = localStorage[`YTHWV_STATE_STREAMS_${section}`];
+
+		hideItems(findStreamElements(), state, section);
+	};
+
+	// ===========================================================
+
 	const updateClassOnVideoItems = () => {
 		// Remove existing classes
 		document
@@ -415,6 +502,7 @@
 		const section = determineYoutubeSection();
 
 		updateClassOnWatchedItems(section);
+		updateClassOnStreamItems(section);
 	};
 
 	// ===========================================================
