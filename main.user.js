@@ -289,25 +289,8 @@
 		return youtubeSection;
 	};
 
-	// ===========================================================
-
-	const updateClassOnWatchedItems = () => {
-		// Remove existing classes
-		document
-			.querySelectorAll('.YT-HWV-WATCHED-DIMMED')
-			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
-		document
-			.querySelectorAll('.YT-HWV-WATCHED-HIDDEN')
-			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
-
-		// If we're on the History page -- do nothing. We don't want to hide
-		// watched videos here.
-		if (window.location.href.indexOf('/feed/history') >= 0) return;
-
-		const section = determineYoutubeSection();
-		const state = localStorage[`YTHWV_STATE_${section}`];
-
-		findWatchedElements().forEach((item, _i) => {
+	const hideItems = (elements, state, section) => {
+		elements.forEach((item, _i) => {
 			let watchedItem;
 			let dimmedItem;
 
@@ -382,6 +365,14 @@
 
 	// ===========================================================
 
+	const updateClassOnWatchedItems = (section) => {
+		const state = localStorage[`YTHWV_STATE_${section}`];
+
+		hideItems(findWatchedElements(), state, section);
+	};
+
+	// ===========================================================
+
 	const updateClassOnShortsItems = () => {
 		const section = determineYoutubeSection();
 
@@ -404,6 +395,26 @@
 				item.classList.add('YT-HWV-SHORTS-HIDDEN');
 			}
 		});
+	};
+
+	// ===========================================================
+
+	const updateClassOnVideoItems = () => {
+		// Remove existing classes
+		document
+			.querySelectorAll('.YT-HWV-WATCHED-DIMMED')
+			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
+		document
+			.querySelectorAll('.YT-HWV-WATCHED-HIDDEN')
+			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
+
+		// If we're on the History page -- do nothing. We don't want to hide
+		// watched videos here.
+		if (window.location.href.indexOf('/feed/history') >= 0) return;
+
+		const section = determineYoutubeSection();
+
+		updateClassOnWatchedItems(section);
 	};
 
 	// ===========================================================
@@ -454,7 +465,7 @@
 
 						localStorage.setItem(storageKey, newState);
 
-						updateClassOnWatchedItems();
+						updateClassOnVideoItems();
 						updateClassOnShortsItems();
 						renderButtons();
 					});
@@ -491,7 +502,7 @@
 		}
 
 		logDebug('Running check for watched videos, and shorts');
-		updateClassOnWatchedItems();
+		updateClassOnVideoItems();
 		updateClassOnShortsItems();
 		renderButtons();
 	}, 250);
