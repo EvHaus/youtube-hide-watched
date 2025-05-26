@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.11
+// @version      6.12
 // @license      MIT
-// @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
+// @description  Hides watched videos, member only videos and shorts from your YouTube subscriptions page.
 // @author       Ev Haus
 // @author       netjeff
 // @author       actionless
+// @author       sndrsmnk
 // @match        http://*.youtube.com/*
 // @match        http://youtube.com/*
 // @match        https://*.youtube.com/*
