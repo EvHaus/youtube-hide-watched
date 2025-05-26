@@ -88,6 +88,10 @@
 	};
 
 	addStyle(`
+.YT-HWV-MEMBERS-HIDDEN { display: none !important }
+
+.YT-HWV-MEMBERS-DIMMED { opacity: 0.3 }
+
 .YT-HWV-WATCHED-HIDDEN { display: none !important }
 
 .YT-HWV-WATCHED-DIMMED { opacity: 0.3 }
@@ -163,6 +167,14 @@
 				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><g fill="currentColor"><g clip-path="url(#slashGap)"><path d="M31.97 3c-1.11 0-2.25.3-3.27.93l-15.93 9.45c-2.43 1.41-3.87 4.29-3.75 7.32.15 3 1.74 5.61 4.17 6.84.06.03 2.25 1.05 2.25 1.05l-2.7 1.59C9.32 32.22 8 36.99 9.8 40.83c1.29 2.64 3.72 4.17 6.27 4.17 1.11 0 2.22-.3 3.27-.93l15.93-9.45c2.4-1.44 3.87-4.29 3.72-7.35-.12-2.97-1.74-5.61-4.17-6.81-.06-.03-2.25-1.05-2.25-1.05l2.7-1.59c3.42-2.04 4.74-6.81 2.91-10.65C36.95 4.53 34.49 3 31.97 3z"/></g><path d="m7.501 5.55 4.066-2.42 24.26 40.78-4.065 2.418z"/></g></svg>',
 			name: 'Toggle Shorts',
 			stateKey: 'YTHWV_STATE_SHORTS',
+			type: 'toggle',
+		},
+		{
+			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="m24.002 2.4946c-11.961 0-21.635 9.6703-21.635 21.627 0 11.957 9.6737 21.627 21.635 21.627s21.635-9.6703 21.635-21.627c0-11.957-9.6737-21.627-21.635-21.627zm7.6339 32.44-7.6648-4.8197-7.6957 4.8197 2.0707-9.176-6.7067-6.2718 8.8702-0.6797 3.5233-8.589 3.4615 8.589 8.8702 0.6797-6.7376 6.2718z"/></svg>',
+			iconHidden:
+				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="m24.002 2.4946c-11.961 0-21.635 9.6703-21.635 21.627 0 11.957 9.6737 21.627 21.635 21.627s21.635-9.6703 21.635-21.627c0-11.957-9.6737-21.627-21.635-21.627zm7.6339 32.44-7.6648-4.8197-7.6957 4.8197 2.0707-9.176-6.7067-6.2718 8.8702-0.6797 3.5233-8.589 3.4615 8.589 8.8702 0.6797-6.7376 6.2718z"/><path d="m2.7218 3.0648 42.735 42.543" stroke="currentColor" stroke-width="4"/></svg>',
+			name: 'Toggle Member Only/First Videos',
+			stateKey: 'YTHWV_STATE_MEMBERS',
 			type: 'toggle',
 		},
 		{
@@ -261,6 +273,26 @@
 
 	// ===========================================================
 
+	const FindMemberVideoElements = () => {
+		var memberVideosArray = [];
+
+		document.querySelectorAll('.badge-style-type-members-only[aria-label="Members first"]').forEach((child) => {
+			memberVideosArray.push(child);
+		});
+
+		document.querySelectorAll('.badge-style-type-members-only[aria-label="Members only"]').forEach((child) => {
+			memberVideosArray.push(child);
+		});
+
+		logDebug(
+			`Found ${memberVideosArray.length} members first/only elements `,
+		);
+
+		return memberVideosArray;
+	};
+
+	// ===========================================================
+
 	const findButtonAreaTarget = () => {
 		// Button will be injected into the main header menu
 		return document.querySelector('#container #end #buttons');
@@ -290,6 +322,97 @@
 		}
 
 		return youtubeSection;
+	};
+
+	// ===========================================================
+
+	const updateClassOnMemberVideoItems = () => {
+		// Remove existing classes
+		document
+			.querySelectorAll('.YT-HWV-MEMBERS-DIMMED')
+			.forEach((el) => el.classList.remove('YT-HWV-MEMBERS-DIMMED'));
+		document
+			.querySelectorAll('.YT-HWV-MEMBERS-HIDDEN')
+			.forEach((el) => el.classList.remove('YT-HWV-MEMBERS-HIDDEN'));
+
+		// If we're on the History page -- do nothing. We don't want to hide
+		// members only videos here.
+		if (window.location.href.indexOf('/feed/history') >= 0) return;
+
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_MEMBERS_${section}`];
+
+		FindMemberVideoElements().forEach((item, _i) => {
+			let membersItem;
+			let dimmedItem;
+
+			// "Subscription" section needs us to hide the "#contents",
+			// but in the "Trending" section, that class will hide everything.
+			// So there, we need to hide the "ytd-video-renderer"
+			if (section === 'subscriptions') {
+				// For rows, hide the row and the header too. We can't hide
+				// their entire parent because then we'll get the infinite
+				// page loader to load forever.
+				membersItem =
+					// Grid item
+					item.closest('.ytd-grid-renderer') ||
+					item.closest('.ytd-item-section-renderer') ||
+					item.closest('.ytd-rich-grid-row') ||
+					item.closest('.ytd-rich-grid-renderer') ||
+					// List item
+					item.closest('#grid-container');
+
+				// If we're hiding the .ytd-item-section-renderer element, we need to give it
+				// some extra spacing otherwise we'll get stuck in infinite page loading
+				if (membersItem?.classList.contains('ytd-item-section-renderer')) {
+					membersItem
+						.closest('ytd-item-section-renderer')
+						.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+				}
+			} else if (section === 'playlist') {
+				membersItem = item.closest('ytd-playlist-video-renderer');
+			} else if (section === 'watch') {
+				membersItem = item.closest('ytd-compact-video-renderer');
+
+				// Don't hide video if it's going to play next.
+				//
+				// If there is no membersItem - we probably got
+				// `ytd-playlist-panel-video-renderer`:
+				// let's also ignore it as in case of shuffle enabled
+				// we could accidentially hide the item which gonna play next.
+				if (membersItem?.closest('ytd-compact-autoplay-renderer')) {
+					membersItem = null;
+				}
+
+				// For playlist items, we never hide them, but we will dim
+				// them even if current mode is to hide rather than dim.
+				const membersItemInPlaylist = item.closest(
+					'ytd-playlist-panel-video-renderer',
+				);
+				if (!membersItem && membersItemInPlaylist) {
+					dimmedItem = membersItemInPlaylist;
+				}
+			} else {
+				// For home page and other areas
+				membersItem =
+					item.closest('ytd-rich-item-renderer') ||
+					item.closest('ytd-video-renderer') ||
+					item.closest('ytd-grid-video-renderer');
+			}
+
+			if (membersItem) {
+				// Add current class
+				if (state === 'dimmed') {
+					membersItem.classList.add('YT-HWV-MEMBERS-DIMMED');
+				} else if (state === 'hidden') {
+					membersItem.classList.add('YT-HWV-MEMBERS-HIDDEN');
+				}
+			}
+
+			if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
+				dimmedItem.classList.add('YT-HWV-MEMBERS-DIMMED');
+			}
+		});
 	};
 
 	// ===========================================================
@@ -459,6 +582,7 @@
 
 						updateClassOnWatchedItems();
 						updateClassOnShortsItems();
+						updateClassOnMemberVideoItems();
 						renderButtons();
 					});
 					break;
@@ -496,6 +620,7 @@
 		logDebug('Running check for watched videos, and shorts');
 		updateClassOnWatchedItems();
 		updateClassOnShortsItems();
+		updateClassOnMemberVideoItems();
 		renderButtons();
 	}, 250);
 
