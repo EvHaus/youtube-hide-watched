@@ -25,4 +25,4 @@ The "Watched Videos" button keeps track of different areas of YouTube separately
 - Playlist pages
 - Everywhere else
 
-YouTube does not keep track of which Shorts you've watched, s the "Shorts" button dims/hides all Shorts.
+YouTube does not keep track of which Shorts you've watched, so the "Shorts" button dims/hides all Shorts.
