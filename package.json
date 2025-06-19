@@ -14,7 +14,7 @@
 	},
 	"scripts": {
 		"biome:check": "biome check --write",
-		"lint": "pnpm packagelint && pnpm biome:check",
+		"lint": "pnpm biome:check && pnpm packagelint",
 		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
 		"test": "pnpm lint"
 	},

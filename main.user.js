@@ -24,6 +24,9 @@
 // You can open new issues at:
 // https://github.com/EvHaus/youtube-hide-watched/issues
 
+const REGEX_CHANNEL = /.*\/(user|channel|c)\/.+\/videos/u;
+const REGEX_USER = /.*\/@.*/u;
+
 ((_undefined) => {
 	// Enable for debugging
 	const DEBUG = false;
@@ -37,8 +40,8 @@
 		const s = (s) => s;
 		trustedTypes.createPolicy('default', {
 			createHTML: s,
-			createScriptURL: s,
 			createScript: s,
+			createScriptURL: s,
 		});
 	}
 
@@ -274,10 +277,7 @@
 		let youtubeSection = 'misc';
 		if (href.includes('/watch?')) {
 			youtubeSection = 'watch';
-		} else if (
-			href.match(/.*\/(user|channel|c)\/.+\/videos/u) ||
-			href.match(/.*\/@.*/u)
-		) {
+		} else if (href.match(REGEX_CHANNEL) || href.match(REGEX_USER)) {
 			youtubeSection = 'channel';
 		} else if (href.includes('/feed/subscriptions')) {
 			youtubeSection = 'subscriptions';

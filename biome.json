@@ -1,5 +1,16 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on",
+				"useSortedAttributes": "on",
+				"useSortedKeys": "on",
+				"useSortedProperties": "on"
+			}
+		},
+		"enabled": true
+	},
 	"css": {
 		"formatter": {
 			"quoteStyle": "single"
@@ -8,8 +19,16 @@
 			"cssModules": true
 		}
 	},
+	"files": {
+		"includes": ["**", "!dist"]
+	},
 	"formatter": {
 		"enabled": true
+	},
+	"html": {
+		"formatter": {
+			"enabled": true
+		}
 	},
 	"javascript": {
 		"formatter": {
@@ -20,13 +39,11 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
 			"a11y": {
 				"noAutofocus": "off",
 				"useSemanticElements": "off"
 			},
 			"complexity": {
-				"noForEach": "off",
 				"noUselessStringConcat": "error",
 				"noUselessUndefinedInitialization": "error",
 				"noVoid": "error",
@@ -38,41 +55,49 @@
 				"noUnusedFunctionParameters": "error",
 				"noUnusedImports": "error",
 				"noUnusedPrivateClassMembers": "error",
-				"noUnusedVariables": "error",
+				"noUnusedVariables": {
+					"level": "error",
+					"options": {
+						"ignoreRestSiblings": true
+					}
+				},
 				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
+				"noBitwiseOperators": "error",
+				"noFloatingPromises": "error",
+				"noImportCycles": "warn",
+				"noTsIgnore": "error",
+				"noUnwantedPolyfillio": "error",
+				"useConsistentObjectDefinition": {
+					"level": "error",
+					"options": {
+						"syntax": "shorthand"
+					}
+				},
+				"useSortedClasses": "error",
+				"useUniqueElementIds": "off"
+			},
+			"performance": {
+				"noBarrelFile": "warn",
+				"noNamespaceImport": "error",
+				"useTopLevelRegex": "error"
+			},
+			"recommended": true,
+			"style": {
 				"noDescendingSpecificity": "error",
-				"noDocumentCookie": "error",
-				"noDocumentImportInPage": "error",
-				"noDuplicateCustomProperties": "error",
-				"noDuplicateProperties": "error",
+				"noDoneCallback": "error",
 				"noEnum": "error",
 				"noExportedImports": "error",
 				"noHeadElement": "error",
-				"noHeadImportInDocument": "error",
-				"noImgElement": "error",
-				"noIrregularWhitespace": "error",
+				"noInferrableTypes": "error",
 				"noNestedTernary": "error",
-				"noOctalEscape": "error",
-				"noTemplateCurlyInString": "error",
-				"noUnknownPseudoElement": "error",
-				"noUnknownTypeSelector": "error",
-				"noUselessEscapeInRegex": "error",
-				"noUselessStringRaw": "error",
-				"useCollapsedIf": "error",
-				"useDeprecatedReason": "error",
-				"useGoogleFontDisplay": "error",
-				"useSortedClasses": "error"
-			},
-			"performance": {
-				"noBarrelFile": "warn"
-			},
-			"style": {
-				"noDoneCallback": "error",
-				"noNamespaceImport": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
 				"noYodaExpression": "error",
+				"useAsConstAssertion": "error",
 				"useCollapsedElseIf": "error",
+				"useCollapsedIf": "error",
 				"useConsistentArrayType": {
 					"level": "error",
 					"options": {
@@ -80,26 +105,34 @@
 					}
 				},
 				"useConsistentBuiltinInstantiation": "error",
+				"useDefaultParameterLast": "error",
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
 				"useShorthandAssign": "error",
 				"useThrowNewError": "error",
 				"useThrowOnlyError": "error"
 			},
 			"suspicious": {
-				"useAwait": "error",
 				"noConsole": {
 					"level": "error",
 					"options": {
 						"allow": ["error", "warn", "info", "debug"]
 					}
 				},
-				"useErrorMessage": "error",
+				"noDocumentImportInPage": "error",
 				"noEmptyBlockStatements": "error",
+				"noFocusedTests": "warn",
+				"noHeadImportInDocument": "error",
 				"noMisplacedAssertion": "error",
+				"useAwait": "error",
+				"useErrorMessage": "error",
 				"useNumberToFixedDigitsArgument": "error"
 			}
 		}
 	},
-	"organizeImports": {
-		"enabled": true
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true,
+		"useIgnoreFile": true
 	}
 }
