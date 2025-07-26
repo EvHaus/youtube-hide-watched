@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.12
+// @version      6.13
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -197,6 +197,8 @@ const REGEX_USER = /.*\/@.*/u;
 		const watched = document.querySelectorAll(
 			[
 				'.ytd-thumbnail-overlay-resume-playback-renderer',
+				// Recommended videos on the right-hand sidebar when watching a video
+				'.ytThumbnailOverlayProgressBarHostWatchedProgressBarSegment',
 				// 2025-02-01 Update
 				'.ytThumbnailOverlayProgressBarHostWatchedProgressBarSegmentModern',
 			].join(','),
@@ -343,7 +345,10 @@ const REGEX_USER = /.*\/@.*/u;
 			} else if (section === 'playlist') {
 				watchedItem = item.closest('ytd-playlist-video-renderer');
 			} else if (section === 'watch') {
-				watchedItem = item.closest('ytd-compact-video-renderer');
+				watchedItem =
+					item.closest('ytd-compact-video-renderer') ||
+					// Recommended videos on the right-hand sidebar when watching a video (#370)
+					item.closest('yt-lockup-view-model');
 
 				// Don't hide video if it's going to play next.
 				//
