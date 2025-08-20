@@ -301,12 +301,12 @@ const REGEX_USER = /.*\/@.*/u;
 
 	const updateClassOnWatchedItems = () => {
 		// Remove existing classes
-		document
-			.querySelectorAll('.YT-HWV-WATCHED-DIMMED')
-			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
-		document
-			.querySelectorAll('.YT-HWV-WATCHED-HIDDEN')
-			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
+		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
+			el.classList.remove('YT-HWV-WATCHED-DIMMED');
+		});
+		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
+			el.classList.remove('YT-HWV-WATCHED-HIDDEN');
+		});
 
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
@@ -396,12 +396,12 @@ const REGEX_USER = /.*\/@.*/u;
 	const updateClassOnShortsItems = () => {
 		const section = determineYoutubeSection();
 
-		document
-			.querySelectorAll('.YT-HWV-SHORTS-DIMMED')
-			.forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
-		document
-			.querySelectorAll('.YT-HWV-SHORTS-HIDDEN')
-			.forEach((el) => el.classList.remove('YT-HWV-SHORTS-HIDDEN'));
+		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
+			el.classList.remove('YT-HWV-SHORTS-DIMMED');
+		});
+		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => {
+			el.classList.remove('YT-HWV-SHORTS-HIDDEN');
+		});
 
 		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
 

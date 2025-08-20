@@ -3,9 +3,24 @@
 	"assist": {
 		"actions": {
 			"source": {
-				"organizeImports": "on",
-				"useSortedAttributes": "on",
-				"useSortedKeys": "on",
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"identifierOrder": "natural"
+					}
+				},
+				"useSortedAttributes": {
+					"level": "on",
+					"options": {
+						"sortOrder": "natural"
+					}
+				},
+				"useSortedKeys": {
+					"level": "on",
+					"options": {
+						"sortOrder": "natural"
+					}
+				},
 				"useSortedProperties": "on"
 			}
 		},
@@ -64,23 +79,15 @@
 				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
-				"noBitwiseOperators": "error",
 				"noFloatingPromises": "error",
 				"noImportCycles": "warn",
-				"noTsIgnore": "error",
-				"noUnwantedPolyfillio": "error",
-				"useConsistentObjectDefinition": {
-					"level": "error",
-					"options": {
-						"syntax": "shorthand"
-					}
-				},
-				"useSortedClasses": "error",
-				"useUniqueElementIds": "off"
+				"useAnchorHref": "error",
+				"useSortedClasses": "error"
 			},
 			"performance": {
 				"noBarrelFile": "warn",
 				"noNamespaceImport": "error",
+				"noUnwantedPolyfillio": "error",
 				"useTopLevelRegex": "error"
 			},
 			"recommended": true,
@@ -105,6 +112,12 @@
 					}
 				},
 				"useConsistentBuiltinInstantiation": "error",
+				"useConsistentObjectDefinitions": {
+					"level": "error",
+					"options": {
+						"syntax": "shorthand"
+					}
+				},
 				"useDefaultParameterLast": "error",
 				"useNumberNamespace": "error",
 				"useSelfClosingElements": "error",
@@ -113,6 +126,7 @@
 				"useThrowOnlyError": "error"
 			},
 			"suspicious": {
+				"noBitwiseOperators": "error",
 				"noConsole": {
 					"level": "error",
 					"options": {
@@ -130,6 +144,14 @@
 			}
 		}
 	},
+	"overrides": [
+		{
+			"assist": {
+				"enabled": false
+			},
+			"includes": ["package.json"]
+		}
+	],
 	"vcs": {
 		"clientKind": "git",
 		"enabled": true,
