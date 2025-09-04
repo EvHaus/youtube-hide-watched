@@ -15,8 +15,8 @@
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @downloadURL  https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.user.js
-// @updateURL    https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.meta.js
+// @downloadURL https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.user.js
+// @updateURL https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.meta.js
 // ==/UserScript==
 
 // To submit bugs or submit revisions please see visit the repository at:
@@ -53,6 +53,15 @@ const REGEX_USER = /.*\/@.*/u;
 	const gmc = new GM_config({
 		events: {
 			save() {
+				// Validate duration settings
+				const minDuration = this.get('MIN_VIDEO_DURATION');
+				const maxDuration = this.get('MAX_VIDEO_DURATION');
+
+				if (minDuration > maxDuration) {
+					alert('Error: Minimum duration cannot be greater than maximum duration. Please correct your settings.');
+					return;
+				}
+
 				this.close();
 			},
 		},
@@ -61,6 +70,20 @@ const REGEX_USER = /.*\/@.*/u;
 				default: 10,
 				label: 'Hide/Dim Videos Above Percent',
 				max: 100,
+				min: 0,
+				type: 'int',
+			},
+			MIN_VIDEO_DURATION: {
+				default: 0,
+				label: 'Min Video Duration (minutes)',
+				max: 720,
+				min: 0,
+				type: 'int',
+			},
+			MAX_VIDEO_DURATION: {
+				default: 720,
+				label: 'Max Video Duration (minutes)',
+				max: 720,
 				min: 0,
 				type: 'int',
 			},
@@ -98,6 +121,10 @@ const REGEX_USER = /.*\/@.*/u;
 .YT-HWV-SHORTS-HIDDEN { display: none !important }
 
 .YT-HWV-SHORTS-DIMMED { opacity: 0.3 }
+
+.YT-HWV-DURATION-HIDDEN { display: none !important }
+
+.YT-HWV-DURATION-DIMMED { opacity: 0.3 }
 
 .YT-HWV-HIDDEN-ROW-PARENT { padding-bottom: 10px }
 
@@ -169,6 +196,14 @@ const REGEX_USER = /.*\/@.*/u;
 			type: 'toggle',
 		},
 		{
+			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 32c-6.63 0-12-5.37-12-12s5.37-12 12-12 12 5.37 12 12-5.37 12-12 12zm1-20h-2v8l6 3.6 1-1.6-5-3V16z"/></svg>',
+			iconHidden:
+				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><g fill="currentColor"><path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 32c-6.63 0-12-5.37-12-12s5.37-12 12-12 12 5.37 12 12-5.37 12-12 12zm1-20h-2v8l6 3.6 1-1.6-5-3V16z"/><path d="m6.4 6.4 35.2 35.2-2.8 2.8L3.6 9.2z"/></g></svg>',
+			name: 'Filter by Duration',
+			stateKey: 'YTHWV_STATE_DURATION',
+			type: 'toggle',
+		},
+		{
 			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="currentColor" d="M12 9.5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5m0-1c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zM13.22 3l.55 2.2.13.51.5.18c.61.23 1.19.56 1.72.98l.4.32.5-.14 2.17-.62 1.22 2.11-1.63 1.59-.37.36.08.51c.05.32.08.64.08.98s-.03.66-.08.98l-.08.51.37.36 1.63 1.59-1.22 2.11-2.17-.62-.5-.14-.4.32c-.53.43-1.11.76-1.72.98l-.5.18-.13.51-.55 2.24h-2.44l-.55-2.2-.13-.51-.5-.18c-.6-.23-1.18-.56-1.72-.99l-.4-.32-.5.14-2.17.62-1.21-2.12 1.63-1.59.37-.36-.08-.51c-.05-.32-.08-.65-.08-.98s.03-.66.08-.98l.08-.51-.37-.36L3.6 8.56l1.22-2.11 2.17.62.5.14.4-.32c.53-.44 1.11-.77 1.72-.99l.5-.18.13-.51.54-2.21h2.44M14 2h-4l-.74 2.96c-.73.27-1.4.66-2 1.14l-2.92-.83-2 3.46 2.19 2.13c-.06.37-.09.75-.09 1.14s.03.77.09 1.14l-2.19 2.13 2 3.46 2.92-.83c.6.48 1.27.87 2 1.14L10 22h4l.74-2.96c.73-.27 1.4-.66 2-1.14l2.92.83 2-3.46-2.19-2.13c.06-.37.09-.75.09-1.14s-.03-.77-.09-1.14l2.19-2.13-2-3.46-2.92.83c-.6-.48-1.27-.87-2-1.14L14 2z"/></svg>',
 			name: 'Settings',
 			type: 'settings',
@@ -189,6 +224,33 @@ const REGEX_USER = /.*\/@.*/u;
 			timeout = setTimeout(later, wait);
 			if (callNow) func.apply(this, args);
 		};
+	};
+
+	// ===========================================================
+
+	const parseDuration = (durationText) => {
+		if (!durationText) return null;
+
+		// Remove any whitespace
+		durationText = durationText.trim();
+
+		// Handle formats: "10:30" (mm:ss) or "1:05:23" (h:mm:ss)
+		const parts = durationText.split(':');
+
+		if (parts.length === 2) {
+			// mm:ss format
+			const minutes = parseInt(parts[0], 10);
+			const seconds = parseInt(parts[1], 10);
+			return minutes + (seconds / 60);
+		} else if (parts.length === 3) {
+			// h:mm:ss format
+			const hours = parseInt(parts[0], 10);
+			const minutes = parseInt(parts[1], 10);
+			const seconds = parseInt(parts[2], 10);
+			return (hours * 60) + minutes + (seconds / 60);
+		}
+
+		return null;
 	};
 
 	// ===========================================================
@@ -218,6 +280,95 @@ const REGEX_USER = /.*\/@.*/u;
 		);
 
 		return withThreshold;
+	};
+
+	// ===========================================================
+
+	const findDurationFilteredElements = () => {
+		const section = determineYoutubeSection();
+		const minDuration = gmc.get('MIN_VIDEO_DURATION');
+		const maxDuration = gmc.get('MAX_VIDEO_DURATION');
+
+		// Find all video elements that could have duration
+		const videoSelectors = [
+			'ytd-rich-item-renderer',
+			'ytd-video-renderer',
+			'ytd-grid-video-renderer',
+			'ytd-compact-video-renderer',
+			'ytd-playlist-video-renderer'
+		];
+
+		const allVideos = document.querySelectorAll(videoSelectors.join(','));
+		const filteredVideos = [];
+
+		Array.from(allVideos).forEach((videoElement) => {
+			// Skip shorts - we don't want to apply duration filtering to them
+			if (videoElement.querySelector('[is-shorts]') ||
+				videoElement.closest('ytd-reel-shelf-renderer') ||
+				videoElement.querySelector('.ytd-thumbnail-overlay-time-status-renderer[aria-label="Shorts"]')) {
+				return;
+			}
+
+			// Try to find duration using broader approach
+			let durationFound = false;
+			let videoDurationMinutes = null;
+
+			// Method 1: Look for specific overlay elements
+			const overlaySelectors = [
+				'ytd-thumbnail-overlay-time-status-renderer span',
+				'.ytd-thumbnail-overlay-time-status-renderer span',
+				'[class*="time-status"] span',
+				'[class*="duration"] span'
+			];
+
+			for (let selector of overlaySelectors) {
+				const elements = videoElement.querySelectorAll(selector);
+				for (let el of elements) {
+					const text = el.textContent?.trim();
+					if (text && text.match(/^\d{1,2}:\d{2}(:\d{2})?$/)) {
+						videoDurationMinutes = parseDuration(text);
+						if (videoDurationMinutes !== null) {
+							durationFound = true;
+							break;
+						}
+					}
+				}
+				if (durationFound) break;
+			}
+
+			// Method 2: If overlay method failed, look for ANY text that looks like duration
+			if (!durationFound) {
+				const walker = document.createTreeWalker(
+					videoElement,
+					NodeFilter.SHOW_TEXT,
+					null,
+					false
+				);
+
+				let textNode;
+				while (textNode = walker.nextNode()) {
+					const text = textNode.textContent.trim();
+					if (text.match(/^\d{1,2}:\d{2}(:\d{2})?$/)) {
+						videoDurationMinutes = parseDuration(text);
+						if (videoDurationMinutes !== null) {
+							durationFound = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!durationFound) {
+				return;
+			}
+
+			// Check if video should be filtered based on duration
+			if (videoDurationMinutes < minDuration || videoDurationMinutes > maxDuration) {
+				filteredVideos.push(videoElement);
+			}
+		});
+
+		return filteredVideos;
 	};
 
 	// ===========================================================
@@ -301,12 +452,12 @@ const REGEX_USER = /.*\/@.*/u;
 
 	const updateClassOnWatchedItems = () => {
 		// Remove existing classes
-		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-DIMMED');
-		});
-		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-HIDDEN');
-		});
+		document
+			.querySelectorAll('.YT-HWV-WATCHED-DIMMED')
+			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-DIMMED'));
+		document
+			.querySelectorAll('.YT-HWV-WATCHED-HIDDEN')
+			.forEach((el) => el.classList.remove('YT-HWV-WATCHED-HIDDEN'));
 
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
@@ -393,15 +544,46 @@ const REGEX_USER = /.*\/@.*/u;
 
 	// ===========================================================
 
+	const updateClassOnDurationItems = () => {
+		// Remove existing duration filter classes
+		document
+			.querySelectorAll('.YT-HWV-DURATION-DIMMED')
+			.forEach((el) => el.classList.remove('YT-HWV-DURATION-DIMMED'));
+		document
+			.querySelectorAll('.YT-HWV-DURATION-HIDDEN')
+			.forEach((el) => el.classList.remove('YT-HWV-DURATION-HIDDEN'));
+
+		const section = determineYoutubeSection();
+		const state = localStorage[`YTHWV_STATE_DURATION_${section}`];
+
+		// Only apply duration filtering if it's enabled
+		if (!state || state === 'normal') {
+			return;
+		}
+
+		const durationFilteredElements = findDurationFilteredElements();
+
+		durationFilteredElements.forEach((videoElement) => {
+			// Add current class based on state
+			if (state === 'dimmed') {
+				videoElement.classList.add('YT-HWV-DURATION-DIMMED');
+			} else if (state === 'hidden') {
+				videoElement.classList.add('YT-HWV-DURATION-HIDDEN');
+			}
+		});
+	};
+
+	// ===========================================================
+
 	const updateClassOnShortsItems = () => {
 		const section = determineYoutubeSection();
 
-		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
-			el.classList.remove('YT-HWV-SHORTS-DIMMED');
-		});
-		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => {
-			el.classList.remove('YT-HWV-SHORTS-HIDDEN');
-		});
+		document
+			.querySelectorAll('.YT-HWV-SHORTS-DIMMED')
+			.forEach((el) => el.classList.remove('YT-HWV-SHORTS-DIMMED'));
+		document
+			.querySelectorAll('.YT-HWV-SHORTS-HIDDEN')
+			.forEach((el) => el.classList.remove('YT-HWV-SHORTS-HIDDEN'));
 
 		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
 
@@ -467,6 +649,7 @@ const REGEX_USER = /.*\/@.*/u;
 
 						updateClassOnWatchedItems();
 						updateClassOnShortsItems();
+						updateClassOnDurationItems();
 						renderButtons();
 					});
 					break;
@@ -501,9 +684,10 @@ const REGEX_USER = /.*\/@.*/u;
 			return;
 		}
 
-		logDebug('Running check for watched videos, and shorts');
+		logDebug('Running check for watched videos, shorts, and duration filtering');
 		updateClassOnWatchedItems();
 		updateClassOnShortsItems();
+		updateClassOnDurationItems();
 		renderButtons();
 	}, 250);
 
@@ -548,6 +732,7 @@ const REGEX_USER = /.*\/@.*/u;
 					if (
 						mutations.length === 1 &&
 						mutations[0].addedNodes?.length === 1 &&
+						mutations[0].addedNodes[0].classList &&
 						mutations[0].addedNodes[0].classList.contains('YT-HWV-BUTTONS')
 					) {
 						return;
