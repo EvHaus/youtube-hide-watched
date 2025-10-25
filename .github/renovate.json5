@@ -1,0 +1,10 @@
+{
+	"automerge": true,
+	"extends": ["config:base"],
+	"packageRules": [{
+      "description": "Update these noisy dependencies once a month",
+      "matchPackageNames": ["lefthook"],
+      "groupName": "noisy-dependencies",
+      "schedule": ["* * 1 * *"]
+    }]
+}
