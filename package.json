@@ -14,9 +14,9 @@
 	},
 	"scripts": {
 		"biome:check": "biome check --write",
-		"lint": "pnpm biome:check && pnpm packagelint",
+		"lint": "bun biome:check && bun packagelint",
 		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
-		"test": "pnpm lint"
+		"test": "bun lint"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.11",
@@ -25,6 +25,5 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"packageManager": "pnpm@10.27.0"
+	}
 }

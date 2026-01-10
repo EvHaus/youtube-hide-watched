@@ -5,9 +5,9 @@ pre-commit:
   commands:
     biome:
       glob: "*.{js,jsx,ts,tsx}"
-      run: pnpm biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      run: bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true
     prettier-package-json:
       glob: "package.json"
-      run: pnpm prettier-package-json --use-tabs --write {staged_files}
+      run: bun prettier-package-json --use-tabs --write {staged_files}
       stage_fixed: true
