@@ -82,13 +82,31 @@ const REGEX_USER = /.*\/@.*/u;
 	// localStorage clears) but fall back to localStorage if GM APIs
 	// are unavailable.
 	const stateGet = async (key, defaultValue) => {
-		try { return GM_getValue(key, defaultValue); } catch (_) { /* fall through */ }
-		try { return await GM.getValue(key, defaultValue); } catch (_) { /* fall through */ }
+		try {
+			return GM_getValue(key, defaultValue);
+		} catch (_) {
+			/* fall through */
+		}
+		try {
+			return await GM.getValue(key, defaultValue);
+		} catch (_) {
+			/* fall through */
+		}
 		return localStorage.getItem(key) ?? defaultValue;
 	};
 	const stateSet = async (key, value) => {
-		try { GM_setValue(key, value); return; } catch (_) { /* fall through */ }
-		try { await GM.setValue(key, value); return; } catch (_) { /* fall through */ }
+		try {
+			GM_setValue(key, value);
+			return;
+		} catch (_) {
+			/* fall through */
+		}
+		try {
+			await GM.setValue(key, value);
+			return;
+		} catch (_) {
+			/* fall through */
+		}
 		localStorage.setItem(key, value);
 	};
 
@@ -452,7 +470,9 @@ const REGEX_USER = /.*\/@.*/u;
 			// For toggle buttons, determine where in GM storage they track state
 			const section = determineYoutubeSection();
 			const storageKey = stateKey ? [stateKey, section].join('_') : null;
-			const toggleButtonState = storageKey ? await stateGet(storageKey, 'normal') : 'normal';
+			const toggleButtonState = storageKey
+				? await stateGet(storageKey, 'normal')
+				: 'normal';
 
 			// Generate button DOM
 			const button = document.createElement('button');
@@ -487,9 +507,9 @@ const REGEX_USER = /.*\/@.*/u;
 					});
 					break;
 				case 'settings':
-					button.addEventListener('click', () => {
+					button.addEventListener('click', async () => {
 						gmc.open();
-						renderButtons();
+						await renderButtons();
 					});
 					break;
 			}
