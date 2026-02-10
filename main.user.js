@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.14
+// @version      6.15
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -15,6 +15,8 @@
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM.getValue
+// @grant        GM.setValue
 // @downloadURL  https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.user.js
 // @updateURL    https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.meta.js
 // ==/UserScript==
@@ -74,6 +76,38 @@ const REGEX_USER = /.*\/@.*/u;
 
 	const logDebug = (...msgs) => {
 		if (DEBUG) console.debug('[YT-HWV]', msgs);
+	};
+
+	// Storage helpers — prefer GM storage (persists across YouTube's
+	// localStorage clears) but fall back to localStorage if GM APIs
+	// are unavailable.
+	const stateGet = async (key, defaultValue) => {
+		try {
+			return GM_getValue(key, defaultValue);
+		} catch (_) {
+			/* fall through */
+		}
+		try {
+			return await GM.getValue(key, defaultValue);
+		} catch (_) {
+			/* fall through */
+		}
+		return localStorage.getItem(key) ?? defaultValue;
+	};
+	const stateSet = async (key, value) => {
+		try {
+			GM_setValue(key, value);
+			return;
+		} catch (_) {
+			/* fall through */
+		}
+		try {
+			await GM.setValue(key, value);
+			return;
+		} catch (_) {
+			/* fall through */
+		}
+		localStorage.setItem(key, value);
 	};
 
 	// GreaseMonkey no longer supports GM_addStyle. So we have to define
@@ -299,7 +333,7 @@ const REGEX_USER = /.*\/@.*/u;
 
 	// ===========================================================
 
-	const updateClassOnWatchedItems = () => {
+	const updateClassOnWatchedItems = async () => {
 		// Remove existing classes
 		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
 			el.classList.remove('YT-HWV-WATCHED-DIMMED');
@@ -313,7 +347,7 @@ const REGEX_USER = /.*\/@.*/u;
 		if (window.location.href.indexOf('/feed/history') >= 0) return;
 
 		const section = determineYoutubeSection();
-		const state = localStorage[`YTHWV_STATE_${section}`];
+		const state = await stateGet(`YTHWV_STATE_${section}`);
 
 		findWatchedElements().forEach((item, _i) => {
 			let watchedItem;
@@ -393,7 +427,7 @@ const REGEX_USER = /.*\/@.*/u;
 
 	// ===========================================================
 
-	const updateClassOnShortsItems = () => {
+	const updateClassOnShortsItems = async () => {
 		const section = determineYoutubeSection();
 
 		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
@@ -403,7 +437,7 @@ const REGEX_USER = /.*\/@.*/u;
 			el.classList.remove('YT-HWV-SHORTS-HIDDEN');
 		});
 
-		const state = localStorage[`YTHWV_STATE_SHORTS_${section}`];
+		const state = await stateGet(`YTHWV_STATE_SHORTS_${section}`);
 
 		const shortsContainers = findShortsContainers();
 
@@ -419,7 +453,7 @@ const REGEX_USER = /.*\/@.*/u;
 
 	// ===========================================================
 
-	const renderButtons = () => {
+	const renderButtons = async () => {
 		// Find button area target
 		const target = findButtonAreaTarget();
 		if (!target) return;
@@ -432,11 +466,13 @@ const REGEX_USER = /.*\/@.*/u;
 		buttonArea.classList.add('YT-HWV-BUTTONS');
 
 		// Render buttons
-		BUTTONS.forEach(({ icon, iconHidden, name, stateKey, type }) => {
-			// For toggle buttons, determine where in localStorage they track state
+		for (const { icon, iconHidden, name, stateKey, type } of BUTTONS) {
+			// For toggle buttons, determine where in GM storage they track state
 			const section = determineYoutubeSection();
-			const storageKey = [stateKey, section].join('_');
-			const toggleButtonState = localStorage.getItem(storageKey) || 'normal';
+			const storageKey = stateKey ? [stateKey, section].join('_') : null;
+			const toggleButtonState = storageKey
+				? await stateGet(storageKey, 'normal')
+				: 'normal';
 
 			// Generate button DOM
 			const button = document.createElement('button');
@@ -453,7 +489,7 @@ const REGEX_USER = /.*\/@.*/u;
 			// Attach events for toggle buttons
 			switch (type) {
 				case 'toggle':
-					button.addEventListener('click', () => {
+					button.addEventListener('click', async () => {
 						logDebug(`Button ${name} clicked. State: ${toggleButtonState}`);
 
 						let newState = 'dimmed';
@@ -463,21 +499,21 @@ const REGEX_USER = /.*\/@.*/u;
 							newState = 'normal';
 						}
 
-						localStorage.setItem(storageKey, newState);
+						await stateSet(storageKey, newState);
 
-						updateClassOnWatchedItems();
-						updateClassOnShortsItems();
-						renderButtons();
+						await updateClassOnWatchedItems();
+						await updateClassOnShortsItems();
+						await renderButtons();
 					});
 					break;
 				case 'settings':
-					button.addEventListener('click', () => {
+					button.addEventListener('click', async () => {
 						gmc.open();
-						renderButtons();
+						await renderButtons();
 					});
 					break;
 			}
-		});
+		}
 
 		// Insert buttons into DOM
 		if (existingButtons) {
@@ -489,7 +525,7 @@ const REGEX_USER = /.*\/@.*/u;
 		}
 	};
 
-	const run = debounce((mutations) => {
+	const run = debounce(async (mutations) => {
 		// Don't react if only our own buttons changed state
 		// to avoid running an endless loop
 		if (
@@ -502,9 +538,9 @@ const REGEX_USER = /.*\/@.*/u;
 		}
 
 		logDebug('Running check for watched videos, and shorts');
-		updateClassOnWatchedItems();
-		updateClassOnShortsItems();
-		renderButtons();
+		await updateClassOnWatchedItems();
+		await updateClassOnShortsItems();
+		await renderButtons();
 	}, 250);
 
 	// ===========================================================
