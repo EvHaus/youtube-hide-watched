@@ -80,7 +80,6 @@
 			},
 			"nursery": {
 				"noFloatingPromises": "error",
-				"noImportCycles": "warn",
 				"useSortedClasses": "error"
 			},
 			"performance": {
@@ -136,6 +135,7 @@
 				"noEmptyBlockStatements": "error",
 				"noFocusedTests": "warn",
 				"noHeadImportInDocument": "error",
+				"noImportCycles": "warn",
 				"noMisplacedAssertion": "error",
 				"useAwait": "error",
 				"useErrorMessage": "error",
