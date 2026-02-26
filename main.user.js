@@ -326,6 +326,8 @@ const REGEX_USER = /.*\/@.*/u;
 			youtubeSection = 'playlist';
 		} else if (href.includes('/results?')) {
 			youtubeSection = 'search';
+		} else if (href.includes('/hashtag/')) {
+			youtubeSection = 'hashtag';
 		}
 
 		return youtubeSection;
