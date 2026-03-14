@@ -410,17 +410,14 @@ const REGEX_USER = /.*\/@.*/u;
 			if (watchedItem) {
 				// Add current class
 				if (state === 'dimmed') {
-					//watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 					dimmedItems.add(watchedItem);
 				} else if (state === 'hidden') {
-					//watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
 					hiddenItems.add(watchedItem);
 				}
 			}
 
 			// Playlist items should not be hidden, only dimmed
 			if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
-				//dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				dimmedItems.add(dimmedItem);
 			}
 		});
