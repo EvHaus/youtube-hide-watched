@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.16
+// @version      6.17
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -336,13 +336,8 @@ const REGEX_USER = /.*\/@.*/u;
 	// ===========================================================
 
 	const updateClassOnWatchedItems = async () => {
-		// Remove existing classes
-		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-DIMMED');
-		});
-		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-HIDDEN');
-		});
+		const dimmedItems = new Set();
+		const hiddenItems = new Set();
 
 		// If we're on the History page -- do nothing. We don't want to hide
 		// watched videos here.
@@ -415,16 +410,29 @@ const REGEX_USER = /.*\/@.*/u;
 			if (watchedItem) {
 				// Add current class
 				if (state === 'dimmed') {
-					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+					dimmedItems.add(watchedItem);
 				} else if (state === 'hidden') {
-					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+					hiddenItems.add(watchedItem);
 				}
 			}
 
+			// Playlist items should not be hidden, only dimmed
 			if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
-				dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+				dimmedItems.add(dimmedItem);
 			}
 		});
+
+		// Only remove the class if it's not in the set
+		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
+			if (!dimmedItems.has(el)) el.classList.remove('YT-HWV-WATCHED-DIMMED');
+		});
+		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
+			if (!hiddenItems.has(el)) el.classList.remove('YT-HWV-WATCHED-HIDDEN');
+		});
+
+		// Add new hidden and dimmed classes
+		dimmedItems.forEach((el) => el.classList.add('YT-HWV-WATCHED-DIMMED'));
+		hiddenItems.forEach((el) => el.classList.add('YT-HWV-WATCHED-HIDDEN'));
 	};
 
 	// ===========================================================
