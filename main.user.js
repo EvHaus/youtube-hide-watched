@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.16
+// @version      6.17
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -297,7 +297,7 @@ const REGEX_USER = /.*\/@.*/u;
 			)
 			.forEach((child) => {
 				const container = child.closest('ytd-video-renderer');
-				shortsContainers.push(container);
+				if (container) shortsContainers.push(container);
 			});
 
 		logDebug(`Found ${shortsContainers.length} shorts container elements`);
@@ -340,121 +340,129 @@ const REGEX_USER = /.*\/@.*/u;
 	// ===========================================================
 
 	const updateClassOnWatchedItems = async () => {
-		// Remove existing classes
-		document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-DIMMED');
-		});
-		document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
-			el.classList.remove('YT-HWV-WATCHED-HIDDEN');
-		});
+		try {
+			// Remove existing classes
+			document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
+				el.classList.remove('YT-HWV-WATCHED-DIMMED');
+			});
+			document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
+				el.classList.remove('YT-HWV-WATCHED-HIDDEN');
+			});
 
-		// If we're on the History page -- do nothing. We don't want to hide
-		// watched videos here.
-		if (window.location.href.indexOf('/feed/history') >= 0) return;
+			// If we're on the History page -- do nothing. We don't want to hide
+			// watched videos here.
+			if (window.location.href.indexOf('/feed/history') >= 0) return;
 
-		const section = determineYoutubeSection();
-		const state = await stateGet(`YTHWV_STATE_${section}`);
+			const section = determineYoutubeSection();
+			const state = await stateGet(`YTHWV_STATE_${section}`);
 
-		findWatchedElements().forEach((item, _i) => {
-			let watchedItem;
-			let dimmedItem;
+			findWatchedElements().forEach((item, _i) => {
+				let watchedItem;
+				let dimmedItem;
 
-			// "Subscription" section needs us to hide the "#contents",
-			// but in the "Trending" section, that class will hide everything.
-			// So there, we need to hide the "ytd-video-renderer"
-			if (section === 'subscriptions') {
-				// For rows, hide the row and the header too. We can't hide
-				// their entire parent because then we'll get the infinite
-				// page loader to load forever.
-				watchedItem =
-					// Grid item
-					item.closest('.ytd-grid-renderer') ||
-					item.closest('.ytd-item-section-renderer') ||
-					item.closest('.ytd-rich-grid-row') ||
-					item.closest('.ytd-rich-grid-renderer') ||
-					// List item
-					item.closest('#grid-container');
+				// "Subscription" section needs us to hide the "#contents",
+				// but in the "Trending" section, that class will hide everything.
+				// So there, we need to hide the "ytd-video-renderer"
+				if (section === 'subscriptions') {
+					// For rows, hide the row and the header too. We can't hide
+					// their entire parent because then we'll get the infinite
+					// page loader to load forever.
+					watchedItem =
+						// Grid item
+						item.closest('.ytd-grid-renderer') ||
+						item.closest('.ytd-item-section-renderer') ||
+						item.closest('.ytd-rich-grid-row') ||
+						item.closest('.ytd-rich-grid-renderer') ||
+						// List item
+						item.closest('#grid-container');
 
-				// If we're hiding the .ytd-item-section-renderer element, we need to give it
-				// some extra spacing otherwise we'll get stuck in infinite page loading
-				if (watchedItem?.classList.contains('ytd-item-section-renderer')) {
-					watchedItem
-						.closest('ytd-item-section-renderer')
-						.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+					// If we're hiding the .ytd-item-section-renderer element, we need to give it
+					// some extra spacing otherwise we'll get stuck in infinite page loading
+					if (watchedItem?.classList.contains('ytd-item-section-renderer')) {
+						watchedItem
+							.closest('ytd-item-section-renderer')
+							.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+					}
+				} else if (section === 'playlist') {
+					watchedItem = item.closest('ytd-playlist-video-renderer');
+				} else if (section === 'watch') {
+					watchedItem =
+						item.closest('ytd-compact-video-renderer') ||
+						// Recommended videos on the right-hand sidebar when watching a video (#370)
+						item.closest('yt-lockup-view-model');
+
+					// Don't hide video if it's going to play next.
+					//
+					// If there is no watchedItem - we probably got
+					// `ytd-playlist-panel-video-renderer`:
+					// let's also ignore it as in case of shuffle enabled
+					// we could accidentially hide the item which gonna play next.
+					if (watchedItem?.closest('ytd-compact-autoplay-renderer')) {
+						watchedItem = null;
+					}
+
+					// For playlist items, we never hide them, but we will dim
+					// them even if current mode is to hide rather than dim.
+					const watchedItemInPlaylist = item.closest(
+						'ytd-playlist-panel-video-renderer',
+					);
+					if (!watchedItem && watchedItemInPlaylist) {
+						dimmedItem = watchedItemInPlaylist;
+					}
+				} else {
+					// For home page and other areas
+					watchedItem =
+						item.closest('ytd-rich-item-renderer') ||
+						item.closest('ytd-video-renderer') ||
+						item.closest('ytd-grid-video-renderer');
 				}
-			} else if (section === 'playlist') {
-				watchedItem = item.closest('ytd-playlist-video-renderer');
-			} else if (section === 'watch') {
-				watchedItem =
-					item.closest('ytd-compact-video-renderer') ||
-					// Recommended videos on the right-hand sidebar when watching a video (#370)
-					item.closest('yt-lockup-view-model');
 
-				// Don't hide video if it's going to play next.
-				//
-				// If there is no watchedItem - we probably got
-				// `ytd-playlist-panel-video-renderer`:
-				// let's also ignore it as in case of shuffle enabled
-				// we could accidentially hide the item which gonna play next.
-				if (watchedItem?.closest('ytd-compact-autoplay-renderer')) {
-					watchedItem = null;
+				if (watchedItem) {
+					// Add current class
+					if (state === 'dimmed') {
+						watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
+					} else if (state === 'hidden') {
+						watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
+					}
 				}
 
-				// For playlist items, we never hide them, but we will dim
-				// them even if current mode is to hide rather than dim.
-				const watchedItemInPlaylist = item.closest(
-					'ytd-playlist-panel-video-renderer',
-				);
-				if (!watchedItem && watchedItemInPlaylist) {
-					dimmedItem = watchedItemInPlaylist;
+				if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
+					dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
 				}
-			} else {
-				// For home page and other areas
-				watchedItem =
-					item.closest('ytd-rich-item-renderer') ||
-					item.closest('ytd-video-renderer') ||
-					item.closest('ytd-grid-video-renderer');
-			}
-
-			if (watchedItem) {
-				// Add current class
-				if (state === 'dimmed') {
-					watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
-				} else if (state === 'hidden') {
-					watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
-				}
-			}
-
-			if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
-				dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
-			}
-		});
+			});
+		} catch (error) {
+			console.error('[YT-HWV]', error);
+		}
 	};
 
 	// ===========================================================
 
 	const updateClassOnShortsItems = async () => {
-		const section = determineYoutubeSection();
+		try {
+			const section = determineYoutubeSection();
 
-		document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
-			el.classList.remove('YT-HWV-SHORTS-DIMMED');
-		});
-		document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => {
-			el.classList.remove('YT-HWV-SHORTS-HIDDEN');
-		});
+			document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
+				el.classList.remove('YT-HWV-SHORTS-DIMMED');
+			});
+			document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => {
+				el.classList.remove('YT-HWV-SHORTS-HIDDEN');
+			});
 
-		const state = await stateGet(`YTHWV_STATE_SHORTS_${section}`);
+			const state = await stateGet(`YTHWV_STATE_SHORTS_${section}`);
 
-		const shortsContainers = findShortsContainers();
+			const shortsContainers = findShortsContainers();
 
-		shortsContainers.forEach((item) => {
-			// Add current class
-			if (state === 'dimmed') {
-				item.classList.add('YT-HWV-SHORTS-DIMMED');
-			} else if (state === 'hidden') {
-				item.classList.add('YT-HWV-SHORTS-HIDDEN');
-			}
-		});
+			shortsContainers.forEach((item) => {
+				// Add current class
+				if (state === 'dimmed') {
+					item.classList.add('YT-HWV-SHORTS-DIMMED');
+				} else if (state === 'hidden') {
+					item.classList.add('YT-HWV-SHORTS-HIDDEN');
+				}
+			});
+		} catch (error) {
+			console.error('[YT-HWV]', error);
+		}
 	};
 
 	// ===========================================================
