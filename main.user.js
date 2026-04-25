@@ -149,13 +149,17 @@ const REGEX_USER = /.*\/@.*/u;
 	background: transparent;
 	border: 0;
     border-radius: 40px;
-	color: var(--yt-spec-text-primary);
+	color: #0F0F0F;
 	cursor: pointer;
     display: flex;
 	height: 40px;
     justify-content: center;
 	outline: 0;
 	width: 40px;
+}
+
+[dark] .YT-HWV-BUTTON {
+	color: #F1F1F1;
 }
 
 .YT-HWV-BUTTON:focus,
