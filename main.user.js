@@ -586,7 +586,7 @@ const REGEX_USER = /.*\/@.*/u;
 					if (
 						mutations.length === 1 &&
 						mutations[0].addedNodes?.length === 1 &&
-						mutations[0].addedNodes[0].classList.contains('YT-HWV-BUTTONS')
+						mutations[0].addedNodes[0]?.classList?.contains('YT-HWV-BUTTONS')
 					) {
 						return;
 					}
