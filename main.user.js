@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.17
+// @version      6.18
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -167,7 +167,7 @@ const REGEX_USER = /.*\/@.*/u;
 	background: var(--yt-spec-additive-background);
 }
 
-.YT-HWV-BUTTON-DISABLED { color: var(--yt-spec-text-disabled) }
+.YT-HWV-BUTTON-DISABLED { opacity: 0.5 }
 
 .YT-HWV-MENU {
 	background: #F8F8F8;
