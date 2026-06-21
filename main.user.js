@@ -164,7 +164,7 @@ const REGEX_USER = /.*\/@.*/u;
 
 .YT-HWV-BUTTON:focus,
 .YT-HWV-BUTTON:hover {
-	background: var(--yt-spec-additive-background);
+	background: var(--yt-sys-color-baseline--overlay-button-primary);
 }
 
 .YT-HWV-BUTTON-DISABLED { opacity: 0.5 }
