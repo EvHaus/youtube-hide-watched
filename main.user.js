@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.18
+// @version      6.19
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -384,7 +384,9 @@ const REGEX_USER = /.*\/@.*/u;
 							.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
 					}
 				} else if (section === 'playlist') {
-					watchedItem = item.closest('ytd-playlist-video-renderer');
+					watchedItem =
+						item.closest('ytd-playlist-video-renderer') ||
+						item.closest('yt-lockup-view-model');
 				} else if (section === 'watch') {
 					watchedItem =
 						item.closest('ytd-compact-video-renderer') ||
