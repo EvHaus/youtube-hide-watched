@@ -19,7 +19,7 @@
 		"test": "bun lint"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.0",
+		"@biomejs/biome": "2.5.1",
 		"lefthook": "2.1.9",
 		"prettier-package-json": "2.8.0"
 	},
