@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.19
+// @version      6.20
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
@@ -363,60 +363,69 @@ const REGEX_USER = /.*\/@.*/u;
 				// "Subscription" section needs us to hide the "#contents",
 				// but in the "Trending" section, that class will hide everything.
 				// So there, we need to hide the "ytd-video-renderer"
-				if (section === 'subscriptions') {
-					// For rows, hide the row and the header too. We can't hide
-					// their entire parent because then we'll get the infinite
-					// page loader to load forever.
-					watchedItem =
-						// Grid item
-						item.closest('.ytd-grid-renderer') ||
-						item.closest('.ytd-item-section-renderer') ||
-						item.closest('.ytd-rich-grid-row') ||
-						item.closest('.ytd-rich-grid-renderer') ||
-						// List item
-						item.closest('#grid-container');
+				switch (section) {
+					case 'subscriptions': {
+						// For rows, hide the row and the header too. We can't hide
+						// their entire parent because then we'll get the infinite
+						// page loader to load forever.
+						watchedItem =
+							// Grid item
+							item.closest('.ytd-grid-renderer') ||
+							item.closest('.ytd-item-section-renderer') ||
+							item.closest('.ytd-rich-grid-row') ||
+							item.closest('.ytd-rich-grid-renderer') ||
+							// List item
+							item.closest('#grid-container');
 
-					// If we're hiding the .ytd-item-section-renderer element, we need to give it
-					// some extra spacing otherwise we'll get stuck in infinite page loading
-					if (watchedItem?.classList.contains('ytd-item-section-renderer')) {
-						watchedItem
-							.closest('ytd-item-section-renderer')
-							.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+						// If we're hiding the .ytd-item-section-renderer element, we need to give it
+						// some extra spacing otherwise we'll get stuck in infinite page loading
+						if (watchedItem?.classList.contains('ytd-item-section-renderer')) {
+							watchedItem
+								.closest('ytd-item-section-renderer')
+								.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
+						}
+						break;
 					}
-				} else if (section === 'playlist') {
-					watchedItem =
-						item.closest('ytd-playlist-video-renderer') ||
-						item.closest('yt-lockup-view-model');
-				} else if (section === 'watch') {
-					watchedItem =
-						item.closest('ytd-compact-video-renderer') ||
-						// Recommended videos on the right-hand sidebar when watching a video (#370)
-						item.closest('yt-lockup-view-model');
+					case 'playlist': {
+						watchedItem =
+							item.closest('ytd-playlist-video-renderer') ||
+							item.closest('yt-lockup-view-model');
+						break;
+					}
+					case 'watch': {
+						watchedItem =
+							item.closest('ytd-compact-video-renderer') ||
+							// Recommended videos on the right-hand sidebar when watching a video (#370)
+							item.closest('yt-lockup-view-model');
 
-					// Don't hide video if it's going to play next.
-					//
-					// If there is no watchedItem - we probably got
-					// `ytd-playlist-panel-video-renderer`:
-					// let's also ignore it as in case of shuffle enabled
-					// we could accidentially hide the item which gonna play next.
-					if (watchedItem?.closest('ytd-compact-autoplay-renderer')) {
-						watchedItem = null;
-					}
+						// Don't hide video if it's going to play next.
+						//
+						// If there is no watchedItem - we probably got
+						// `ytd-playlist-panel-video-renderer`:
+						// let's also ignore it as in case of shuffle enabled
+						// we could accidentially hide the item which gonna play next.
+						if (watchedItem?.closest('ytd-compact-autoplay-renderer')) {
+							watchedItem = null;
+						}
 
-					// For playlist items, we never hide them, but we will dim
-					// them even if current mode is to hide rather than dim.
-					const watchedItemInPlaylist = item.closest(
-						'ytd-playlist-panel-video-renderer',
-					);
-					if (!watchedItem && watchedItemInPlaylist) {
-						dimmedItem = watchedItemInPlaylist;
+						// For playlist items, we never hide them, but we will dim
+						// them even if current mode is to hide rather than dim.
+						const watchedItemInPlaylist = item.closest(
+							'ytd-playlist-panel-video-renderer',
+						);
+						if (!watchedItem && watchedItemInPlaylist) {
+							dimmedItem = watchedItemInPlaylist;
+						}
+						break;
 					}
-				} else {
-					// For home page and other areas
-					watchedItem =
-						item.closest('ytd-rich-item-renderer') ||
-						item.closest('ytd-video-renderer') ||
-						item.closest('ytd-grid-video-renderer');
+					default: {
+						// For home page and other areas
+						watchedItem =
+							item.closest('ytd-rich-item-renderer') ||
+							item.closest('ytd-video-renderer') ||
+							item.closest('ytd-grid-video-renderer') ||
+							item.closest('yt-lockup-view-model');
+					}
 				}
 
 				if (watchedItem) {
