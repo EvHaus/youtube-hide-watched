@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         YouTube: Hide Watched Videos
 // @namespace    https://www.haus.gg/
-// @version      6.19
+// @version      6.20
 // @license      MIT
 // @description  Hides watched videos (and shorts) from your YouTube subscriptions page.
 // @author       Ev Haus
 // @author       netjeff
 // @author       actionless
+// @author       CHJ85
 // @match        http://*.youtube.com/*
 // @match        http://youtube.com/*
 // @match        https://*.youtube.com/*
@@ -17,619 +18,211 @@
 // @grant        GM_setValue
 // @grant        GM.getValue
 // @grant        GM.setValue
-// @downloadURL  https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.user.js
-// @updateURL    https://update.greasyfork.org/scripts/13040/YouTube%3A%20Hide%20Watched%20Videos.meta.js
 // ==/UserScript==
 
-// To submit bugs or submit revisions please see visit the repository at:
-// https://github.com/EvHaus/youtube-hide-watched
-// You can open new issues at:
-// https://github.com/EvHaus/youtube-hide-watched/issues
-
-const REGEX_CHANNEL = /.*\/(user|channel|c)\/.+\/videos/u;
-const REGEX_USER = /.*\/@.*/u;
-
 ((_undefined) => {
-	// Enable for debugging
-	const DEBUG = false;
-
-	// Needed to bypass YouTube's Trusted Types restrictions, ie.
-	// Uncaught TypeError: Failed to set the 'innerHTML' property on 'Element': This document requires 'TrustedHTML' assignment.
-	if (
-		typeof trustedTypes !== 'undefined' &&
-		trustedTypes.defaultPolicy === null
-	) {
-		const s = (s) => s;
-		trustedTypes.createPolicy('default', {
-			createHTML: s,
-			createScript: s,
-			createScriptURL: s,
-		});
-	}
-
-	// GM_config setup
-	const title = document.createElement('a');
-	title.textContent = 'YouTube: Hide Watched Videos Settings';
-	title.href = 'https://github.com/EvHaus/youtube-hide-watched';
-	title.target = '_blank';
-	const gmc = new GM_config({
-		events: {
-			save() {
-				this.close();
-			},
-		},
-		fields: {
-			HIDDEN_THRESHOLD_PERCENT: {
-				default: 10,
-				label: 'Hide/Dim Videos Above Percent',
-				max: 100,
-				min: 0,
-				type: 'int',
-			},
-		},
-		id: 'YouTubeHideWatchedVideos',
-		title,
-	});
-
-	// Set defaults
-	localStorage.YTHWV_WATCHED = localStorage.YTHWV_WATCHED || 'false';
-
-	const logDebug = (...msgs) => {
-		if (DEBUG) console.debug('[YT-HWV]', msgs);
-	};
-
-	// Storage helpers — prefer GM storage (persists across YouTube's
-	// localStorage clears) but fall back to localStorage if GM APIs
-	// are unavailable.
-	const stateGet = async (key, defaultValue) => {
-		try {
-			return GM_getValue(key, defaultValue);
-		} catch (_) {
-			/* fall through */
-		}
-		try {
-			return await GM.getValue(key, defaultValue);
-		} catch (_) {
-			/* fall through */
-		}
-		return localStorage.getItem(key) ?? defaultValue;
-	};
-	const stateSet = async (key, value) => {
-		try {
-			GM_setValue(key, value);
-			return;
-		} catch (_) {
-			/* fall through */
-		}
-		try {
-			await GM.setValue(key, value);
-			return;
-		} catch (_) {
-			/* fall through */
-		}
-		localStorage.setItem(key, value);
-	};
-
-	// GreaseMonkey no longer supports GM_addStyle. So we have to define
-	// our own polyfill here
-	const addStyle = (aCss) => {
-		const head = document.getElementsByTagName('head')[0];
-		if (head) {
-			const style = document.createElement('style');
-			style.setAttribute('type', 'text/css');
-			style.textContent = aCss;
-			head.appendChild(style);
-			return style;
-		}
-		return null;
-	};
-
-	addStyle(`
-.YT-HWV-WATCHED-HIDDEN { display: none !important }
-
-.YT-HWV-WATCHED-DIMMED { opacity: 0.3 }
-
-.YT-HWV-SHORTS-HIDDEN { display: none !important }
-
-.YT-HWV-SHORTS-DIMMED { opacity: 0.3 }
-
-.YT-HWV-HIDDEN-ROW-PARENT { padding-bottom: 10px }
-
-.YT-HWV-BUTTONS {
-	background: transparent;
-	border: 1px solid var(--ytd-searchbox-legacy-border-color);
-    border-radius: 40px;
-    display: flex;
-    gap: 5px;
-	margin: 0 20px;
-}
-
-.YT-HWV-BUTTON {
-	align-items: center;
-	background: transparent;
-	border: 0;
-    border-radius: 40px;
-	color: #0F0F0F;
-	cursor: pointer;
-    display: flex;
-	height: 40px;
-    justify-content: center;
-	outline: 0;
-	width: 40px;
-}
-
-[dark] .YT-HWV-BUTTON {
-	color: #F1F1F1;
-}
-
-.YT-HWV-BUTTON:focus,
-.YT-HWV-BUTTON:hover {
-	background: var(--yt-sys-color-baseline--overlay-button-primary);
-}
-
-.YT-HWV-BUTTON-DISABLED { opacity: 0.5 }
-
-.YT-HWV-MENU {
-	background: #F8F8F8;
-	border: 1px solid #D3D3D3;
-	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-	display: none;
-	font-size: 12px;
-	margin-top: -1px;
-	padding: 10px;
-	position: absolute;
-	right: 0;
-	text-align: center;
-	top: 100%;
-	white-space: normal;
-	z-index: 9999;
-}
-
-.YT-HWV-MENU-ON { display: block; }
-.YT-HWV-MENUBUTTON-ON span { transform: rotate(180deg) }
-`);
-
-	const BUTTONS = [
-		{
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></svg>',
-			iconHidden:
-				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="M24 14c5.52 0 10 4.48 10 10 0 1.29-.26 2.52-.71 3.65l5.85 5.85c3.02-2.52 5.4-5.78 6.87-9.5-3.47-8.78-12-15-22.01-15-2.8 0-5.48.5-7.97 1.4l4.32 4.31c1.13-.44 2.36-.71 3.65-.71zM4 8.55l4.56 4.56.91.91C6.17 16.6 3.56 20.03 2 24c3.46 8.78 12 15 22 15 3.1 0 6.06-.6 8.77-1.69l.85.85L39.45 44 42 41.46 6.55 6 4 8.55zM15.06 19.6l3.09 3.09c-.09.43-.15.86-.15 1.31 0 3.31 2.69 6 6 6 .45 0 .88-.06 1.3-.15l3.09 3.09C27.06 33.6 25.58 34 24 34c-5.52 0-10-4.48-10-10 0-1.58.4-3.06 1.06-4.4zm8.61-1.57 6.3 6.3L30 24c0-3.31-2.69-6-6-6l-.33.03z"/></svg>',
-			name: 'Toggle Watched Videos',
-			stateKey: 'YTHWV_STATE',
-			type: 'toggle',
-		},
-		{
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><path fill="currentColor" d="M31.95 3c-1.11 0-2.25.3-3.27.93l-15.93 9.45C10.32 14.79 8.88 17.67 9 20.7c.15 3 1.74 5.61 4.17 6.84.06.03 2.25 1.05 2.25 1.05l-2.7 1.59c-3.42 2.04-4.74 6.81-2.94 10.65C11.07 43.47 13.5 45 16.05 45c1.11 0 2.22-.3 3.27-.93l15.93-9.45c2.4-1.44 3.87-4.29 3.72-7.35-.12-2.97-1.74-5.61-4.17-6.81-.06-.03-2.25-1.05-2.25-1.05l2.7-1.59c3.42-2.04 4.74-6.81 2.91-10.65C36.93 4.53 34.47 3 31.95 3z"/></svg>',
-			iconHidden:
-				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 48 48"><g fill="currentColor"><g clip-path="url(#slashGap)"><path d="M31.97 3c-1.11 0-2.25.3-3.27.93l-15.93 9.45c-2.43 1.41-3.87 4.29-3.75 7.32.15 3 1.74 5.61 4.17 6.84.06.03 2.25 1.05 2.25 1.05l-2.7 1.59C9.32 32.22 8 36.99 9.8 40.83c1.29 2.64 3.72 4.17 6.27 4.17 1.11 0 2.22-.3 3.27-.93l15.93-9.45c2.4-1.44 3.87-4.29 3.72-7.35-.12-2.97-1.74-5.61-4.17-6.81-.06-.03-2.25-1.05-2.25-1.05l2.7-1.59c3.42-2.04 4.74-6.81 2.91-10.65C36.95 4.53 34.49 3 31.97 3z"/></g><path d="m7.501 5.55 4.066-2.42 24.26 40.78-4.065 2.418z"/></g></svg>',
-			name: 'Toggle Shorts',
-			stateKey: 'YTHWV_STATE_SHORTS',
-			type: 'toggle',
-		},
-		{
-			icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="currentColor" d="M12 9.5a2.5 2.5 0 0 1 0 5 2.5 2.5 0 0 1 0-5m0-1c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zM13.22 3l.55 2.2.13.51.5.18c.61.23 1.19.56 1.72.98l.4.32.5-.14 2.17-.62 1.22 2.11-1.63 1.59-.37.36.08.51c.05.32.08.64.08.98s-.03.66-.08.98l-.08.51.37.36 1.63 1.59-1.22 2.11-2.17-.62-.5-.14-.4.32c-.53.43-1.11.76-1.72.98l-.5.18-.13.51-.55 2.24h-2.44l-.55-2.2-.13-.51-.5-.18c-.6-.23-1.18-.56-1.72-.99l-.4-.32-.5.14-2.17.62-1.21-2.12 1.63-1.59.37-.36-.08-.51c-.05-.32-.08-.65-.08-.98s.03-.66.08-.98l.08-.51-.37-.36L3.6 8.56l1.22-2.11 2.17.62.5.14.4-.32c.53-.44 1.11-.77 1.72-.99l.5-.18.13-.51.54-2.21h2.44M14 2h-4l-.74 2.96c-.73.27-1.4.66-2 1.14l-2.92-.83-2 3.46 2.19 2.13c-.06.37-.09.75-.09 1.14s.03.77.09 1.14l-2.19 2.13 2 3.46 2.92-.83c.6.48 1.27.87 2 1.14L10 22h4l.74-2.96c.73-.27 1.4-.66 2-1.14l2.92.83 2-3.46-2.19-2.13c.06-.37.09-.75.09-1.14s-.03-.77-.09-1.14l2.19-2.13-2-3.46-2.92.83c-.6-.48-1.27-.87-2-1.14L14 2z"/></svg>',
-			name: 'Settings',
-			type: 'settings',
-		},
-	];
-
-	// ===========================================================
-
-	const debounce = function (func, wait, immediate) {
-		let timeout;
-		return (...args) => {
-			const later = () => {
-				timeout = null;
-				if (!immediate) func.apply(this, args);
-			};
-			const callNow = immediate && !timeout;
-			clearTimeout(timeout);
-			timeout = setTimeout(later, wait);
-			if (callNow) func.apply(this, args);
-		};
-	};
-
-	// ===========================================================
-
-	const findWatchedElements = () => {
-		const watched = document.querySelectorAll(
-			[
-				'.ytd-thumbnail-overlay-resume-playback-renderer',
-				// Recommended videos on the right-hand sidebar when watching a video
-				'.ytThumbnailOverlayProgressBarHostWatchedProgressBarSegment',
-				// 2025-02-01 Update
-				'.ytThumbnailOverlayProgressBarHostWatchedProgressBarSegmentModern',
-			].join(','),
-		);
-
-		const withThreshold = Array.from(watched).filter((bar) => {
-			return (
-				bar.style.width &&
-				Number.parseInt(bar.style.width, 10) >=
-					gmc.get('HIDDEN_THRESHOLD_PERCENT')
-			);
-		});
-
-		logDebug(
-			`Found ${watched.length} watched elements ` +
-				`(${withThreshold.length} within threshold)`,
-		);
-
-		return withThreshold;
-	};
-
-	// ===========================================================
-
-	const findShortsContainers = () => {
-		const shortsContainers = [
-			// All pages (2024-09 update)
-			document.querySelectorAll('[is-shorts]'),
-			// Subscriptions Page (List View)
-			document.querySelectorAll(
-				'ytd-reel-shelf-renderer ytd-reel-item-renderer',
-			),
-			document.querySelectorAll(
-				'ytd-rich-shelf-renderer ytd-rich-grid-slim-media',
-			),
-			// Home Page & Subscriptions Page (Grid View)
-			document.querySelectorAll('ytd-reel-shelf-renderer ytd-thumbnail'),
-			// Search results page
-			document.querySelectorAll(
-				'ytd-reel-shelf-renderer .ytd-reel-shelf-renderer',
-			),
-			// Search results apge (2025-06 update)
-			document.querySelectorAll('ytm-shorts-lockup-view-model-v2'),
-		].reduce((acc, matches) => {
-			matches?.forEach((child) => {
-				const container =
-					child.closest('ytd-reel-shelf-renderer') ||
-					child.closest('ytd-rich-shelf-renderer') ||
-					child.closest('grid-shelf-view-model');
-				if (container && !acc.includes(container)) acc.push(container);
-			});
-			return acc;
-		}, []);
-
-		// Search results sometimes also show Shorts as if they're regular videos with a little "Shorts" badge
-		document
-			.querySelectorAll(
-				'.ytd-thumbnail-overlay-time-status-renderer[aria-label="Shorts"]',
-			)
-			.forEach((child) => {
-				const container = child.closest('ytd-video-renderer');
-				if (container) shortsContainers.push(container);
-			});
-
-		logDebug(`Found ${shortsContainers.length} shorts container elements`);
-
-		return shortsContainers;
-	};
-
-	// ===========================================================
-
-	const findButtonAreaTarget = () => {
-		// Button will be injected into the main header menu
-		return document.querySelector('#container #end #buttons');
-	};
-
-	// ===========================================================
-
-	const determineYoutubeSection = () => {
-		const { href } = window.location;
-
-		let youtubeSection = 'misc';
-		if (href.includes('/watch?')) {
-			youtubeSection = 'watch';
-		} else if (href.match(REGEX_CHANNEL) || href.match(REGEX_USER)) {
-			youtubeSection = 'channel';
-		} else if (href.includes('/feed/subscriptions')) {
-			youtubeSection = 'subscriptions';
-		} else if (href.includes('/feed/trending')) {
-			youtubeSection = 'trending';
-		} else if (href.includes('/playlist?')) {
-			youtubeSection = 'playlist';
-		} else if (href.includes('/results?')) {
-			youtubeSection = 'search';
-		} else if (href.includes('/hashtag/')) {
-			youtubeSection = 'hashtag';
-		}
-
-		return youtubeSection;
-	};
-
-	// ===========================================================
-
-	const updateClassOnWatchedItems = async () => {
-		try {
-			// Remove existing classes
-			document.querySelectorAll('.YT-HWV-WATCHED-DIMMED').forEach((el) => {
-				el.classList.remove('YT-HWV-WATCHED-DIMMED');
-			});
-			document.querySelectorAll('.YT-HWV-WATCHED-HIDDEN').forEach((el) => {
-				el.classList.remove('YT-HWV-WATCHED-HIDDEN');
-			});
-
-			// If we're on the History page -- do nothing. We don't want to hide
-			// watched videos here.
-			if (window.location.href.indexOf('/feed/history') >= 0) return;
-
-			const section = determineYoutubeSection();
-			const state = await stateGet(`YTHWV_STATE_${section}`);
-
-			findWatchedElements().forEach((item, _i) => {
-				let watchedItem;
-				let dimmedItem;
-
-				// "Subscription" section needs us to hide the "#contents",
-				// but in the "Trending" section, that class will hide everything.
-				// So there, we need to hide the "ytd-video-renderer"
-				if (section === 'subscriptions') {
-					// For rows, hide the row and the header too. We can't hide
-					// their entire parent because then we'll get the infinite
-					// page loader to load forever.
-					watchedItem =
-						// Grid item
-						item.closest('.ytd-grid-renderer') ||
-						item.closest('.ytd-item-section-renderer') ||
-						item.closest('.ytd-rich-grid-row') ||
-						item.closest('.ytd-rich-grid-renderer') ||
-						// List item
-						item.closest('#grid-container');
-
-					// If we're hiding the .ytd-item-section-renderer element, we need to give it
-					// some extra spacing otherwise we'll get stuck in infinite page loading
-					if (watchedItem?.classList.contains('ytd-item-section-renderer')) {
-						watchedItem
-							.closest('ytd-item-section-renderer')
-							.classList.add('YT-HWV-HIDDEN-ROW-PARENT');
-					}
-				} else if (section === 'playlist') {
-					watchedItem =
-						item.closest('ytd-playlist-video-renderer') ||
-						item.closest('yt-lockup-view-model');
-				} else if (section === 'watch') {
-					watchedItem =
-						item.closest('ytd-compact-video-renderer') ||
-						// Recommended videos on the right-hand sidebar when watching a video (#370)
-						item.closest('yt-lockup-view-model');
-
-					// Don't hide video if it's going to play next.
-					//
-					// If there is no watchedItem - we probably got
-					// `ytd-playlist-panel-video-renderer`:
-					// let's also ignore it as in case of shuffle enabled
-					// we could accidentially hide the item which gonna play next.
-					if (watchedItem?.closest('ytd-compact-autoplay-renderer')) {
-						watchedItem = null;
-					}
-
-					// For playlist items, we never hide them, but we will dim
-					// them even if current mode is to hide rather than dim.
-					const watchedItemInPlaylist = item.closest(
-						'ytd-playlist-panel-video-renderer',
-					);
-					if (!watchedItem && watchedItemInPlaylist) {
-						dimmedItem = watchedItemInPlaylist;
-					}
-				} else {
-					// For home page and other areas
-					watchedItem =
-						item.closest('ytd-rich-item-renderer') ||
-						item.closest('ytd-video-renderer') ||
-						item.closest('ytd-grid-video-renderer');
-				}
-
-				if (watchedItem) {
-					// Add current class
-					if (state === 'dimmed') {
-						watchedItem.classList.add('YT-HWV-WATCHED-DIMMED');
-					} else if (state === 'hidden') {
-						watchedItem.classList.add('YT-HWV-WATCHED-HIDDEN');
-					}
-				}
-
-				if (dimmedItem && (state === 'dimmed' || state === 'hidden')) {
-					dimmedItem.classList.add('YT-HWV-WATCHED-DIMMED');
-				}
-			});
-		} catch (error) {
-			console.error('[YT-HWV]', error);
-		}
-	};
-
-	// ===========================================================
-
-	const updateClassOnShortsItems = async () => {
-		try {
-			const section = determineYoutubeSection();
-
-			document.querySelectorAll('.YT-HWV-SHORTS-DIMMED').forEach((el) => {
-				el.classList.remove('YT-HWV-SHORTS-DIMMED');
-			});
-			document.querySelectorAll('.YT-HWV-SHORTS-HIDDEN').forEach((el) => {
-				el.classList.remove('YT-HWV-SHORTS-HIDDEN');
-			});
-
-			const state = await stateGet(`YTHWV_STATE_SHORTS_${section}`);
-
-			const shortsContainers = findShortsContainers();
-
-			shortsContainers.forEach((item) => {
-				// Add current class
-				if (state === 'dimmed') {
-					item.classList.add('YT-HWV-SHORTS-DIMMED');
-				} else if (state === 'hidden') {
-					item.classList.add('YT-HWV-SHORTS-HIDDEN');
-				}
-			});
-		} catch (error) {
-			console.error('[YT-HWV]', error);
-		}
-	};
-
-	// ===========================================================
-
-	const renderButtons = async () => {
-		// Find button area target
-		const target = findButtonAreaTarget();
-		if (!target) return;
-
-		// Did we already render the buttons?
-		const existingButtons = document.querySelector('.YT-HWV-BUTTONS');
-
-		// Generate buttons area DOM
-		const buttonArea = document.createElement('div');
-		buttonArea.classList.add('YT-HWV-BUTTONS');
-
-		// Render buttons
-		for (const { icon, iconHidden, name, stateKey, type } of BUTTONS) {
-			// For toggle buttons, determine where in GM storage they track state
-			const section = determineYoutubeSection();
-			const storageKey = stateKey ? [stateKey, section].join('_') : null;
-			const toggleButtonState = storageKey
-				? await stateGet(storageKey, 'normal')
-				: 'normal';
-
-			// Generate button DOM
-			const button = document.createElement('button');
-			button.title =
-				type === 'toggle'
-					? `${name} : currently "${toggleButtonState}" for section "${section}"`
-					: `${name}`;
-			button.classList.add('YT-HWV-BUTTON');
-			if (toggleButtonState !== 'normal')
-				button.classList.add('YT-HWV-BUTTON-DISABLED');
-			button.innerHTML = toggleButtonState === 'hidden' ? iconHidden : icon;
-			buttonArea.appendChild(button);
-
-			// Attach events for toggle buttons
-			switch (type) {
-				case 'toggle':
-					button.addEventListener('click', async () => {
-						logDebug(`Button ${name} clicked. State: ${toggleButtonState}`);
-
-						let newState = 'dimmed';
-						if (toggleButtonState === 'dimmed') {
-							newState = 'hidden';
-						} else if (toggleButtonState === 'hidden') {
-							newState = 'normal';
-						}
-
-						await stateSet(storageKey, newState);
-
-						await updateClassOnWatchedItems();
-						await updateClassOnShortsItems();
-						await renderButtons();
-					});
-					break;
-				case 'settings':
-					button.addEventListener('click', async () => {
-						gmc.open();
-						await renderButtons();
-					});
-					break;
-			}
-		}
-
-		// Insert buttons into DOM
-		if (existingButtons) {
-			target.parentNode.replaceChild(buttonArea, existingButtons);
-			logDebug('Re-rendered menu buttons');
-		} else {
-			target.parentNode.insertBefore(buttonArea, target);
-			logDebug('Rendered menu buttons');
-		}
-	};
-
-	const run = debounce(async (mutations) => {
-		// Don't react if only our own buttons changed state
-		// to avoid running an endless loop
-		if (
-			mutations &&
-			mutations.length === 1 &&
-			(mutations[0].target.classList.contains('YT-HWV-BUTTON') ||
-				mutations[0].target.classList.contains('YT-HWV-BUTTON-SHORTS'))
-		) {
-			return;
-		}
-
-		logDebug('Running check for watched videos, and shorts');
-		await updateClassOnWatchedItems();
-		await updateClassOnShortsItems();
-		await renderButtons();
-	}, 250);
-
-	// ===========================================================
-
-	// Hijack all XHR calls
-	const send = XMLHttpRequest.prototype.send;
-	XMLHttpRequest.prototype.send = function (data) {
-		this.addEventListener(
-			'readystatechange',
-			function () {
-				if (
-					// Anytime more videos are fetched -- re-run script
-					this.responseURL.indexOf('browse_ajax?action_continuation') > 0
-				) {
-					setTimeout(() => {
-						run();
-					}, 0);
-				}
-			},
-			false,
-		);
-		send.call(this, data);
-	};
-
-	// ===========================================================
-
-	const observeDOM = (() => {
-		const MutationObserver =
-			window.MutationObserver || window.WebKitMutationObserver;
-		const eventListenerSupported = window.addEventListener;
-
-		return (obj, callback) => {
-			logDebug('Attaching DOM listener');
-
-			// Invalid `obj` given
-			if (!obj) return;
-
-			if (MutationObserver) {
-				const obs = new MutationObserver((mutations, _observer) => {
-					// If the mutation is the script's own buttons being injected, ignore the event
-					if (
-						mutations.length === 1 &&
-						mutations[0].addedNodes?.length === 1 &&
-						mutations[0].addedNodes[0]?.classList?.contains('YT-HWV-BUTTONS')
-					) {
-						return;
-					}
-
-					if (
-						mutations[0].addedNodes.length ||
-						mutations[0].removedNodes.length
-					) {
-						callback(mutations);
-					}
-				});
-
-				obs.observe(obj, { childList: true, subtree: true });
-			} else if (eventListenerSupported) {
-				obj.addEventListener('DOMNodeInserted', callback, false);
-				obj.addEventListener('DOMNodeRemoved', callback, false);
-			}
-		};
-	})();
-
-	// ===========================================================
-
-	logDebug('Starting Script');
-
-	// YouTube does navigation via history and also does a bunch
-	// of AJAX video loading. In order to ensure we're always up
-	// to date, we have to listen for ANY DOM change event, and
-	// re-run our script.
-	observeDOM(document.body, run);
-
-	run();
+    const DEBUG = false;
+
+    const STATES = {
+        NORMAL: 'normal',
+        DIMMED: 'dimmed',
+        HIDDEN: 'hidden',
+    };
+
+    let watchedState = GM_getValue('WATCHED_STATE', STATES.HIDDEN);
+    let shortsState = GM_getValue('SHORTS_STATE', STATES.HIDDEN);
+
+    const addStyle = (aCss) => {
+        const head = document.getElementsByTagName('head')[0];
+        if (head) {
+            const style = document.createElement('style');
+            style.setAttribute('type', 'text/css');
+            style.textContent = aCss;
+            head.appendChild(style);
+            return style;
+        }
+        return null;
+    };
+
+    addStyle(`
+        .YT-HWV-WATCHED-HIDDEN { display: none !important; }
+        .YT-HWV-WATCHED-DIMMED { opacity: 0.3; }
+        .YT-HWV-SHORTS-HIDDEN { display: none !important; }
+        .YT-HWV-SHORTS-DIMMED { opacity: 0.3; }
+
+        /* Container styled to match YouTube's topbar pill/group containers */
+        .YT-HWV-BUTTONS {
+            display: flex;
+            gap: 2px;
+            margin: 0 12px;
+            align-items: center;
+            background: var(--yt-spec-badge-chip-background, rgba(0, 0, 0, 0.05));
+            border-radius: 20px;
+            padding: 2px;
+        }
+        html[dark] .YT-HWV-BUTTONS, [dark] .YT-HWV-BUTTONS {
+            background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.1));
+        }
+
+        /* Individual button matching YouTube's native topbar icon buttons */
+        .YT-HWV-BUTTON {
+            align-items: center;
+            background: transparent;
+            border: 0;
+            border-radius: 50%;
+            color: var(--yt-spec-text-primary, #0F0F0F);
+            cursor: pointer;
+            display: flex;
+            height: 36px;
+            justify-content: center;
+            outline: 0;
+            width: 36px;
+            position: relative;
+            transition: background 0.15s ease;
+        }
+        html[dark] .YT-HWV-BUTTON, [dark] .YT-HWV-BUTTON {
+            color: var(--yt-spec-text-primary, #F1F1F1);
+        }
+        .YT-HWV-BUTTON:hover {
+            background: var(--yt-spec-badge-chip-background, rgba(0, 0, 0, 0.08));
+        }
+        html[dark] .YT-HWV-BUTTON:hover, [dark] .YT-HWV-BUTTON:hover {
+            background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.15));
+        }
+
+        /* State Modifiers */
+        .YT-HWV-STATE-NORMAL { opacity: 0.4; }
+        .YT-HWV-STATE-DIMMED { opacity: 0.85; }
+        .YT-HWV-STATE-HIDDEN { opacity: 1; }
+
+        /* Subtle Corner Indicator Badges matching YouTube theme accents */
+        .YT-HWV-BUTTON::after {
+            content: attr(data-badge);
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 0 2px;
+            border-radius: 3px;
+            line-height: 9px;
+            letter-spacing: -0.2px;
+        }
+        .YT-HWV-STATE-NORMAL::after { content: 'OFF'; background: var(--yt-spec-icon-disabled, #909090); color: var(--yt-spec-static-brand-white, #fff); }
+        .YT-HWV-STATE-DIMMED::after { content: 'DIM'; background: var(--yt-spec-raised-background, #f5f5f5); color: var(--yt-spec-text-primary, #0f0f0f); border: 1px solid var(--yt-spec-icon-disabled, #ccc); }
+        .YT-HWV-STATE-HIDDEN::after { content: 'HIDE'; background: var(--yt-spec-call-to-action, #3ea6ff); color: var(--yt-spec-static-brand-white, #fff); }
+
+        html[dark] .YT-HWV-STATE-DIMMED::after {
+            background: var(--yt-spec-raised-background, #272727);
+            color: var(--yt-spec-text-primary, #f1f1f1);
+            border-color: var(--yt-spec-icon-disabled, #3f3f3f);
+        }
+    `);
+
+    if (typeof trustedTypes !== 'undefined' && trustedTypes.defaultPolicy === null) {
+        const s = (s) => s;
+        trustedTypes.createPolicy('default', {
+            createHTML: s,
+            createScript: s,
+            createScriptURL: s,
+        });
+    }
+
+    function cycleState(currentState) {
+        if (currentState === STATES.NORMAL) return STATES.DIMMED;
+        if (currentState === STATES.DIMMED) return STATES.HIDDEN;
+        return STATES.NORMAL;
+    }
+
+    function updateButtonVisuals(button, type, state) {
+        button.title = `Toggle ${type}: currently "${state}" (Click to change)`;
+        button.className = `YT-HWV-BUTTON YT-HWV-STATE-${state.toUpperCase()}`;
+    }
+
+    function processItems() {
+        const items = document.querySelectorAll('ytd-rich-item-renderer, ytd-grid-video-renderer, yt-lockup-view-model');
+
+        items.forEach((item) => {
+            const renderTarget = item.closest('ytd-rich-item-renderer, ytd-grid-video-renderer') || item;
+
+            renderTarget.classList.remove('YT-HWV-WATCHED-HIDDEN', 'YT-HWV-WATCHED-DIMMED', 'YT-HWV-SHORTS-HIDDEN', 'YT-HWV-SHORTS-DIMMED');
+
+            const watchedBar = item.querySelector('.ytThumbnailOverlayProgressBarHostWatchedProgressBar, ytd-thumbnail-overlay-resume-playback-renderer');
+            if (watchedBar) {
+                const progressSegment = watchedBar.querySelector('.ytThumbnailOverlayProgressBarHostWatchedProgressBarSegment');
+                let percent = 100;
+                if (progressSegment && progressSegment.style.width) {
+                    percent = parseFloat(progressSegment.style.width) || 100;
+                }
+
+                if (percent >= 10) {
+                    if (watchedState === STATES.HIDDEN) {
+                        renderTarget.classList.add('YT-HWV-WATCHED-HIDDEN');
+                    } else if (watchedState === STATES.DIMMED) {
+                        renderTarget.classList.add('YT-HWV-WATCHED-DIMMED');
+                    }
+                }
+            }
+
+            const isShort = item.querySelector('a[href*="/shorts/"]') || item.tagName.toLowerCase() === 'yt-shorts-lockup-view-model';
+            if (isShort) {
+                if (shortsState === STATES.HIDDEN) {
+                    renderTarget.classList.add('YT-HWV-SHORTS-HIDDEN');
+                } else if (shortsState === STATES.DIMMED) {
+                    renderTarget.classList.add('YT-HWV-SHORTS-DIMMED');
+                }
+            }
+        });
+    }
+
+    function insertButtons() {
+        if (document.querySelector('.YT-HWV-BUTTONS')) return;
+
+        const targetContainer = document.querySelector('ytd-masthead #end #buttons') || document.querySelector('ytd-masthead #end');
+        if (!targetContainer) return;
+
+        const container = document.createElement('div');
+        container.className = 'YT-HWV-BUTTONS';
+
+        // Watched Videos Button
+        const watchedBtn = document.createElement('button');
+        watchedBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="currentColor" d="M24 9C14 9 5.46 15.22 2 24c3.46 8.78 12 15 22 15 10.01 0 18.54-6.22 22-15-3.46-8.78-11.99-15-22-15zm0 25c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-16c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/></svg>`;
+        updateButtonVisuals(watchedBtn, 'Watched Videos', watchedState);
+
+        watchedBtn.addEventListener('click', () => {
+            watchedState = cycleState(watchedState);
+            GM_setValue('WATCHED_STATE', watchedState);
+            updateButtonVisuals(watchedBtn, 'Watched Videos', watchedState);
+            processItems();
+        });
+
+        // Shorts Button
+        const shortsBtn = document.createElement('button');
+        shortsBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="currentColor" d="M31.95 3c-1.11 0-2.25.3-3.27.93l-15.93 9.45C10.32 14.79 8.88 17.67 9 20.7c.15 3 1.74 5.61 4.17 6.84.06.03 2.25 1.05 2.25 1.05l-2.7 1.59c-3.42 2.04-4.74 6.81-2.94 10.65C11.07 43.47 13.5 45 16.05 45c1.11 0 2.22-.3 3.27-.93l15.93-9.45c2.4-1.44 3.87-4.29 3.72-7.35-.12-2.97-1.74-5.61-4.17-6.81-.06-.03-2.25-1.05-2.25-1.05l2.7-1.59c3.42-2.04 4.74-6.81 2.91-10.65C36.93 4.53 34.47 3 31.95 3z"/></svg>`;
+        updateButtonVisuals(shortsBtn, 'Shorts', shortsState);
+
+        shortsBtn.addEventListener('click', () => {
+            shortsState = cycleState(shortsState);
+            GM_setValue('SHORTS_STATE', shortsState);
+            updateButtonVisuals(shortsBtn, 'Shorts', shortsState);
+            processItems();
+        });
+
+        container.appendChild(watchedBtn);
+        container.appendChild(shortsBtn);
+        targetContainer.prepend(container);
+    }
+
+    const observer = new MutationObserver(() => {
+        insertButtons();
+        processItems();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+
+    insertButtons();
+    processItems();
 })();
