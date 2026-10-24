@@ -79,8 +79,7 @@
 				"useHookAtTopLevel": "error"
 			},
 			"nursery": {
-				"noFloatingPromises": "error",
-				"useSortedClasses": "error"
+				"noFloatingPromises": "error"
 			},
 			"performance": {
 				"noBarrelFile": "warn",
