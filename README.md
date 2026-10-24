@@ -14,10 +14,9 @@ The script adds two small buttons at the top of the page, see screenshot below. 
 
 You will see the buttons at the top of the page, to right of the Search box.
 
-![screenshot](screenshot.png 'Screenshot')
+![screenshot](screenshot.png "Screenshot")
 
 The "Watched Videos" button keeps track of different areas of YouTube separately. This allows you to hide watched videos on the Subscriptions page, show watched as dimmed in the sidebar recommendations, and show watched normally on channel pages. Here are the areas that the button keeps track of separately:
-
 - Subscriptions page
 - Channel pages
 - Trending page
