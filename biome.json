@@ -21,6 +21,7 @@
 						"sortOrder": "natural"
 					}
 				},
+				"useSortedPackageJson": "on",
 				"useSortedProperties": "on"
 			}
 		},
@@ -144,7 +145,11 @@
 	"overrides": [
 		{
 			"assist": {
-				"enabled": false
+				"actions": {
+					"source": {
+						"useSortedKeys": "off"
+					}
+				}
 			},
 			"includes": ["package.json"]
 		}
