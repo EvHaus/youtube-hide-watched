@@ -4,10 +4,6 @@ pre-commit:
   parallel: true
   commands:
     biome:
-      glob: "*.{js,jsx,ts,tsx}"
+      glob: "{*.{js,jsx,ts,tsx},package.json}"
       run: bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
-      stage_fixed: true
-    prettier-package-json:
-      glob: "package.json"
-      run: bun prettier-package-json --use-tabs --write {staged_files}
       stage_fixed: true

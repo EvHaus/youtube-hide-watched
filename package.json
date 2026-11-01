@@ -2,26 +2,24 @@
 	"name": "youtube-hide-watched",
 	"version": "0.0.0-development",
 	"description": "Hides watched videos from your YouTube subscriptions page",
-	"license": "MIT",
-	"author": "Ev Haus",
 	"homepage": "https://github.com/EvHaus/youtube-hide-watched",
+	"bugs": {
+		"url": "https://github.com/EvHaus/youtube-hide-watched/issues"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:EvHaus/youtube-hide-watched.git"
 	},
-	"bugs": {
-		"url": "https://github.com/EvHaus/youtube-hide-watched/issues"
-	},
+	"license": "MIT",
+	"author": "Ev Haus",
 	"scripts": {
 		"biome:check": "biome check --write",
-		"lint": "bun biome:check && bun packagelint",
-		"packagelint": "prettier-package-json --use-tabs --write ./package.json",
+		"lint": "bun biome:check",
 		"test": "bun lint"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.6.4",
-		"lefthook": "2.2.2",
-		"prettier-package-json": "2.8.0"
+		"lefthook": "2.2.2"
 	},
 	"publishConfig": {
 		"access": "public"
