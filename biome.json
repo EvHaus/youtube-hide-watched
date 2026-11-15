@@ -67,6 +67,8 @@
 			},
 			"correctness": {
 				"noConstantMathMinMaxClamp": "error",
+				"noNestedComponentDefinitions": "error",
+				"noReactPropAssignments": "error",
 				"noUndeclaredDependencies": "off",
 				"noUnusedFunctionParameters": "error",
 				"noUnusedImports": "error",
@@ -87,6 +89,9 @@
 				"noNamespaceImport": "error",
 				"noUnwantedPolyfillio": "error",
 				"useTopLevelRegex": "error"
+			},
+			"security": {
+				"useIframeSandbox": "error"
 			},
 			"style": {
 				"noDescendingSpecificity": "error",
@@ -116,6 +121,7 @@
 					}
 				},
 				"useDefaultParameterLast": "error",
+				"useErrorCause": "error",
 				"useNumberNamespace": "error",
 				"useSelfClosingElements": "error",
 				"useShorthandAssign": "error",
@@ -130,12 +136,16 @@
 						"allow": ["error", "warn", "info", "debug"]
 					}
 				},
+				"noConstantBinaryExpressions": "error",
 				"noDocumentImportInPage": "error",
 				"noEmptyBlockStatements": "error",
 				"noFocusedTests": "warn",
 				"noHeadImportInDocument": "error",
 				"noImportCycles": "warn",
+				"noLeakedRender": "error",
 				"noMisplacedAssertion": "error",
+				"noReactForwardRef": "error",
+				"noUnassignedVariables": "error",
 				"useAwait": "error",
 				"useErrorMessage": "error",
 				"useNumberToFixedDigitsArgument": "error"
